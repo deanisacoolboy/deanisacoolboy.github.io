@@ -4,6 +4,19 @@
   
   
   <entry>
+    <title>Go</title>
+    <link href="/2022/03/12/Go/"/>
+    <url>/2022/03/12/Go/</url>
+    
+    <content type="html"><![CDATA[<h1 id="go学习"><a href="#go学习" class="headerlink" title="go学习"></a>go学习</h1><h2 id="了解go环境"><a href="#了解go环境" class="headerlink" title="了解go环境"></a>了解go环境</h2><h3 id="环境变量GOROOT-和GOPATH的区别"><a href="#环境变量GOROOT-和GOPATH的区别" class="headerlink" title="环境变量GOROOT 和GOPATH的区别"></a>环境变量GOROOT 和GOPATH的区别</h3><p><font>GOPATH不应该指向go的安装路径，而是指向你的工作空间.</font>每当你使用<font>go get</font> 或者<font>go install</font>的时候他就会被扔到GOPATH里面去。如果没有区分开在运行代码的时候会警告你。</p><p><img src="1.png" alt="1"></p><p>设置新的环境变量，然后重启电脑。</p><figure class="highlight shell"><table><tr><td class="gutter"><div class="code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></div></td><td class="code"><pre><code class="hljs shell"><br>setx GOPATN xxxx<br><br></code></pre></td></tr></table></figure><h2 id="GO-ENV"><a href="#GO-ENV" class="headerlink" title="GO ENV"></a>GO ENV</h2><p><img src="5.png" alt="5"></p><h3 id="GO-MODULE"><a href="#GO-MODULE" class="headerlink" title="GO MODULE"></a>GO MODULE</h3><p>go1.11的时候推出了 GO MODULE来解决依赖管理问题。通过GO111MODULE这个变量来控制 GO Module的开启和关闭，取值为off,on 或者auto。</p><p>从Go1.13开始，GO MODULE 开始做为GoLang的中标准的包管理器。</p><h2 id="测试案例"><a href="#测试案例" class="headerlink" title="测试案例"></a>测试案例</h2><p>在Go项目了一般源码放在src目录下，所以我们在工作目录下新建一个src目录存放我们的源码文件，目录结构如下：</p><p><img src="2.png" alt="2"></p><p>这里我是新建了一个hello文件夹用于存放测试案例hello.go。</p><blockquote><p>测试hello.go是否能够正常运行</p></blockquote><p><img src="3.png" alt="3"></p><p>在cmd终端下使用go run 指令直接运行。</p><h3 id="go的编译过程"><a href="#go的编译过程" class="headerlink" title="go的编译过程"></a>go的编译过程</h3><ol><li>go build  —–&gt;   go run</li><li>直接  go run </li></ol><p><img src="4.png" alt="4"></p><p>测试OK!</p>]]></content>
+    
+    
+    
+  </entry>
+  
+  
+  
+  <entry>
     <title>es</title>
     <link href="/2022/03/12/es/"/>
     <url>/2022/03/12/es/</url>
