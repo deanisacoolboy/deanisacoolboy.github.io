@@ -4,6 +4,31 @@
   
   
   <entry>
+    <title>Linux</title>
+    <link href="/2022/03/13/Linux/"/>
+    <url>/2022/03/13/Linux/</url>
+    
+    <content type="html"><![CDATA[<h1 id="直接上图片"><a href="#直接上图片" class="headerlink" title="直接上图片"></a>直接上图片</h1><p><img src="01_Linux%E5%9F%BA%E7%A1%80%E7%AF%87%E7%9F%A5%E8%AF%86.png" alt="01_Linux基础篇知识"><br><img src="02_%E5%B8%AE%E5%8A%A9%E5%91%BD%E4%BB%A4.png" alt="02_帮助命令"><br><img src="03_%E6%96%87%E4%BB%B6%E4%B8%8E%E7%9B%AE%E5%BD%95%E7%AE%A1%E7%90%86.png" alt="03_文件与目录管理"><br><img src="04_%E6%96%87%E4%BB%B6%E4%B8%8E%E7%9B%AE%E5%BD%95%E7%AE%A1%E7%90%862.png" alt="04_文件与目录管理2"><br><img src="05_%E6%9D%83%E9%99%90%E7%AE%A1%E7%90%86.png" alt="05_权限管理"><br><img src="06_Vim%E6%96%87%E6%9C%AC%E7%BC%96%E8%BE%91%E5%99%A8.png" alt="06_Vim文本编辑器"><br><img src="07_%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E5%92%8C%E6%96%87%E4%BB%B6%E6%9F%A5%E6%89%BE.png" alt="07_文件系统和文件查找"><br><img src="08_%E7%B3%BB%E7%BB%9F%E7%AE%A1%E7%90%861.png" alt="08_系统管理1"><br><img src="08_%E7%B3%BB%E7%BB%9F%E7%AE%A1%E7%90%862.png" alt="08_系统管理2"><br><img src="09_%E7%B3%BB%E7%BB%9F%E7%AE%A1%E7%90%86-%E5%85%A8.png" alt="09_系统管理-全"><br><img src="10_%E7%A3%81%E7%9B%98%E3%80%81%E9%80%BB%E8%BE%91%E5%8D%B7%E5%92%8C%E6%95%85%E9%9A%9C%E4%BF%AE%E5%A4%8D.png" alt="10_磁盘、逻辑卷和故障修复"><br><img src="11_%E8%AE%A4%E8%AF%86BASH%E5%92%8CShell%E5%91%BD%E4%BB%A4%E7%9B%B8%E5%85%B3.png" alt="11_认识BASH和Shell命令相关"><br><img src="12_Shell%E8%84%9A%E6%9C%AC%E6%93%8D%E4%BD%9C%E7%9B%B8%E5%85%B3.png" alt="12_Shell脚本操作相关"><br><img src="12_Shell%E5%BE%AA%E7%8E%AF%E6%93%8D%E4%BD%9C.png" alt="12_Shell循环操作"><br><img src="13_%E6%96%87%E6%9C%AC%E6%93%8D%E4%BD%9C%E7%AF%87.png" alt="13_文本操作篇"><br><img src="14_sed%E5%9F%BA%E7%A1%80.png" alt="14_sed基础"><br><img src="15_AWK.png" alt="15_AWK"> </p>]]></content>
+    
+    
+    <categories>
+      
+      <category>运维</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>运维必会</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
     <title>Reactor</title>
     <link href="/2022/03/13/Reactor/"/>
     <url>/2022/03/13/Reactor/</url>
