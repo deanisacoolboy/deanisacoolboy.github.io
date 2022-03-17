@@ -16,21 +16,21 @@
   <meta name="author" content="John Doe">
   <meta name="keywords" content="">
   
-    <meta name="description" content="&#x2F;**  数据过滤处理   @author sj  &#x2F;@Aspect@Componentpublic class DataScopeAspect{  &#x2F;**  全部数据权限 &#x2F;public static final String DATA_SCOPE_ALL &#x3D; “1”;    &#x2F;**  自定数据权限 &#x2F;public static final String DATA_SCOPE_CUSTOM &#x3D;">
+    <meta name="description" content="前言我们公司是做金融系统的，我现在在做的呢是数据平台补录，就是一些简单的增删改查。然后呢这周的开发任务是配置导入导出功能，重点来了！！ 这是我最想吐槽的。这里的导入导出跟你们想的用一个excel注解不一样，正常开发是  用一个excel注解 文件上传 工具类将excel转换成一个对象数组 对数据库进行操作  我们公司的神操作来了！！！前方高能！！！！ 我们公司的操作是  在数据库文件模板表里面加一">
 <meta property="og:type" content="article">
-<meta property="og:title" content="若依如何实现的数据范围过滤">
-<meta property="og:url" content="http://example.com/2022/03/13/%E8%8B%A5%E4%BE%9D%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0%E7%9A%84%E6%95%B0%E6%8D%AE%E8%8C%83%E5%9B%B4%E8%BF%87%E6%BB%A4/index.html">
+<meta property="og:title" content="一个被困扰了一天的问题">
+<meta property="og:url" content="http://example.com/2022/03/17/%E4%B8%80%E4%B8%AA%E8%A2%AB%E5%9B%B0%E6%89%B0%E4%BA%86%E4%B8%80%E5%A4%A9%E7%9A%84%E9%97%AE%E9%A2%98/index.html">
 <meta property="og:site_name" content="Dean 技术社区">
-<meta property="og:description" content="&#x2F;**  数据过滤处理   @author sj  &#x2F;@Aspect@Componentpublic class DataScopeAspect{  &#x2F;**  全部数据权限 &#x2F;public static final String DATA_SCOPE_ALL &#x3D; “1”;    &#x2F;**  自定数据权限 &#x2F;public static final String DATA_SCOPE_CUSTOM &#x3D;">
+<meta property="og:description" content="前言我们公司是做金融系统的，我现在在做的呢是数据平台补录，就是一些简单的增删改查。然后呢这周的开发任务是配置导入导出功能，重点来了！！ 这是我最想吐槽的。这里的导入导出跟你们想的用一个excel注解不一样，正常开发是  用一个excel注解 文件上传 工具类将excel转换成一个对象数组 对数据库进行操作  我们公司的神操作来了！！！前方高能！！！！ 我们公司的操作是  在数据库文件模板表里面加一">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2022-03-13T08:59:51.000Z">
-<meta property="article:modified_time" content="2022-03-13T09:00:43.424Z">
+<meta property="article:published_time" content="2022-03-17T03:24:25.000Z">
+<meta property="article:modified_time" content="2022-03-17T03:42:31.097Z">
 <meta property="article:author" content="John Doe">
-<meta property="article:tag" content="后端框架">
+<meta property="article:tag" content="令人脑瓜子嗡嗡的BUG">
 <meta name="twitter:card" content="summary_large_image">
   
   
-  <title>若依如何实现的数据范围过滤 - Dean 技术社区</title>
+  <title>一个被困扰了一天的问题 - Dean 技术社区</title>
 
   <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/css/bootstrap.min.css" />
 
@@ -176,7 +176,7 @@
       <div class="full-bg-img">
         <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
           <div class="page-header text-center fade-in-up">
-            <span class="h2" id="subtitle" title="若依如何实现的数据范围过滤">
+            <span class="h2" id="subtitle" title="一个被困扰了一天的问题">
               
             </span>
 
@@ -186,8 +186,8 @@
   
     <span class="post-meta">
       <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-      <time datetime="2022-03-13 16:59" pubdate>
-        2022年3月13日 下午
+      <time datetime="2022-03-17 11:24" pubdate>
+        2022年3月17日 上午
       </time>
     </span>
   
@@ -197,7 +197,7 @@
   
     <span class="post-meta mr-2">
       <i class="iconfont icon-chart"></i>
-      4k 字
+      576 字
     </span>
   
 
@@ -206,7 +206,7 @@
       <i class="iconfont icon-clock-fill"></i>
       
       
-      34 分钟
+      5 分钟
     </span>
   
 
@@ -243,155 +243,37 @@
         <div class="py-5" id="board">
           <article class="post-content mx-auto">
             <!-- SEO header -->
-            <h1 style="display: none">若依如何实现的数据范围过滤</h1>
+            <h1 style="display: none">一个被困扰了一天的问题</h1>
             
             <div class="markdown-body">
-              <p>/**</p>
-<ul>
-<li><p>数据过滤处理</p>
-</li>
-<li></li>
-<li><p>@author sj</p>
-</li>
-<li><p>/<br>@Aspect<br>@Component<br>public class DataScopeAspect<br>{<br>  /**</p>
-<ul>
-<li>全部数据权限</li>
-<li>/<br>public static final String DATA_SCOPE_ALL = “1”;</li>
-</ul>
-<p>  /**</p>
-<ul>
-<li>自定数据权限</li>
-<li>/<br>public static final String DATA_SCOPE_CUSTOM = “2”;</li>
-</ul>
-<p>  /**</p>
-<ul>
-<li>部门数据权限</li>
-<li>/<br>public static final String DATA_SCOPE_DEPT = “3”;</li>
-</ul>
-<p>  /**</p>
-<ul>
-<li>部门及以下数据权限</li>
-<li>/<br>public static final String DATA_SCOPE_DEPT_AND_CHILD = “4”;</li>
-</ul>
-<p>  /**</p>
-<ul>
-<li>仅本人数据权限</li>
-<li>/<br>public static final String DATA_SCOPE_SELF = “5”;</li>
-</ul>
-<p>  /**</p>
-<ul>
-<li>数据权限过滤关键字</li>
-<li>/<br>public static final String DATA_SCOPE = “dataScope”;</li>
-</ul>
-<p>  // 配置织入点<br>  @Pointcut(“@annotation(com.sj.common.annotation.DataScope)”)<br>  public void dataScopePointCut()<br>  {<br>  }<br>  // 在织入点之前进行织入<br>  @Before(“dataScopePointCut()”)<br>  public void doBefore(JoinPoint point) throws Throwable<br>  {</p>
-<div class="code-wrapper"><pre><code class="hljs">  // 在织入点之前执行，根据当前登录的用户判断是否数据权限过滤
-  handleDataScope(point);
-</code></pre></div>
-<p>  }</p>
-<p>  protected void handleDataScope(final JoinPoint joinPoint)<br>  {</p>
-<div class="code-wrapper"><pre><code class="hljs">  // 获得注解
-  DataScope controllerDataScope = getAnnotationLog(joinPoint);
-  if (controllerDataScope == null)
-  &#123;
-      return;
-  &#125;
-  // 获取当前的用户
-  LoginUser loginUser = SpringUtils.getBean(TokenService.class).getLoginUser(ServletUtils.getRequest());
-  if (StringUtils.isNotNull(loginUser))
-  &#123;
-      SysUser currentUser = loginUser.getUser();
-      // 如果当前登录的用户不是管理员那就进行数据范围过滤
-      if (StringUtils.isNotNull(currentUser) &amp;&amp; !currentUser.isAdmin())
-      &#123;
-          dataScopeFilter(joinPoint, currentUser, controllerDataScope.deptAlias(),
-                  controllerDataScope.userAlias());
-      &#125;
-  &#125;
-</code></pre></div>
-<p>  }</p>
-<p>  /**</p>
-<ul>
-<li>数据范围过滤</li>
-<li></li>
-<li>@param joinPoint 切点</li>
-<li>@param user 用户</li>
-<li>@param userAlias 别名</li>
-<li>/<br>public static void dataScopeFilter(JoinPoint joinPoint, SysUser user, String deptAlias, String userAlias)<br>{<br>  // 构建字符串<br>  StringBuilder sqlString = new StringBuilder();<br>  // 遍历角色，一个用户可以有多个角色<br>  for (SysRole role : user.getRoles())<br>  {<div class="code-wrapper"><pre><code class="hljs">  // 获取到数据权限范围
-  String dataScope = role.getDataScope();
-  // 如果是全部数据权限则不需要构造拼接字符串
-  if (DATA_SCOPE_ALL.equals(dataScope))
-  &#123;
-      sqlString = new StringBuilder();
-      break;
-  &#125;
-  else if (DATA_SCOPE_CUSTOM.equals(dataScope))
-  &#123;
-      sqlString.append(StringUtils.format(
-              &quot; OR &#123;&#125;.dept_id IN ( SELECT dept_id FROM sys_role_dept WHERE role_id = &#123;&#125; ) &quot;, deptAlias,
-              role.getRoleId()));
-  &#125;
-  // 本部门的数据
-  else if (DATA_SCOPE_DEPT.equals(dataScope))
-  &#123;
-      sqlString.append(StringUtils.format(&quot; OR &#123;&#125;.dept_id = &#123;&#125; &quot;, deptAlias, user.getDeptId()));
-  &#125;
-  // 本部门及本部门以下
-  else if (DATA_SCOPE_DEPT_AND_CHILD.equals(dataScope))
-  &#123;
-      // dept_id等于本本部门的id或者dept_id在祖级列表里面
-      sqlString.append(StringUtils.format(
-              &quot; OR &#123;&#125;.dept_id IN ( SELECT dept_id FROM sys_dept WHERE dept_id = &#123;&#125; or find_in_set( &#123;&#125; , ancestors ) )&quot;,
-              deptAlias, user.getDeptId(), user.getDeptId()));
-  &#125;
-  else if (DATA_SCOPE_SELF.equals(dataScope))
-  &#123;
-      if (StringUtils.isNotBlank(userAlias))
-      &#123;
-          sqlString.append(StringUtils.format(&quot; OR &#123;&#125;.user_id = &#123;&#125; &quot;, userAlias, user.getUserId()));
-      &#125;
-      else
-      &#123;
-          // 数据权限为仅本人且没有userAlias别名不查询任何数据
-          sqlString.append(&quot; OR 1=0 &quot;);
-      &#125;
-  &#125;
-</code></pre></div>
-  }  // 将sqlString转换为String且当不为空时<br>  if (StringUtils.isNotBlank(sqlString.toString()))<br>  {<div class="code-wrapper"><pre><code class="hljs">  // 获取连接点的参数，
-  Object params = joinPoint.getArgs()[0];
-  // 如果参数不为空并且是一个实体
-  if (StringUtils.isNotNull(params) &amp;&amp; params instanceof BaseEntity)
-  &#123;
-      // 将参数转换为实体
-      BaseEntity baseEntity = (BaseEntity) params;
-      // 将拼接的Sql语句放到参数列表
-      baseEntity.getParams().put(DATA_SCOPE, &quot; AND (&quot; + sqlString.substring(4) + &quot;)&quot;);
-  &#125;
-</code></pre></div>
-  }<br>}</li>
-</ul>
-<p>  /**</p>
-<ul>
-<li>是否存在注解，如果存在就获取</li>
-<li>/<br>private DataScope getAnnotationLog(JoinPoint joinPoint)<br>{<br>  // 获取封装了签名信息的对象，在该对象中可以获取到目标方法名，所属类的class等信息<br>  Signature signature = joinPoint.getSignature();<br>  // 将签名对象转换为方法签名对象<br>  MethodSignature methodSignature = (MethodSignature) signature;<br>  // 获取到目标方法<br>  Method method = methodSignature.getMethod();<br>  // 如果目标方法不为空则返回目标方法上的注解<br>  if (method != null)<br>  {<div class="code-wrapper"><pre><code class="hljs">  return method.getAnnotation(DataScope.class);
-</code></pre></div>
-  }<br>  // 否则返回空<br>  return null;<br>}<br>}</li>
-</ul>
-</li>
-</ul>
-<p>// 作为前置知识需要了解角色管理页面中，可以配置下面几种数据范围<br> /**<br>     * 全部数据权限<br>     <em>/<br>    public static final String DATA_SCOPE_ALL = “1”;<br> /</em>*<br>     * 自定数据权限<br>     */<br>    public static final String DATA_SCOPE_CUSTOM = “2”;</p>
-<p>查询 部门角色对应表中，用户具备的角色可以管理那些部门<br> OR d.dept_id IN ( SELECT dept_id FROM sys_role_dept WHERE role_id = {rolelist} )    </p>
-<p>/**<br>     * 部门数据权限<br>     */<br>    public static final String DATA_SCOPE_DEPT = “3”;</p>
-<p>查询部门编号=用户所在部门编号的数据<br>OR {}.dept_id = {}  </p>
-<p>  /**<br>     * 部门及以下数据权限<br>     */<br>    public static final String DATA_SCOPE_DEPT_AND_CHILD = “4”;</p>
-<p>查询部门和子部门的权限</p>
-<div class="code-wrapper"><pre><code class="hljs">/**
- * 仅本人数据权限
- */
-public static final String DATA_SCOPE_SELF = &quot;5&quot;;
-
-if (StringUtils.isNotBlank(userAlias))
-</code></pre></div>
-<p>{<br>    sqlString.append(StringUtils.format(“ OR {}.user_id = {} “, userAlias, user.getUserId()));<br>}<br>else<br>{<br>    // 数据权限为仅本人且没有userAlias别名不查询任何数据<br>    sqlString.append(“ OR 1=0 “);<br>}</p>
+              <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>我们公司是做金融系统的，我现在在做的呢是数据平台补录，就是一些简单的增删改查。然后呢这周的开发任务是配置导入导出功能，重点来了！！ 这是我最想吐槽的。这里的导入导出跟你们想的用一个excel注解不一样，正常开发是</p>
+<ol>
+<li>用一个excel注解</li>
+<li>文件上传</li>
+<li>工具类将excel转换成一个对象数组</li>
+<li>对数据库进行操作</li>
+</ol>
+<p><strong>我们公司的神操作来了！！！前方高能！！！！</strong></p>
+<p>我们公司的操作是</p>
+<ol>
+<li>在数据库文件模板表里面加一条记录字段包括你要导入的excel的模板的一些元数据</li>
+<li>配置导入文字字段详情，就是excel表和数据库表的对应关系</li>
+<li>配置导出文件字段的对应关系</li>
+</ol>
+<p>有人可能要说了，这看着也没啥问题啊0..0</p>
+<p><strong>问题来了</strong></p>
+<p>一般的一张表几十个字段，多个要上百个字段，那要插到啥时候。。。。。当场裂开开。</p>
+<p>我昨天就是在做这个事，，，，</p>
+<p>插了一百多条记录，真的是眼睛都要瞎了0..0</p>
+<p><strong>当然，肯定不会让你这么轻松的就搞完的</strong></p>
+<p>不出所料，我成功的插错了两条记录。。。。错把两条非主键字段设置为了主键字段，导致在插入的时候主键重复差不进去。这个问题我过了好久才发现，昨天晚上搞到十二点。</p>
+<blockquote>
+<p>那为什么我会那么久没发现这个问题呢？</p>
+</blockquote>
+<p><strong>系统的日志不详细！！！</strong></p>
+<p>我反复查看了后端日志信息，没有一条报错信息，就很离谱，唯一的一条就是说“总条数1；失败条数：1”</p>
+<p>我裂开，没有报错原因，没有异常。。。。。</p>
+<p><strong>从这里看出，一个系统有一个完整日志的重要性啊！！！！</strong></p>
 
             </div>
             <hr>
@@ -401,7 +283,7 @@ if (StringUtils.isNotBlank(userAlias))
                   <div class="post-meta mr-3">
                     <i class="iconfont icon-category"></i>
                     
-                      <a class="hover-with-bg" href="/categories/%E5%90%8E%E7%AB%AF/">后端</a>
+                      <a class="hover-with-bg" href="/categories/%E5%BC%80%E5%8F%91%E4%B8%AD%E9%81%87%E5%88%B0%E7%9A%84%E5%90%84%E7%A7%8D%E7%A5%9EBUG/">开发中遇到的各种神BUG</a>
                     
                   </div>
                 
@@ -409,7 +291,7 @@ if (StringUtils.isNotBlank(userAlias))
                   <div class="post-meta">
                     <i class="iconfont icon-tags"></i>
                     
-                      <a class="hover-with-bg" href="/tags/%E5%90%8E%E7%AB%AF%E6%A1%86%E6%9E%B6/">后端框架</a>
+                      <a class="hover-with-bg" href="/tags/%E4%BB%A4%E4%BA%BA%E8%84%91%E7%93%9C%E5%AD%90%E5%97%A1%E5%97%A1%E7%9A%84BUG/">令人脑瓜子嗡嗡的BUG</a>
                     
                   </div>
                 
@@ -426,18 +308,12 @@ if (StringUtils.isNotBlank(userAlias))
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2022/03/17/%E4%B8%80%E4%B8%AA%E8%A2%AB%E5%9B%B0%E6%89%B0%E4%BA%86%E4%B8%80%E5%A4%A9%E7%9A%84%E9%97%AE%E9%A2%98/">
-                        <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">一个被困扰了一天的问题</span>
-                        <span class="visible-mobile">上一篇</span>
-                      </a>
-                    
                   </article>
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2022/03/13/SpringAop/">
-                        <span class="hidden-mobile">SpringAop</span>
+                      <a href="/2022/03/13/%E8%8B%A5%E4%BE%9D%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0%E7%9A%84%E6%95%B0%E6%8D%AE%E8%8C%83%E5%9B%B4%E8%BF%87%E6%BB%A4/">
+                        <span class="hidden-mobile">若依如何实现的数据范围过滤</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
