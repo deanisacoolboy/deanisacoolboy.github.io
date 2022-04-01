@@ -24,10 +24,12 @@
 <meta property="og:description" content="高并发前言在写这篇博客的时候，我是准备跳槽了，跳槽的原因也很简单，我做的岗位没有达到的预期，可以说做的东西跟Java都不搭边，，，，， 在这之前很多东西都已经学过了，但是一直没有用到，所以随着时间的推移也就慢慢的遗忘了。我认为工作的意义除了早日帮老板实现财富自由，还有的就是让我们自己学的东西能够得到巩固吧。 跳不跳槽呢，我认为主要看下面几点：  工资有没有达到你的预期 你做的东西对你下一次找工作有">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="http://example.com/2022/03/30/java%E9%9D%A2%E8%AF%95%E4%B9%8B%E5%B9%B6%E5%8F%91/03.png">
+<meta property="og:image" content="http://example.com/2022/03/30/java%E9%9D%A2%E8%AF%95%E4%B9%8B%E5%B9%B6%E5%8F%91/04.png">
+<meta property="og:image" content="http://example.com/2022/03/30/java%E9%9D%A2%E8%AF%95%E4%B9%8B%E5%B9%B6%E5%8F%91/05.png">
 <meta property="og:image" content="http://example.com/2022/03/30/java%E9%9D%A2%E8%AF%95%E4%B9%8B%E5%B9%B6%E5%8F%91/01.png">
 <meta property="og:image" content="http://example.com/2022/03/30/java%E9%9D%A2%E8%AF%95%E4%B9%8B%E5%B9%B6%E5%8F%91/02.png">
 <meta property="article:published_time" content="2022-03-30T11:23:56.000Z">
-<meta property="article:modified_time" content="2022-04-01T04:58:55.335Z">
+<meta property="article:modified_time" content="2022-04-01T06:30:41.464Z">
 <meta property="article:author" content="John Doe">
 <meta property="article:tag" content="面试">
 <meta name="twitter:card" content="summary_large_image">
@@ -201,7 +203,7 @@
   
     <span class="post-meta mr-2">
       <i class="iconfont icon-chart"></i>
-      20k 字
+      21k 字
     </span>
   
 
@@ -210,7 +212,7 @@
       <i class="iconfont icon-clock-fill"></i>
       
       
-      164 分钟
+      175 分钟
     </span>
   
 
@@ -371,6 +373,30 @@
 <h3 id="JMM你谈谈"><a href="#JMM你谈谈" class="headerlink" title="JMM你谈谈"></a>JMM你谈谈</h3><p>JMM (JAVA Memory Model，简称JMM)本身是一种抽象的概念，并不真实存在，他描述的是一组规则或者规范，通过规范定制了程序中的各个变量（包括实例字段，静态字段和构成数组对象的元素）的访问方式</p>
 <h3 id="可见性"><a href="#可见性" class="headerlink" title="可见性"></a>可见性</h3><h4 id="工作内存，主存的理解"><a href="#工作内存，主存的理解" class="headerlink" title="工作内存，主存的理解"></a>工作内存，主存的理解</h4><p>由于JVM运行程序的实体是线程，而每个线程创建时都会为其创建一个工作内存，工作内存是每个线程的私有数据空间，<font style="background-color:gray">而JMM中规</font>定所有的变量都存贮在主内存，主内存是共享区域内存，所有的线程都可以访问，<font>但线程对变量的操作必须在工作内存中进行，首先将变量从主内存拷贝到工作内存，然后对变量进行操作，</font><font>操作完后再将变量写回主内存，不能直接操作主内存中的变量</font>各个线程中的工作内存存储着主线程中的变量的副本拷贝，因此不同的线程无法访问对方的工作内存，通讯必须通过主存来完成。</p>
 <p><img src="03.png" srcset="/img/loading.gif" lazyload alt="03"></p>
+<h4 id="可见性原理"><a href="#可见性原理" class="headerlink" title="可见性原理"></a>可见性原理</h4><p><strong>当修改volatile变量时，会给cpu发送一个信号告诉其他cpu这个变量已修改，当其他cpu调用这个变量时，就会先检查是否有收到修改该变量的信号，有则重新从内存中读取。volatile是无锁的，类似于乐观锁的机制。</strong>（多核CPU）</p>
+<p> 在说这个问题之前，我们先看看CPU是如何执行java代码的。首先编译之后Java代码会被编译成<a target="_blank" rel="noopener" href="https://so.csdn.net/so/search?q=%E5%AD%97%E8%8A%82%E7%A0%81&spm=1001.2101.3001.7020">字节码</a>.class文件，在运行时会被加载到JVM中，JVM会将.class转换为具体的CPU执行指令，CPU加载这些指令逐条执行。如下图，</p>
+<p><img src="04.png" srcset="/img/loading.gif" lazyload alt="04"></p>
+<p><img src="05.png" srcset="/img/loading.gif" lazyload alt="05"></p>
+<p> 以多核CPU为例（两核），我们知道CPU的速度比内存要快得多，为了弥补这个性能差异，CPU内核都会有自己的高速缓存区，当内核运行的线程执行一段代码时，首先将这段代码的指令集进行缓存行填充到高速缓存，如果非volatil变量当CPU执行修改了此变量之后，会将修改后的值回写到高速缓存，然后再刷新到内存中。如果在刷新会内存之前，由于是共享变量，那么CORE2中的线程执行的代码也用到了这个变量，这是变量的值依然是旧的。volatile关键字就会解决这个问题的，如何解决呢，首先被volatile关键字修饰的共享变量在转换成汇编语言时，会加上一个以lock为前缀的指令，当CPU发现这个指令时，立即做两件事：</p>
+<p>将当前内核高速缓存行的数据立刻回写到内存；</p>
+<p>使在其他内核里缓存了该内存地址的数据无效。</p>
+<div class="code-wrapper"><pre><code class="hljs">    第一步很好理解，第二步如何做到呢？使用MESI协议。
+
+    MESI协议在早期的CPU中，是通过在总线加LOCK#锁的方式实现的，但这种方式开销太大，所以Intel开发了缓存一致性协议，也就是MESI协议，该解决缓存一致性的大致思路是：当CPU写数据时，如果发现操作的变量是共享变量，即在其他CPU中也存在该变量的副本，那么他会发出信号通知其他CPU将该变量的缓存行设置为无效状态。当其他CPU使用这个变量时，首先会去嗅探是否有对该变量更改的信号，当发现这个变量的缓存行已经无效时，会从新从内存中读取这个变量。
+
+    以上这些就是volatile关键字的内部实现机制，使用Volatile有什么好处呢？从底层实现原理我们可以发现，volatile是一种非锁机制，这种机制可以避免锁机制引起的线程上下文切换和调度问题。因此，volatile的执行成本比synchronized更低。
+
+    MESI（缓存一致性协议）是一种保持一致性的协议。它的方法是在CPU缓存中保存一个标记位，这个标记位有四种状态：
+</code></pre></div>
+<p>M：Modify，修改缓存，当前CPU的缓存已经被修改了，即与内存中数据已经不一致了</p>
+<p>E：Exclusive，独占缓存，当前CPU的缓存和内存中数据保持一致，而且其他处理器并没有可使用的缓存数据</p>
+<p>S：Share，共享缓存，和内存保持一致的一份拷贝，多组缓存可以同时拥有针对同一内存地址的共享缓存段</p>
+<p>I：Invalid，实效缓存，这个说明CPU中的缓存已经不能使用了</p>
+<div class="code-wrapper"><pre><code class="hljs">    CPU的读取遵循下面几点：
+</code></pre></div>
+<p>如果缓存状态是I，那么就从内存中读取，否则就从缓存中直接读取。</p>
+<p>如果缓存处于M或E的CPU读取到其他CPU有读操作，就把自己的缓存写入到内存中，并将自己的状态设置为S。</p>
+<p>只有缓存状态是M或E的时候，CPU才可以修改缓存中的数据，修改后，缓存状态变为M。</p>
 <h3 id="JMM关于同步的规定"><a href="#JMM关于同步的规定" class="headerlink" title="JMM关于同步的规定"></a>JMM关于同步的规定</h3><ol>
 <li>线程解锁前，必须把共享变量的值刷新回主存</li>
 <li>线程加锁前，必须读取主存的最新值到自己的工作内存</li>
