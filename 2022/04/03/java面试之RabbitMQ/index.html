@@ -31,8 +31,11 @@
 <meta property="og:image" content="http://example.com/2022/04/03/java%E9%9D%A2%E8%AF%95%E4%B9%8BRabbitMQ/06.png">
 <meta property="og:image" content="http://example.com/2022/04/03/java%E9%9D%A2%E8%AF%95%E4%B9%8BRabbitMQ/07.png">
 <meta property="og:image" content="http://example.com/2022/04/03/java%E9%9D%A2%E8%AF%95%E4%B9%8BRabbitMQ/08.png">
+<meta property="og:image" content="http://example.com/2022/04/03/java%E9%9D%A2%E8%AF%95%E4%B9%8BRabbitMQ/21.png">
+<meta property="og:image" content="http://example.com/2022/04/03/java%E9%9D%A2%E8%AF%95%E4%B9%8BRabbitMQ/22.png">
+<meta property="og:image" content="http://example.com/2022/04/03/java%E9%9D%A2%E8%AF%95%E4%B9%8BRabbitMQ/23.png">
 <meta property="article:published_time" content="2022-04-03T12:10:47.000Z">
-<meta property="article:modified_time" content="2022-04-03T13:37:06.694Z">
+<meta property="article:modified_time" content="2022-04-04T04:34:12.824Z">
 <meta property="article:author" content="John Doe">
 <meta property="article:tag" content="面试">
 <meta name="twitter:card" content="summary_large_image">
@@ -206,7 +209,7 @@
   
     <span class="post-meta mr-2">
       <i class="iconfont icon-chart"></i>
-      9.3k 字
+      10k 字
     </span>
   
 
@@ -215,7 +218,7 @@
       <i class="iconfont icon-clock-fill"></i>
       
       
-      78 分钟
+      88 分钟
     </span>
   
 
@@ -363,6 +366,22 @@
 <li>拆分多个 queue(消息队列)，每个 queue(消息队列) 一个 consumer(消费者)，就是多一些 queue (消息队列)而已，确实是麻烦点；</li>
 <li>或者就一个 queue (消息队列)但是对应一个 consumer(消费者)，然后这个 consumer(消费者)内部用内存队列做排队，然后分发给底层不同的 worker 来处理。</li>
 </ol>
+<h2 id="如何解决消息丢失的问题"><a href="#如何解决消息丢失的问题" class="headerlink" title="如何解决消息丢失的问题"></a>如何解决消息丢失的问题</h2><h3 id="为什么消息会丢失？"><a href="#为什么消息会丢失？" class="headerlink" title="为什么消息会丢失？"></a>为什么消息会丢失？</h3><p>跟消息重复问题类似，消息丢失也可能出现在生产者、MQ、消费者三者中。这三者导致消息丢失的原因是什么呢？</p>
+<ul>
+<li>生产者：生产者推送消息到 MQ 中，由于网络抖动等原因消息没有推送到 MQ 中，或者消息推送到 MQ 中了但是 MQ 内部出错了，导致消息丢失。</li>
+<li>MQ：MQ 接收到消息后先把消息暂存在 OS Cache 中，消费者还没消费的时候 MQ 自己挂了，导致消息丢失。</li>
+<li>消费者：消费者消费到了这条消息，但是还没来得及处理，消费者自己挂了，但是消费者已经告诉了 MQ 自己已经消费完了，导致消息丢失。</li>
+</ul>
+<h3 id="如何解决消息丢失的问题-1"><a href="#如何解决消息丢失的问题-1" class="headerlink" title="如何解决消息丢失的问题"></a>如何解决消息丢失的问题</h3><p>不同的消息队列解决消息丢失的方法是不同的，下面分别介绍不同 MQ 是如何解决消息丢失问题的。</p>
+<h4 id="生产者导致消息丢失"><a href="#生产者导致消息丢失" class="headerlink" title="生产者导致消息丢失"></a>生产者导致消息丢失</h4><p>RabbitMQ 有两种方案可以避免消息丢失，一种是 RabbitMQ 的事务机制，一种是 Confirm 模式。这里先看一下事务机制。</p>
+<p>RabbitMQ 客户端中 Channel 接口有这么几个函数，channel.txSelect 用来开启一个事务，channel.txCommit 用来提交事务，channel.txRollback 用来回滚事务。为了避免消息丢失，我们可以在发送消息前，先开启执行 txSelect 方法开启一个事务，接着发送消息，如果消息投递失败，执行 txRollback 回滚事务，再执行重试操作重新发送，如果消息投递成功，执行 txCommit 方法提交事务。</p>
+<p>这个方案可以保证我们的消息一定是投递成功的，但是几乎没有人使用这种方案。因为这个方案是同步阻塞的，也就是一条消息发送后，一定要等到 MQ 回应之后执行了提交或回滚事务操作，才能继续往下执行。大致过程如下图所示：</p>
+<p><img src="21.png" srcset="/img/loading.gif" lazyload alt="21"></p>
+<p>RabbitMQ 还提供了另一种方法避免生产者消息丢失问题，那就是 Confirm 模式。Confirm 模式是这样子的，生产者发送消息后，不需要等待 MQ 的回应，MQ 接收成功后，会回调生产者的 ack 接口通知生产者消息投递成功了，如果 MQ 接收失败，会回调 nack 接口通知生产者消息投递失败了，生产者可以重新对这条消息进行投递。大致过程如下图所示：</p>
+<p><img src="22.png" srcset="/img/loading.gif" lazyload alt="22"></p>
+<h4 id="RabbitMQ-导致消息丢失"><a href="#RabbitMQ-导致消息丢失" class="headerlink" title="RabbitMQ 导致消息丢失"></a>RabbitMQ 导致消息丢失</h4><p>RabbitMQ 自己弄丢了数据是由于持久化导致的。通常 RabbitMQ 接收到消息之后写入 OS Cache 中，就会给生产者返回接收成功的回应，这时如果 RabbitMQ 挂了，消息也就丢失了。解决方法可以结合生产者的 Confirm 模式，配置 RabbitMQ 持久化到磁盘之后，才给生产者返回 ack 信号。</p>
+<h4 id="消费者导致消息丢失"><a href="#消费者导致消息丢失" class="headerlink" title="消费者导致消息丢失"></a>消费者导致消息丢失</h4><p>RabbitMQ 在消费者端弄丢数据，是由于 RabbitMQ 的默认自动提交 ack 导致的。解决方法就是关闭 RabbitMQ 的自动响应 ack 即可。这样消息没有处理完成，消费者挂了，RabbitMQ 会认为消息没有处理成功，会再次推送消息给消费者处理。</p>
+<p><img src="23.png" srcset="/img/loading.gif" lazyload alt="23"></p>
 <h2 id="消息如何分发？"><a href="#消息如何分发？" class="headerlink" title="消息如何分发？"></a>消息如何分发？</h2><p>若该队列至少有一个消费者订阅，消息将以循环（round-robin）的方式发送给消费者。每条消息只会分发给一个订阅的消费者（前提是消费者能够正常处理消息并进行确认）。通过路由可实现多消费的功能</p>
 <h2 id="消息怎么路由？"><a href="#消息怎么路由？" class="headerlink" title="消息怎么路由？"></a>消息怎么路由？</h2><p>消息提供方-&gt;路由-&gt;一至多个队列消息发布到交换器时，消息将拥有一个路由键（routing key），在消息创建时设定。通过队列路由键，可以把队列绑定到交换器上。消息到达交换器后，RabbitMQ 会将消息的路由键与队列的路由键进行匹配（针对不同的交换器有不同的路由规则）；</p>
 <p><strong>常用的交换器主要分为一下三种：</strong></p>
