@@ -24,7 +24,7 @@
 <meta property="og:description" content="一、存储引擎MySQL常见的两种存储引擎：MyISAM与InnoDBMySql最左匹配原则：索引的底层是一颗B+树，那么联合索引当然还是一颗B+树，只不过联合索引的健值数量不是一个，而是多个。构建一颗B+树只能根据一个值来构建，因此数据库依据联合索引最左的字段来构建B+树。 MySQL 关于联合索引的字段顺序规则 比如商品有三个分类A，B，C，类似「界门纲目科属种」那样，越左类别越大。还有一个是商">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2022-04-05T05:45:27.000Z">
-<meta property="article:modified_time" content="2022-04-09T11:03:55.120Z">
+<meta property="article:modified_time" content="2022-04-09T11:06:02.630Z">
 <meta property="article:author" content="John Doe">
 <meta property="article:tag" content="面试">
 <meta name="twitter:card" content="summary_large_image">
@@ -305,7 +305,7 @@
 <p>根据数据库里面数据表的相关性进行拆分。 例如，用户表中既有用户的登录信息又有用户的基本信息，可以将用户表拆分成两个单独的表，甚至放到单独的库做分库。</p>
 <p>简单来说垂直拆分是指数据表列的拆分，把一张列比较多的表拆分为多张表。<br>垂直拆分的优点： 可以使得行数据变小，在查询时减少读取的Block数，减少I/O次数。此外，垂直分区可以简化表的结构，易于维护。</p>
 <p>垂直拆分的缺点： 主键会出现冗余，需要管理冗余列，并会引起Join操作，可以通过在应用层进行Join来解决。此外，垂直分区会让事务变得更加复杂；</p>
-<div class="code-wrapper"><pre><code class="hljs">   1. 水平分区：
+<div class="code-wrapper"><pre><code class="hljs">   5. 水平分区：
 </code></pre></div>
 <p>保持数据表结构不变，通过某种策略存储数据分片。这样每一片数据分散到不同的表或者库中，达到了分布式的目的。 水平拆分可以支撑非常大的数据量。</p>
 <p>水平拆分是指数据表行的拆分，表的行数超过200万行时，就会变慢，这时可以把一张的表的数据拆成多张表来存放。举个例子：我们可以将用户信息表拆分成多个用户信息表，这样就可以避免单一表数据量过大对性能造成影响。<br>水品拆分可以支持非常大的数据量。需要注意的一点是:分表仅仅是解决了单一表数据过大的问题，但由于表的数据还是在同一台机器上，其实对于提升MySQL 并发能力没有什么意义，所以 水品拆分最好分库 。</p>
