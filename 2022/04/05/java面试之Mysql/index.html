@@ -16,15 +16,15 @@
   <meta name="author" content="John Doe">
   <meta name="keywords" content="">
   
-    <meta name="description" content="一、存储引擎MySQL常见的两种存储引擎：MyISAM与InnoDBMySql最左匹配原则：索引的底层是一颗B+树，那么联合索引当然还是一颗B+树，只不过联合索引的健值数量不是一个，而是多个。构建一颗B+树只能根据一个值来构建，因此数据库依据联合索引最左的字段来构建B+树。 为什么MySQL InnoDB 存储引擎 要用B+树做索引，而不用B树一般来说，索引本身也很大，不可能全部存储在内存中，因此">
+    <meta name="description" content="一、存储引擎MySQL常见的两种存储引擎：MyISAM与InnoDBMySql最左匹配原则：索引的底层是一颗B+树，那么联合索引当然还是一颗B+树，只不过联合索引的健值数量不是一个，而是多个。构建一颗B+树只能根据一个值来构建，因此数据库依据联合索引最左的字段来构建B+树。 MySQL 关于联合索引的字段顺序规则 比如商品有三个分类A，B，C，类似「界门纲目科属种」那样，越左类别越大。还有一个是商">
 <meta property="og:type" content="article">
 <meta property="og:title" content="java面试之Mysql">
 <meta property="og:url" content="http://example.com/2022/04/05/java%E9%9D%A2%E8%AF%95%E4%B9%8BMysql/index.html">
 <meta property="og:site_name" content="Dean 技术社区">
-<meta property="og:description" content="一、存储引擎MySQL常见的两种存储引擎：MyISAM与InnoDBMySql最左匹配原则：索引的底层是一颗B+树，那么联合索引当然还是一颗B+树，只不过联合索引的健值数量不是一个，而是多个。构建一颗B+树只能根据一个值来构建，因此数据库依据联合索引最左的字段来构建B+树。 为什么MySQL InnoDB 存储引擎 要用B+树做索引，而不用B树一般来说，索引本身也很大，不可能全部存储在内存中，因此">
+<meta property="og:description" content="一、存储引擎MySQL常见的两种存储引擎：MyISAM与InnoDBMySql最左匹配原则：索引的底层是一颗B+树，那么联合索引当然还是一颗B+树，只不过联合索引的健值数量不是一个，而是多个。构建一颗B+树只能根据一个值来构建，因此数据库依据联合索引最左的字段来构建B+树。 MySQL 关于联合索引的字段顺序规则 比如商品有三个分类A，B，C，类似「界门纲目科属种」那样，越左类别越大。还有一个是商">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2022-04-05T05:45:27.000Z">
-<meta property="article:modified_time" content="2022-04-05T05:51:19.762Z">
+<meta property="article:modified_time" content="2022-04-09T11:02:21.433Z">
 <meta property="article:author" content="John Doe">
 <meta property="article:tag" content="面试">
 <meta name="twitter:card" content="summary_large_image">
@@ -197,7 +197,7 @@
   
     <span class="post-meta mr-2">
       <i class="iconfont icon-chart"></i>
-      3.9k 字
+      4.9k 字
     </span>
   
 
@@ -206,7 +206,7 @@
       <i class="iconfont icon-clock-fill"></i>
       
       
-      33 分钟
+      41 分钟
     </span>
   
 
@@ -247,6 +247,22 @@
             
             <div class="markdown-body">
               <p>一、存储引擎<br>MySQL常见的两种存储引擎：MyISAM与InnoDB<br><strong>MySql最左匹配原则</strong>：索引的底层是一颗B+树，那么联合索引当然还是一颗B+树，只不过联合索引的健值数量不是一个，而是多个。构建一颗B+树只能根据一个值来构建，因此数据库依据联合索引最左的字段来构建B+树。</p>
+<p><strong><a target="_blank" rel="noopener" href="https://www.cnblogs.com/zhuyihua/p/15524626.html">MySQL 关于联合索引的字段顺序规则</a></strong></p>
+<p>比如商品有三个分类A，B，C，类似「界门纲目科属种」那样，越左类别越大。还有一个是商品来源D，不一定会用于查询条件中。</p>
+<p>举个例子，A代表衣服，B代表衣服下的长袖，C代表衣服下的红色的长袖。</p>
+<p>如果这三个字段是商品的三个属性，并且要建立索引的话，必然是A,B,C的顺序，并且中间不应该有比如D字段(商品来源)</p>
+<p>因为假设你的索引是这样建立的D,A,B,C，那么当你的查询条件中没有D字段的话，那么这个索引将不会被使用到。</p>
+<p>假设2：索引是这样建立的A,B,D,C，当查询语句为：</p>
+<p>select * from goods where A=’衣服’ and B=’长袖’ and C=’红色’;</p>
+<p>虽然会使用到这个索引，但是这个索引只用到了A,B，因为D字段不作为查询条件，所以C字段也没有使用到。</p>
+<p>这就是  最左匹配原则  的一种。</p>
+<p>再多的，可以再去了解一下数据库索引的数据结构，以及其他最左匹配原则，这里列一下。</p>
+<p>假设有这样一个索引——(a,b,c)，针对下面的5个关于最左原则的解释，做出举例。</p>
+<p>1.必须用到索引的第一个字段，如select * from table where b=’b’ and c=’c’，不会使用到索引。</p>
+<p>2.对于索引的第一个字段，用like时左边必须是固定值，通配符只能出现在右边，如select * from table where a like ‘%a%’不会使用到索引，而select * from table where a like ‘a%’则会使用到索引。</p>
+<p>3.如果在字段前加了函数或在字段前嵌入了表达式，则不会使用索引。如select * from table where trim(a)&gt;1不会使用索引，select * from table where a+1&gt;1也不会使用索引，而select * from table where a&gt;2会使用到索引。</p>
+<p>4.MySQL遵循最左前缀原理，当查询条件匹配联合索引的前面几列时，可以使用联合索引；否则，不会使用联合索引。如果where字句中的列全都包含在索引列中，那么where字句中的字段顺序和索引顺序无关，但如果是部分包括的话就要看是否满足最左前缀匹配原则了。</p>
+<p>5.使用到索引第一个字段的不等于表达式，即使其他字段不是索引字段也会使用到索引。如select * from table where a!=’a’ and ddd=’ddd’会使用到索引。</p>
 <p><strong>为什么MySQL InnoDB 存储引擎 要用B+树做索引，而不用B树</strong><br>一般来说，索引本身也很大，不可能全部存储在内存中，因此索引往往以索引文件的形式存储的磁盘上。这样的话，索引查找过程中就要产生磁盘I/O消耗。而因为B+树的内部节点只是作为索引使用，而不像B树那样每个节点都需要存储硬盘指针。也就是说：B+树中每个非叶节点没有指向某个关键字具体信息的指针，所以每一个节点可以存放更多的关键字数量，即一次性读入内存所需要查找的关键字也就越多，减少了I/O操作。</p>
 <p>二、字符集及校对规则<br>字符集指的是一种从二进制编码到某类字符符号的映射。校对规则则是指某种字符集下的排序规则。Mysql中每一种字符集都会对应一系列的校对规则。</p>
 <p>Mysql采用的是类似继承的方式指定字符集的默认值，每个数据库以及每张数据表都有自己的默认值，他们逐层继承。比如：某个库中所有表的默认字符集将是该数据库所指定的字符集（这些表在没有指定字符集的情况下，才会采用默认字符集） </p>
