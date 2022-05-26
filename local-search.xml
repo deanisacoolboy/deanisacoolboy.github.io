@@ -4,6 +4,44 @@
   
   
   <entry>
+    <title></title>
+    <link href="/2022/05/26/flask/"/>
+    <url>/2022/05/26/flask/</url>
+    
+    <content type="html"><![CDATA[]]></content>
+    
+    
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>python之flask</title>
+    <link href="/2022/05/26/python%E4%B9%8Bflask/"/>
+    <url>/2022/05/26/python%E4%B9%8Bflask/</url>
+    
+    <content type="html"><![CDATA[<h1 id="python之flask"><a href="#python之flask" class="headerlink" title="python之flask"></a>python之flask</h1><h2 id="环境安装"><a href="#环境安装" class="headerlink" title="环境安装"></a>环境安装</h2><h3 id="virtualenv"><a href="#virtualenv" class="headerlink" title="virtualenv"></a>virtualenv</h3><p>安装virtualenv的一个好处呢就是环境隔离，类似于docker的集装箱概念吧，因为python会有很多扩展组件，组件的版本有很复杂，所以一套互相隔离的环境就相当重要了</p><h3 id="安装教程"><a href="#安装教程" class="headerlink" title="安装教程"></a>安装教程</h3><p>安装</p><figure class="highlight shell"><table><tr><td class="gutter"><div class="code-wrapper"><pre><span class="line">1</span><br></pre></div></td><td class="code"><pre><code class="hljs shell">pip install virtualenv<br></code></pre></td></tr></table></figure><p>查看是否安装成功</p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">pip list<br></code></pre></td></tr></table></figure><p>创建虚拟环境</p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">virtualenv envname   # 创建一个名字为envname的虚拟环境<br></code></pre></td></tr></table></figure><p>指定用哪个python版本创建环境</p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">virtualenv -p c:\Python27\Python.exe envname  # 如果安装了多个python版本，如py2和py3，需要指定使用哪个创建虚拟环境<br></code></pre></td></tr></table></figure><p>启动虚拟环境</p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_"># </span><span class="language-bash">进入虚拟环境文件</span><br>cd envname<br><span class="hljs-meta prompt_"># </span><span class="language-bash">进入相关的启动文件夹</span><br>cd Scripts<br><br>activate  # 启动虚拟环境<br>deactivate # 退出虚拟环境<br></code></pre></td></tr></table></figure><p>到此一个虚拟空间就完成了，现在就可以使用这个虚拟环境了。</p><h2 id="使用Pycharm和virtualenv创建一个flask项目"><a href="#使用Pycharm和virtualenv创建一个flask项目" class="headerlink" title="使用Pycharm和virtualenv创建一个flask项目"></a>使用Pycharm和virtualenv创建一个flask项目</h2><p>首先随便建一个文件夹用来存放我们的代码</p><p><img src="01.png" alt="01"></p><p>新建项目</p><p><img src="02.png" alt="02"></p><p>选择我们的项目地址，以及新建的virtualenv空间和virtualenv指定的python解析器，点击create创建完成。</p><h2 id="hello-word"><a href="#hello-word" class="headerlink" title="hello word"></a>hello word</h2><p><img src="03.png" alt="03"></p><p>一个hello word就好了</p><h2 id="requirements-txt"><a href="#requirements-txt" class="headerlink" title="requirements.txt"></a>requirements.txt</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">pip freeze requirements.txt<br></code></pre></td></tr></table></figure><p>使用该指令将我们项目所需要的依赖输出到requirements文件中，下次部署环境时直接</p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">pip install requirements.txt<br></code></pre></td></tr></table></figure><p><img src="04.png" alt="04"></p><p>可以看到这个requirements.txt包含了我们虚拟空间的依赖以及版本号，并没有其他空间的依赖项。</p><p>​    </p>]]></content>
+    
+    
+    <categories>
+      
+      <category>后端</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>后端框架</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
     <title>bootstrap application</title>
     <link href="/2022/05/22/application/"/>
     <url>/2022/05/22/application/</url>
