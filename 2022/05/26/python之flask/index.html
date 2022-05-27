@@ -28,7 +28,7 @@
 <meta property="og:image" content="http://example.com/2022/05/26/python%E4%B9%8Bflask/03.png">
 <meta property="og:image" content="http://example.com/2022/05/26/python%E4%B9%8Bflask/04.png">
 <meta property="article:published_time" content="2022-05-26T15:17:26.000Z">
-<meta property="article:modified_time" content="2022-05-26T16:17:07.342Z">
+<meta property="article:modified_time" content="2022-05-27T16:34:55.823Z">
 <meta property="article:author" content="John Doe">
 <meta property="article:tag" content="后端框架">
 <meta name="twitter:card" content="summary_large_image">
@@ -202,7 +202,7 @@
   
     <span class="post-meta mr-2">
       <i class="iconfont icon-chart"></i>
-      716 字
+      1.7k 字
     </span>
   
 
@@ -211,7 +211,7 @@
       <i class="iconfont icon-clock-fill"></i>
       
       
-      6 分钟
+      15 分钟
     </span>
   
 
@@ -282,7 +282,27 @@
 
 <p><img src="04.png" srcset="/img/loading.gif" lazyload alt="04"></p>
 <p>可以看到这个requirements.txt包含了我们虚拟空间的依赖以及版本号，并没有其他空间的依赖项。</p>
-<p>​    </p>
+<h2 id="上代码"><a href="#上代码" class="headerlink" title="上代码"></a>上代码</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-comment"># 导入flask扩展</span><br><span class="hljs-keyword">from</span> flask <span class="hljs-keyword">import</span> Flask<br><br><span class="hljs-comment"># 创建flask应用实例，需要传入__name__,作用是为了确定资源所在的路径</span><br>app = Flask(__name__)<br><br><br><span class="hljs-meta">@app.route(<span class="hljs-params"><span class="hljs-string">&#x27;/&#x27;</span></span>)</span><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">hello_world</span>():  <span class="hljs-comment"># put application&#x27;s code here</span><br>    <span class="hljs-keyword">return</span> <span class="hljs-string">&#x27;Hello World!&#x27;</span><br><br><span class="hljs-comment"># 定义路由和视图函数 flask中定义路由通过装饰器来实现的</span><br><span class="hljs-meta">@app.route(<span class="hljs-params"><span class="hljs-string">&#x27;/he&#x27;</span></span>)</span><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">a</span>():<br>    <span class="hljs-keyword">return</span> <span class="hljs-string">&quot;hi!&quot;</span><br><br><span class="hljs-comment"># 启动程序 执行了app.run就会把我们的flask程序运行在一个建议的服务器上（Flask提供的，用于猜测的）</span><br><span class="hljs-keyword">if</span> __name__ == <span class="hljs-string">&#x27;__main__&#x27;</span>:<br>    app.run()<br></code></pre></td></tr></table></figure>
+
+<h2 id="Flask运行过程"><a href="#Flask运行过程" class="headerlink" title="Flask运行过程"></a>Flask运行过程</h2><ol>
+<li>当客户端想要获取资源时，一般会通过浏览器发送一个请求</li>
+<li>此时，通过app.run启动的web服务器会把客户端的所有请求都交给Flask程序实例</li>
+<li>程序使用Werkzeug来做路由分发（URL请求和视图函数之间的对应关系）</li>
+<li>根据URL请求，找到具体的视图函数并进行调用<ul>
+<li>在Flask程序中，路由的实现一般是通过程序实例的装饰器实现</li>
+</ul>
+</li>
+<li>Flask调用视图函数后，可以返回两种内容：<ul>
+<li>字符串内容：将视图函数的返回值作为相应的内容，返回给客户端。</li>
+<li>HTML模板内容：获取到数据后，把数据传入HTML模板文件中，模板引擎负责渲染HTTP响应数据，然后返回响应数据给客户端。</li>
+</ul>
+</li>
+</ol>
+<h2 id="路由传参"><a href="#路由传参" class="headerlink" title="路由传参"></a>路由传参</h2><p>有时我们需要将同一URL映射到同一个视图函数处理，比如：使用同一个视图函数来显示不同用户的订单信息。</p>
+<p>路由传递的参数默认当作str处理</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-comment"># 使用同一个视图函数，来显示不同的视图信息</span><br><span class="hljs-comment"># &lt; &gt;定义路由参数</span><br><span class="hljs-comment"># 这里指定参数为int类型，其他类型的传过来会404，有点类似于Java调用方法要参数类型一直</span><br><span class="hljs-meta">@app.route(<span class="hljs-params"><span class="hljs-string">&#x27;/order/&lt;int:orderId&gt;&#x27;</span></span>)</span><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">getOrderId</span>(<span class="hljs-params">orderId</span>):<br>    <span class="hljs-built_in">print</span>(<span class="hljs-built_in">type</span>(orderId))<br>    <span class="hljs-keyword">return</span> <span class="hljs-string">&#x27;orderId %s&#x27;</span> % orderId<br></code></pre></td></tr></table></figure>
+
+<p>这里指定int，会调用系统的路由转换器进行转换和匹配，如果类型没有转换成功就无法匹配该路由</p>
 
             </div>
             <hr>
