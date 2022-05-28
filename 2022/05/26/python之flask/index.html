@@ -27,8 +27,10 @@
 <meta property="og:image" content="http://example.com/2022/05/26/python%E4%B9%8Bflask/02.png">
 <meta property="og:image" content="http://example.com/2022/05/26/python%E4%B9%8Bflask/03.png">
 <meta property="og:image" content="http://example.com/2022/05/26/python%E4%B9%8Bflask/04.png">
+<meta property="og:image" content="http://example.com/2022/05/26/python%E4%B9%8Bflask/05.png">
+<meta property="og:image" content="http://example.com/2022/05/26/python%E4%B9%8Bflask/06.png">
 <meta property="article:published_time" content="2022-05-26T15:17:26.000Z">
-<meta property="article:modified_time" content="2022-05-27T16:34:55.823Z">
+<meta property="article:modified_time" content="2022-05-28T15:02:30.582Z">
 <meta property="article:author" content="John Doe">
 <meta property="article:tag" content="后端框架">
 <meta name="twitter:card" content="summary_large_image">
@@ -202,7 +204,7 @@
   
     <span class="post-meta mr-2">
       <i class="iconfont icon-chart"></i>
-      1.7k 字
+      2.8k 字
     </span>
   
 
@@ -211,7 +213,7 @@
       <i class="iconfont icon-clock-fill"></i>
       
       
-      15 分钟
+      24 分钟
     </span>
   
 
@@ -303,6 +305,41 @@
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-comment"># 使用同一个视图函数，来显示不同的视图信息</span><br><span class="hljs-comment"># &lt; &gt;定义路由参数</span><br><span class="hljs-comment"># 这里指定参数为int类型，其他类型的传过来会404，有点类似于Java调用方法要参数类型一直</span><br><span class="hljs-meta">@app.route(<span class="hljs-params"><span class="hljs-string">&#x27;/order/&lt;int:orderId&gt;&#x27;</span></span>)</span><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">getOrderId</span>(<span class="hljs-params">orderId</span>):<br>    <span class="hljs-built_in">print</span>(<span class="hljs-built_in">type</span>(orderId))<br>    <span class="hljs-keyword">return</span> <span class="hljs-string">&#x27;orderId %s&#x27;</span> % orderId<br></code></pre></td></tr></table></figure>
 
 <p>这里指定int，会调用系统的路由转换器进行转换和匹配，如果类型没有转换成功就无法匹配该路由</p>
+<h2 id="结构化管理"><a href="#结构化管理" class="headerlink" title="结构化管理"></a>结构化管理</h2><p><img src="05.png" srcset="/img/loading.gif" lazyload alt="05"></p>
+<p>这一点很好理解，这是一种思想，分类管理。而不是要把所有的东西都放在一个地方。比如我们写api,新建一个api的包，v1代表版本，然后下面才是我们具体的api文件。</p>
+<p>这里的路由不能使用@app.route</p>
+<p><img src="06.png" srcset="/img/loading.gif" lazyload alt="06"></p>
+<p>蓝图需要向app注册,关于app对象的配置统一写在app.py里面。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">def</span> <span class="hljs-title function_">createApp</span>():<br>    app = Flask(__name__)<br>    app.config.from_object(<span class="hljs-string">&#x27;app.config.setting&#x27;</span>)<br>    app.config.from_object(<span class="hljs-string">&#x27;app.config.secure&#x27;</span>)<br>    <span class="hljs-comment"># 调用注册方法实现注册</span><br>    registerBlueprints(app)<br>    <span class="hljs-keyword">return</span> app<br><br><br><span class="hljs-comment"># 定义一个注册的方法</span><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">registerBlueprints</span>(<span class="hljs-params">app</span>):<br>    <span class="hljs-keyword">from</span> api.v1.book <span class="hljs-keyword">import</span> book<br>    <span class="hljs-keyword">from</span> api.v1.user <span class="hljs-keyword">import</span> user<br>    app.register_blueprint(user)<br>    app.register_blueprint(book)<br></code></pre></td></tr></table></figure>
+
+<h2 id="实现一个自己的蓝图"><a href="#实现一个自己的蓝图" class="headerlink" title="实现一个自己的蓝图"></a>实现一个自己的蓝图</h2><p>蓝图包括哪些功能呢？</p>
+<ol>
+<li>路由</li>
+<li>路由和视图函数的绑定</li>
+</ol>
+<p>他是怎么实现的呢，看源代码</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">def</span> <span class="hljs-title function_">route</span>(<span class="hljs-params">self, roule, **option</span>):<br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">decorator</span>(<span class="hljs-params">f</span>):<br>        <span class="hljs-comment"># f是当前视图函数，将当前视图函数加入到option中</span><br>        endpoint = option.pop(<span class="hljs-string">&quot;endpoint&quot;</span>, f.__name__)<br>        <span class="hljs-comment"># 再给看图添加url规则</span><br>        self.add_url_rule(rule, edpoint, f, **option)<br>        <span class="hljs-keyword">return</span> f<br>    <span class="hljs-keyword">return</span> decorator<br></code></pre></td></tr></table></figure>
+
+<p>我们自己模仿实现</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">def</span> <span class="hljs-title function_">route</span>(<span class="hljs-params">self, rule, **options</span>):<br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">decorator</span>(<span class="hljs-params">f</span>):<br>        <span class="hljs-comment"># 我们拿不到蓝图,先保存等可以拿到的时候再来处理</span><br>        self.mount.append((f, rule, options))<br>        <span class="hljs-keyword">return</span> f<br><br>    <span class="hljs-keyword">return</span> decorator<br></code></pre></td></tr></table></figure>
+
+<p>register</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">def</span> <span class="hljs-title function_">register</span>(<span class="hljs-params">self, bp, url_prefix=<span class="hljs-literal">None</span></span>):<br>    <span class="hljs-keyword">for</span> f, rule, options <span class="hljs-keyword">in</span> self.mount:<br>        <span class="hljs-comment"># 如果有以endpoint为key的value则取value，否则取视图的名字</span><br>        endpoint = options.pop(<span class="hljs-string">&quot;endpoint&quot;</span>, f.__name__)<br>        bp.add_url_rule(url_prefix + rule, endpoint, f, **options)<br></code></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
             </div>
             <hr>
