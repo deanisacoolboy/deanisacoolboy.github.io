@@ -35,6 +35,8 @@
 <meta property="og:image" content="http://example.com/A/image-20220603161332243.png">
 <meta property="og:image" content="http://example.com/2022/06/03/Mysql/Mysql.assets/image-20220603172619010.png">
 <meta property="og:image" content="http://example.com/2022/06/03/Mysql/08.png">
+<meta property="og:image" content="http://example.com/2022/06/03/Mysql/12.png">
+<meta property="og:image" content="http://example.com/2022/06/03/Mysql/Mysql.assets/image-20220605144324433.png">
 <meta property="og:image" content="http://example.com/2022/06/03/Mysql/Mysql.assets/image-20220603195202610.png">
 <meta property="og:image" content="http://example.com/2022/06/03/Mysql/09.png">
 <meta property="og:image" content="http://example.com/2022/06/03/Mysql/10.png">
@@ -42,7 +44,7 @@
 <meta property="og:image" content="http://example.com/2022/06/03/Mysql/11.png">
 <meta property="og:image" content="http://example.com/2022/06/03/Mysql/Mysql.assets/image-20220603214639609.png">
 <meta property="article:published_time" content="2022-06-03T07:02:31.000Z">
-<meta property="article:modified_time" content="2022-06-03T15:41:56.933Z">
+<meta property="article:modified_time" content="2022-06-05T07:33:16.977Z">
 <meta property="article:author" content="John Doe">
 <meta property="article:tag" content="数据库">
 <meta name="twitter:card" content="summary_large_image">
@@ -216,7 +218,7 @@
   
     <span class="post-meta mr-2">
       <i class="iconfont icon-chart"></i>
-      1.8k 字
+      2k 字
     </span>
   
 
@@ -225,7 +227,7 @@
       <i class="iconfont icon-clock-fill"></i>
       
       
-      16 分钟
+      18 分钟
     </span>
   
 
@@ -310,6 +312,14 @@
 <h3 id="B-树"><a href="#B-树" class="headerlink" title="B+树"></a>B+树<img src="Mysql.assets/image-20220603172619010.png" srcset="/img/loading.gif" lazyload alt="image-20220603172619010"></h3><p><img src="08.png" srcset="/img/loading.gif" lazyload alt="08"></p>
 <p> B+TREE非叶子节点不会存储数据，存的是下指向下一个 节点的指针，也可以说是下一个节点的磁盘地址，在叶子节点才会存储数据在磁盘中的地址。比如我们查找一个数据18，18在15<del>56之间，那么就会找到A，A中存储了下面一个节点的磁盘地址，然后在下面的这个节点中继续查找，18在15</del>20之间，然后根据d存储的下一节点的磁盘地址知道叶子节点，在叶子节点里面找到了18，然后18这个节点存储的是这个18所在的磁盘地址，这时候就可根据这个地址在磁盘中定位到数据了。</p>
 <p>我么可以看到B+TREE的一个节点可以有多个索引，通过横向扩展的方式降低了这棵树的高度，就是因为他的一个节点可以有多个索引，这也有了 <strong>最左匹配原则</strong>，因为我们构建树的时候只能根据一个节点来构建，但是一个节点有多个索引，所以统一规定使用最左边的索引来构建这个树。</p>
+<h3 id="hash结构"><a href="#hash结构" class="headerlink" title="hash结构"></a>hash结构</h3><ul>
+<li>对索引的key进行一次hash运算就可以定位出数据存储的位置</li>
+<li>很多时候hash索引要比B+树索引更高效</li>
+<li>仅能满足 “=”  “in”,不支持范围查询 因为经过hash运算后之前的范围不一定等于之后的范围，你如之前的范围是[10,25],经过hash运算后就不一定是这个范围了。B+TREE叶子节点相当于是一个循环列表，叶子节点之间通过指针互联，而且索引字段还是排好序的，所以可以支持范围查找</li>
+<li>hash冲突问题</li>
+</ul>
+<p><img src="12.png" srcset="/img/loading.gif" lazyload alt="12"></p>
+<p><img src="Mysql.assets/image-20220605144324433.png" srcset="/img/loading.gif" lazyload alt="image-20220605144324433"></p>
 <h2 id="MyISM存储引擎索引实现"><a href="#MyISM存储引擎索引实现" class="headerlink" title="MyISM存储引擎索引实现"></a>MyISM存储引擎索引实现</h2><img src="Mysql.assets/image-20220603195202610.png" srcset="/img/loading.gif" lazyload alt="image-20220603195202610" style="zoom:67%;" />
 
 <p><img src="09.png" srcset="/img/loading.gif" lazyload alt="09"></p>
@@ -339,8 +349,9 @@
 <h2 id="为什么建议InnoDB建立主键索引"><a href="#为什么建议InnoDB建立主键索引" class="headerlink" title="为什么建议InnoDB建立主键索引"></a>为什么建议InnoDB建立主键索引</h2><p>首先呢，InnoDB这张表本身就是按照B+TREE这种结构来存储的，如果用的是主键索引通过主键索引到叶子节点找到的就是这条记录完整的记录了，如果没用主键索引，还要根据根据索引找到的叶子节点存储的还是主键索引，还要再找一次。</p>
 <p>InnoDB存储数据时是按照B+TREE来存储的，所以他要有一个节点来构建这个属性结构。如果我们又没建立，那么MySQL会自动给我们维护一个隐藏列，而且会保证这个隐藏列的唯一性。然后根据这个隐藏的唯一列帮我们组织这个树。</p>
 <h3 id="为什么建议使用整形自增的做主键呢"><a href="#为什么建议使用整形自增的做主键呢" class="headerlink" title="为什么建议使用整形自增的做主键呢"></a>为什么建议使用整形自增的做主键呢</h3><p>在寻找叶子节点的过程中需要进行不断的比较，那么是整形比较的快呢，还是uuid这种比较的快呢，显然是整形这种啦。</p>
-<p>为什么建议自增呢？我们说过索引的本质是为了帮助MySQL高效获取数据的排好序的数据结构，使用自增可以提高排序效率。提高全表扫描能力，顺序访问。</p>
+<p>为什么建议自增呢？我们说过索引的本质是为了帮助MySQL高效获取数据的排好序的数据结构，使用自增可以提高排序效率。<strong>很少会造成节点的分裂，节点的分裂是比较耗费性能的</strong>  提高全表扫描能力，顺序访问。</p>
 <h2 id="索引的本质-1"><a href="#索引的本质-1" class="headerlink" title="索引的本质"></a>索引的本质</h2><p>索引是帮助MySQL高效获取数据的 <code>排好序的数据结构</code> </p>
+<p>​    </p>
 
             </div>
             <hr>
@@ -374,6 +385,12 @@
                 <div class="post-prevnext">
                   <article class="post-prev col-6">
                     
+                    
+                      <a href="/2022/07/15/js%E8%8E%B7%E5%8F%96%E5%AF%B9%E8%B1%A1%E5%B1%9E%E6%80%A7%E6%96%B9%E5%BC%8F/">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">js获取对象属性方式</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
                     
                   </article>
                   <article class="post-next col-6">
