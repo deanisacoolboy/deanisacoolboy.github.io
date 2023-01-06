@@ -1,0 +1,618 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/siteicon.jpg">
+  <link rel="icon" href="/img/siteicon.jpg">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="John Doe">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="python之flask环境安装virtualenv安装virtualenv的一个好处呢就是环境隔离，类似于docker的集装箱概念吧，因为python会有很多扩展组件，组件的版本有很复杂，所以一套互相隔离的环境就相当重要了 安装教程安装 1pip install virtualenv  查看是否安装成功 1pip list  创建虚拟环境 1virtualenv envname   # 创建一个">
+<meta property="og:type" content="article">
+<meta property="og:title" content="python之flask">
+<meta property="og:url" content="http://example.com/2022/05/26/python%E4%B9%8Bflask/index.html">
+<meta property="og:site_name" content="野草技术社区">
+<meta property="og:description" content="python之flask环境安装virtualenv安装virtualenv的一个好处呢就是环境隔离，类似于docker的集装箱概念吧，因为python会有很多扩展组件，组件的版本有很复杂，所以一套互相隔离的环境就相当重要了 安装教程安装 1pip install virtualenv  查看是否安装成功 1pip list  创建虚拟环境 1virtualenv envname   # 创建一个">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/2022/05/26/python%E4%B9%8Bflask/01.png">
+<meta property="og:image" content="http://example.com/2022/05/26/python%E4%B9%8Bflask/02.png">
+<meta property="og:image" content="http://example.com/2022/05/26/python%E4%B9%8Bflask/03.png">
+<meta property="og:image" content="http://example.com/2022/05/26/python%E4%B9%8Bflask/04.png">
+<meta property="og:image" content="http://example.com/2022/05/26/python%E4%B9%8Bflask/05.png">
+<meta property="og:image" content="http://example.com/2022/05/26/python%E4%B9%8Bflask/06.png">
+<meta property="article:published_time" content="2022-05-26T15:17:26.000Z">
+<meta property="article:modified_time" content="2022-05-28T15:02:30.582Z">
+<meta property="article:author" content="John Doe">
+<meta property="article:tag" content="后端框架">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="http://example.com/2022/05/26/python%E4%B9%8Bflask/01.png">
+  
+  
+  <title>python之flask - 野草技术社区</title>
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/css/bootstrap.min.css" />
+
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@4/github-markdown.min.css" />
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hint.css@2/hint.min.css" />
+
+  
+    
+    
+      
+      <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@10/styles/github-gist.min.css" />
+    
+  
+
+  
+    <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.css" />
+  
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_ba1fz6golrf.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.8.14","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"copy_btn":true,"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":"nGD612Gu0HScFjNTtkQ975DQ-gzGzoHsz","app_key":"uQWFCWpfdpmUcF3iVKDcak3s","server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+<meta name="generator" content="Hexo 5.4.1"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>野草技术社区</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="banner" id="banner" parallax=true
+         style="background: url('/img/bg01.jpg') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="page-header text-center fade-in-up">
+            <span class="h2" id="subtitle" title="python之flask">
+              
+            </span>
+
+            
+              <div class="mt-3">
+  
+  
+    <span class="post-meta">
+      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+      <time datetime="2022-05-26 23:17" pubdate>
+        2022年5月26日 晚上
+      </time>
+    </span>
+  
+</div>
+
+<div class="mt-1">
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      2.8k 字
+    </span>
+  
+
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      24 分钟
+    </span>
+  
+
+  
+  
+    
+      <!-- LeanCloud 统计文章PV -->
+      <span id="leancloud-page-views-container" class="post-meta" style="display: none">
+        <i class="iconfont icon-eye" aria-hidden="true"></i>
+        <span id="leancloud-page-views"></span> 次
+      </span>
+    
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">python之flask</h1>
+            
+            <div class="markdown-body">
+              <h1 id="python之flask"><a href="#python之flask" class="headerlink" title="python之flask"></a>python之flask</h1><h2 id="环境安装"><a href="#环境安装" class="headerlink" title="环境安装"></a>环境安装</h2><h3 id="virtualenv"><a href="#virtualenv" class="headerlink" title="virtualenv"></a>virtualenv</h3><p>安装virtualenv的一个好处呢就是环境隔离，类似于docker的集装箱概念吧，因为python会有很多扩展组件，组件的版本有很复杂，所以一套互相隔离的环境就相当重要了</p>
+<h3 id="安装教程"><a href="#安装教程" class="headerlink" title="安装教程"></a>安装教程</h3><p>安装</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><div class="code-wrapper"><pre><span class="line">1</span><br></pre></div></td><td class="code"><pre><code class="hljs shell">pip install virtualenv<br></code></pre></td></tr></table></figure>
+
+<p>查看是否安装成功</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">pip list<br></code></pre></td></tr></table></figure>
+
+<p>创建虚拟环境</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">virtualenv envname   # 创建一个名字为envname的虚拟环境<br></code></pre></td></tr></table></figure>
+
+<p>指定用哪个python版本创建环境</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">virtualenv -p c:\Python27\Python.exe envname  # 如果安装了多个python版本，如py2和py3，需要指定使用哪个创建虚拟环境<br></code></pre></td></tr></table></figure>
+
+<p>启动虚拟环境</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_"># </span><span class="language-bash">进入虚拟环境文件</span><br>cd envname<br><span class="hljs-meta prompt_"># </span><span class="language-bash">进入相关的启动文件夹</span><br>cd Scripts<br><br>activate  # 启动虚拟环境<br>deactivate # 退出虚拟环境<br></code></pre></td></tr></table></figure>
+
+<p>到此一个虚拟空间就完成了，现在就可以使用这个虚拟环境了。</p>
+<h2 id="使用Pycharm和virtualenv创建一个flask项目"><a href="#使用Pycharm和virtualenv创建一个flask项目" class="headerlink" title="使用Pycharm和virtualenv创建一个flask项目"></a>使用Pycharm和virtualenv创建一个flask项目</h2><p>首先随便建一个文件夹用来存放我们的代码</p>
+<p><img src="01.png" srcset="/img/loading.gif" lazyload alt="01"></p>
+<p>新建项目</p>
+<p><img src="02.png" srcset="/img/loading.gif" lazyload alt="02"></p>
+<p>选择我们的项目地址，以及新建的virtualenv空间和virtualenv指定的python解析器，点击create创建完成。</p>
+<h2 id="hello-word"><a href="#hello-word" class="headerlink" title="hello word"></a>hello word</h2><p><img src="03.png" srcset="/img/loading.gif" lazyload alt="03"></p>
+<p>一个hello word就好了</p>
+<h2 id="requirements-txt"><a href="#requirements-txt" class="headerlink" title="requirements.txt"></a>requirements.txt</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">pip freeze requirements.txt<br></code></pre></td></tr></table></figure>
+
+<p>使用该指令将我们项目所需要的依赖输出到requirements文件中，下次部署环境时直接</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">pip install requirements.txt<br></code></pre></td></tr></table></figure>
+
+<p><img src="04.png" srcset="/img/loading.gif" lazyload alt="04"></p>
+<p>可以看到这个requirements.txt包含了我们虚拟空间的依赖以及版本号，并没有其他空间的依赖项。</p>
+<h2 id="上代码"><a href="#上代码" class="headerlink" title="上代码"></a>上代码</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-comment"># 导入flask扩展</span><br><span class="hljs-keyword">from</span> flask <span class="hljs-keyword">import</span> Flask<br><br><span class="hljs-comment"># 创建flask应用实例，需要传入__name__,作用是为了确定资源所在的路径</span><br>app = Flask(__name__)<br><br><br><span class="hljs-meta">@app.route(<span class="hljs-params"><span class="hljs-string">&#x27;/&#x27;</span></span>)</span><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">hello_world</span>():  <span class="hljs-comment"># put application&#x27;s code here</span><br>    <span class="hljs-keyword">return</span> <span class="hljs-string">&#x27;Hello World!&#x27;</span><br><br><span class="hljs-comment"># 定义路由和视图函数 flask中定义路由通过装饰器来实现的</span><br><span class="hljs-meta">@app.route(<span class="hljs-params"><span class="hljs-string">&#x27;/he&#x27;</span></span>)</span><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">a</span>():<br>    <span class="hljs-keyword">return</span> <span class="hljs-string">&quot;hi!&quot;</span><br><br><span class="hljs-comment"># 启动程序 执行了app.run就会把我们的flask程序运行在一个建议的服务器上（Flask提供的，用于猜测的）</span><br><span class="hljs-keyword">if</span> __name__ == <span class="hljs-string">&#x27;__main__&#x27;</span>:<br>    app.run()<br></code></pre></td></tr></table></figure>
+
+<h2 id="Flask运行过程"><a href="#Flask运行过程" class="headerlink" title="Flask运行过程"></a>Flask运行过程</h2><ol>
+<li>当客户端想要获取资源时，一般会通过浏览器发送一个请求</li>
+<li>此时，通过app.run启动的web服务器会把客户端的所有请求都交给Flask程序实例</li>
+<li>程序使用Werkzeug来做路由分发（URL请求和视图函数之间的对应关系）</li>
+<li>根据URL请求，找到具体的视图函数并进行调用<ul>
+<li>在Flask程序中，路由的实现一般是通过程序实例的装饰器实现</li>
+</ul>
+</li>
+<li>Flask调用视图函数后，可以返回两种内容：<ul>
+<li>字符串内容：将视图函数的返回值作为相应的内容，返回给客户端。</li>
+<li>HTML模板内容：获取到数据后，把数据传入HTML模板文件中，模板引擎负责渲染HTTP响应数据，然后返回响应数据给客户端。</li>
+</ul>
+</li>
+</ol>
+<h2 id="路由传参"><a href="#路由传参" class="headerlink" title="路由传参"></a>路由传参</h2><p>有时我们需要将同一URL映射到同一个视图函数处理，比如：使用同一个视图函数来显示不同用户的订单信息。</p>
+<p>路由传递的参数默认当作str处理</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-comment"># 使用同一个视图函数，来显示不同的视图信息</span><br><span class="hljs-comment"># &lt; &gt;定义路由参数</span><br><span class="hljs-comment"># 这里指定参数为int类型，其他类型的传过来会404，有点类似于Java调用方法要参数类型一直</span><br><span class="hljs-meta">@app.route(<span class="hljs-params"><span class="hljs-string">&#x27;/order/&lt;int:orderId&gt;&#x27;</span></span>)</span><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">getOrderId</span>(<span class="hljs-params">orderId</span>):<br>    <span class="hljs-built_in">print</span>(<span class="hljs-built_in">type</span>(orderId))<br>    <span class="hljs-keyword">return</span> <span class="hljs-string">&#x27;orderId %s&#x27;</span> % orderId<br></code></pre></td></tr></table></figure>
+
+<p>这里指定int，会调用系统的路由转换器进行转换和匹配，如果类型没有转换成功就无法匹配该路由</p>
+<h2 id="结构化管理"><a href="#结构化管理" class="headerlink" title="结构化管理"></a>结构化管理</h2><p><img src="05.png" srcset="/img/loading.gif" lazyload alt="05"></p>
+<p>这一点很好理解，这是一种思想，分类管理。而不是要把所有的东西都放在一个地方。比如我们写api,新建一个api的包，v1代表版本，然后下面才是我们具体的api文件。</p>
+<p>这里的路由不能使用@app.route</p>
+<p><img src="06.png" srcset="/img/loading.gif" lazyload alt="06"></p>
+<p>蓝图需要向app注册,关于app对象的配置统一写在app.py里面。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">def</span> <span class="hljs-title function_">createApp</span>():<br>    app = Flask(__name__)<br>    app.config.from_object(<span class="hljs-string">&#x27;app.config.setting&#x27;</span>)<br>    app.config.from_object(<span class="hljs-string">&#x27;app.config.secure&#x27;</span>)<br>    <span class="hljs-comment"># 调用注册方法实现注册</span><br>    registerBlueprints(app)<br>    <span class="hljs-keyword">return</span> app<br><br><br><span class="hljs-comment"># 定义一个注册的方法</span><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">registerBlueprints</span>(<span class="hljs-params">app</span>):<br>    <span class="hljs-keyword">from</span> api.v1.book <span class="hljs-keyword">import</span> book<br>    <span class="hljs-keyword">from</span> api.v1.user <span class="hljs-keyword">import</span> user<br>    app.register_blueprint(user)<br>    app.register_blueprint(book)<br></code></pre></td></tr></table></figure>
+
+<h2 id="实现一个自己的蓝图"><a href="#实现一个自己的蓝图" class="headerlink" title="实现一个自己的蓝图"></a>实现一个自己的蓝图</h2><p>蓝图包括哪些功能呢？</p>
+<ol>
+<li>路由</li>
+<li>路由和视图函数的绑定</li>
+</ol>
+<p>他是怎么实现的呢，看源代码</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">def</span> <span class="hljs-title function_">route</span>(<span class="hljs-params">self, roule, **option</span>):<br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">decorator</span>(<span class="hljs-params">f</span>):<br>        <span class="hljs-comment"># f是当前视图函数，将当前视图函数加入到option中</span><br>        endpoint = option.pop(<span class="hljs-string">&quot;endpoint&quot;</span>, f.__name__)<br>        <span class="hljs-comment"># 再给看图添加url规则</span><br>        self.add_url_rule(rule, edpoint, f, **option)<br>        <span class="hljs-keyword">return</span> f<br>    <span class="hljs-keyword">return</span> decorator<br></code></pre></td></tr></table></figure>
+
+<p>我们自己模仿实现</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">def</span> <span class="hljs-title function_">route</span>(<span class="hljs-params">self, rule, **options</span>):<br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">decorator</span>(<span class="hljs-params">f</span>):<br>        <span class="hljs-comment"># 我们拿不到蓝图,先保存等可以拿到的时候再来处理</span><br>        self.mount.append((f, rule, options))<br>        <span class="hljs-keyword">return</span> f<br><br>    <span class="hljs-keyword">return</span> decorator<br></code></pre></td></tr></table></figure>
+
+<p>register</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">def</span> <span class="hljs-title function_">register</span>(<span class="hljs-params">self, bp, url_prefix=<span class="hljs-literal">None</span></span>):<br>    <span class="hljs-keyword">for</span> f, rule, options <span class="hljs-keyword">in</span> self.mount:<br>        <span class="hljs-comment"># 如果有以endpoint为key的value则取value，否则取视图的名字</span><br>        endpoint = options.pop(<span class="hljs-string">&quot;endpoint&quot;</span>, f.__name__)<br>        bp.add_url_rule(url_prefix + rule, endpoint, f, **options)<br></code></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            </div>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                  <div class="post-meta mr-3">
+                    <i class="iconfont icon-category"></i>
+                    
+                      <a class="hover-with-bg" href="/categories/%E5%90%8E%E7%AB%AF/">后端</a>
+                    
+                  </div>
+                
+                
+                  <div class="post-meta">
+                    <i class="iconfont icon-tags"></i>
+                    
+                      <a class="hover-with-bg" href="/tags/%E5%90%8E%E7%AB%AF%E6%A1%86%E6%9E%B6/">后端框架</a>
+                    
+                  </div>
+                
+              </div>
+              
+                <p class="note note-warning">
+                  
+                    本博客所有文章除特别声明外，均采用 <a target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！
+                  
+                </p>
+              
+              
+                <div class="post-prevnext">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2022/05/26/flask/">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile"></span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2022/05/22/application/">
+                        <span class="hidden-mobile">bootstrap application</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+              <!-- Comments -->
+              <article class="comments" id="comments" lazyload>
+                
+                  
+                
+                
+  <div id="valine"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#valine', function() {
+      Fluid.utils.createScript('https://cdn.jsdelivr.net/npm/valine@1/dist/Valine.min.js', function() {
+        var options = Object.assign(
+          {"appId":"nGD612Gu0HScFjNTtkQ975DQ-gzGzoHsz","appKey":"uQWFCWpfdpmUcF3iVKDcak3s","path":"window.location.pathname","placeholder":"说点什么","avatar":"retro","meta":["nick","mail","link"],"requiredFields":[],"pageSize":10,"lang":"zh-CN","highlight":false,"recordIP":false,"serverURLs":"","emojiCDN":null,"emojiMaps":null,"enableQQ":false},
+          {
+            el: "#valine",
+            path: window.location.pathname
+          }
+        )
+        new Valine(options);
+        Fluid.utils.waitElementVisible('#valine .vcontent', () => {
+          Fluid.plugins.initFancyBox('#valine .vcontent img:not(.vemoji)');
+        })
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+              </article>
+            
+          </article>
+        </div>
+      </div>
+    </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+      </div>
+    
+  </div>
+</div>
+
+<!-- Custom -->
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+
+    
+  </main>
+
+  <footer class="text-center mt-5 py-3">
+  <div class="footer-content">
+     <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+  </div>
+  
+  <div class="statistics">
+    
+    
+
+    
+      
+        <!-- LeanCloud 统计PV -->
+        <span id="leancloud-site-pv-container" style="display: none">
+            总访问量 
+            <span id="leancloud-site-pv"></span>
+             次
+          </span>
+      
+      
+        <!-- LeanCloud 统计UV -->
+        <span id="leancloud-site-uv-container" style="display: none">
+            总访客数 
+            <span id="leancloud-site-uv"></span>
+             人
+          </span>
+      
+
+    
+  </div>
+
+
+  
+
+  
+</footer>
+
+
+  <!-- SCRIPTS -->
+  
+  <script  src="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js" ></script>
+<script  src="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+<!-- Plugins -->
+
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+  
+
+
+
+  
+    <script  src="https://cdn.jsdelivr.net/npm/tocbot@4/dist/tocbot.min.js" ></script>
+  
+  
+    <script  src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.js" ></script>
+  
+  
+    <script  src="https://cdn.jsdelivr.net/npm/anchor-js@4/anchor.min.js" ></script>
+  
+  
+    <script defer src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js" ></script>
+  
+
+
+
+
+  <script defer src="/js/leancloud.js" ></script>
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/typed.js@2/lib/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var title = document.getElementById('subtitle').title;
+      
+        typing(title);
+      
+    })(window, document);
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+
+
+<!-- 主题的启动项 保持在最底部 -->
+<script  src="/js/boot.js" ></script>
+
+
+</body>
+</html>

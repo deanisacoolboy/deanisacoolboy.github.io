@@ -1,0 +1,624 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/siteicon.jpg">
+  <link rel="icon" href="/img/siteicon.jpg">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="John Doe">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="反射机制什么是反射机制反射机制是在运行时，对于任意一个类，都能够知道这个类的所有属性和方法；对于任意个对象，都能够调用它的任意一个方法。在java中，只要给定类的名字，就可以通过反射机制来获得类的所有信息。 这种动态获取的信息以及动态调用对象的方法的功能称为Java语言的反射机制。  哪里用过反射 jdbc就是典型的反射  12&#x2F;&#x2F; 加载MySQL的驱动类Class.forName(&amp;#x27;c">
+<meta property="og:type" content="article">
+<meta property="og:title" content="反射机制">
+<meta property="og:url" content="http://example.com/2022/04/03/%E5%8F%8D%E5%B0%84%E6%9C%BA%E5%88%B6/index.html">
+<meta property="og:site_name" content="野草技术社区">
+<meta property="og:description" content="反射机制什么是反射机制反射机制是在运行时，对于任意一个类，都能够知道这个类的所有属性和方法；对于任意个对象，都能够调用它的任意一个方法。在java中，只要给定类的名字，就可以通过反射机制来获得类的所有信息。 这种动态获取的信息以及动态调用对象的方法的功能称为Java语言的反射机制。  哪里用过反射 jdbc就是典型的反射  12&#x2F;&#x2F; 加载MySQL的驱动类Class.forName(&amp;#x27;c">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/2022/04/03/%E5%8F%8D%E5%B0%84%E6%9C%BA%E5%88%B6/01.png">
+<meta property="og:image" content="http://example.com/2022/04/03/%E5%8F%8D%E5%B0%84%E6%9C%BA%E5%88%B6/02.png">
+<meta property="og:image" content="http://example.com/2022/04/03/%E5%8F%8D%E5%B0%84%E6%9C%BA%E5%88%B6/03.png">
+<meta property="og:image" content="http://example.com/2022/04/03/%E5%8F%8D%E5%B0%84%E6%9C%BA%E5%88%B6/04.png">
+<meta property="og:image" content="http://example.com/2022/04/03/%E5%8F%8D%E5%B0%84%E6%9C%BA%E5%88%B6/05.png">
+<meta property="og:image" content="http://example.com/2022/04/03/%E5%8F%8D%E5%B0%84%E6%9C%BA%E5%88%B6/06.png">
+<meta property="og:image" content="http://example.com/2022/04/03/%E5%8F%8D%E5%B0%84%E6%9C%BA%E5%88%B6/07.png">
+<meta property="og:image" content="http://example.com/2022/04/03/%E5%8F%8D%E5%B0%84%E6%9C%BA%E5%88%B6/08.png">
+<meta property="og:image" content="http://example.com/2022/04/03/%E5%8F%8D%E5%B0%84%E6%9C%BA%E5%88%B6/09.png">
+<meta property="og:image" content="http://example.com/2022/04/03/%E5%8F%8D%E5%B0%84%E6%9C%BA%E5%88%B6/10.png">
+<meta property="og:image" content="http://example.com/2022/04/03/%E5%8F%8D%E5%B0%84%E6%9C%BA%E5%88%B6/11.png">
+<meta property="og:image" content="http://example.com/2022/04/03/%E5%8F%8D%E5%B0%84%E6%9C%BA%E5%88%B6/12.png">
+<meta property="og:image" content="http://example.com/2022/04/03/%E5%8F%8D%E5%B0%84%E6%9C%BA%E5%88%B6/13.png">
+<meta property="article:published_time" content="2022-04-03T04:03:09.000Z">
+<meta property="article:modified_time" content="2022-04-03T05:40:58.421Z">
+<meta property="article:author" content="John Doe">
+<meta property="article:tag" content="java高阶">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="http://example.com/2022/04/03/%E5%8F%8D%E5%B0%84%E6%9C%BA%E5%88%B6/01.png">
+  
+  
+  <title>反射机制 - 野草技术社区</title>
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/css/bootstrap.min.css" />
+
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@4/github-markdown.min.css" />
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hint.css@2/hint.min.css" />
+
+  
+    
+    
+      
+      <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@10/styles/github-gist.min.css" />
+    
+  
+
+  
+    <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.css" />
+  
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_ba1fz6golrf.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.8.14","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"copy_btn":true,"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":"nGD612Gu0HScFjNTtkQ975DQ-gzGzoHsz","app_key":"uQWFCWpfdpmUcF3iVKDcak3s","server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+<meta name="generator" content="Hexo 5.4.1"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>野草技术社区</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="banner" id="banner" parallax=true
+         style="background: url('/img/bg01.jpg') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="page-header text-center fade-in-up">
+            <span class="h2" id="subtitle" title="反射机制">
+              
+            </span>
+
+            
+              <div class="mt-3">
+  
+  
+    <span class="post-meta">
+      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+      <time datetime="2022-04-03 12:03" pubdate>
+        2022年4月3日 中午
+      </time>
+    </span>
+  
+</div>
+
+<div class="mt-1">
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      1.6k 字
+    </span>
+  
+
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      14 分钟
+    </span>
+  
+
+  
+  
+    
+      <!-- LeanCloud 统计文章PV -->
+      <span id="leancloud-page-views-container" class="post-meta" style="display: none">
+        <i class="iconfont icon-eye" aria-hidden="true"></i>
+        <span id="leancloud-page-views"></span> 次
+      </span>
+    
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">反射机制</h1>
+            
+            <div class="markdown-body">
+              <h1 id="反射机制"><a href="#反射机制" class="headerlink" title="反射机制"></a>反射机制</h1><h2 id="什么是反射机制"><a href="#什么是反射机制" class="headerlink" title="什么是反射机制"></a>什么是反射机制</h2><p>反射机制是在运行时，对于任意一个类，都能够知道这个类的所有属性和方法；对于任意个对象，都能够调用它的任意一个方法。在java中，只要给定类的名字，就可以通过反射机制来获得类的所有信息。 这种动态获取的信息以及动态调用对象的方法的功能称为Java语言的反射机制。</p>
+<p><img src="01.png" srcset="/img/loading.gif" lazyload alt="01"></p>
+<h2 id="哪里用过反射"><a href="#哪里用过反射" class="headerlink" title="哪里用过反射"></a>哪里用过反射</h2><ol>
+<li>jdbc就是典型的反射</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><div class="code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></div></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// 加载MySQL的驱动类</span><br>Class.forName(<span class="hljs-string">&#x27;com.mysql.jdbc.Driver.class&#x27;</span>); <br></code></pre></td></tr></table></figure>
+
+<ol start="2">
+<li><p>spring的IOC </p>
+<p>spring的IOC特性，维护了一个beans.xml 里面配置了每个类的class全路径，就是通过反射机制构造的</p>
+</li>
+<li><p>hibernate，struts等框架使用反射实现的。</p>
+</li>
+</ol>
+<h2 id="反射的实现方式"><a href="#反射的实现方式" class="headerlink" title="反射的实现方式"></a>反射的实现方式</h2><p>第一步：获取Class对象，有4中方法：</p>
+<ol>
+<li>Class.forName(“类的路径”)；</li>
+<li>类名.class</li>
+<li>对象名.getClass()</li>
+<li>基本类型的包装类，可以调用包装类的Type属性来获得该包装类的Class对象</li>
+</ol>
+<h2 id="实现Java反射的类"><a href="#实现Java反射的类" class="headerlink" title="实现Java反射的类"></a>实现Java反射的类</h2><ol>
+<li><p>Class：表示正在运行的Java应用程序中的类和接口</p>
+<p>注意： 所有获取对象的信息都需要Class类来实现。</p>
+</li>
+<li><p>Field：提供有关类和接口的属性信息，以及对它的动态访问权限。</p>
+</li>
+<li><p>Constructor：提供关于类的单个构造方法的信息以及它的访问权限</p>
+</li>
+<li><p>Method：提供类或接口中某个方法的信息</p>
+</li>
+</ol>
+<h2 id="反射机制的优缺点"><a href="#反射机制的优缺点" class="headerlink" title="反射机制的优缺点"></a>反射机制的优缺点</h2><p><strong>优点：</strong></p>
+<ol>
+<li>能够运行时动态获取类的实例，提高灵活性；</li>
+</ol>
+<p><strong>缺点：</strong></p>
+<ol>
+<li>使用反射性能较低，需要解析字节码，将内存中的对象进行解析。</li>
+<li>相对不安全，破坏了封装性（因为通过反射可以获得私有方法和属性）</li>
+</ol>
+<p><strong>解决方案：</strong></p>
+<ol>
+<li>通过setAccessible(true)关闭JDK的安全检查来提升反射速度；</li>
+<li>多次创建一个类的实例时，有缓存会快很多</li>
+<li>ReflflectASM工具类，通过字节码生成的方式加快反射速度</li>
+</ol>
+<h2 id="反射使用步骤"><a href="#反射使用步骤" class="headerlink" title="反射使用步骤"></a>反射使用步骤</h2><p><strong>获取Class对象，调用对象方法</strong></p>
+<ol>
+<li>获取想要操作的类的 Class 对象，他是反射的核心，通过 Class 对象我们可以任意调用类的方法。</li>
+<li>调用 Class 类中的方法，既就是反射的使用阶段。</li>
+<li>使用反射 API 来操作这些信息。</li>
+</ol>
+<h2 id="获取class对象的几种方法"><a href="#获取class对象的几种方法" class="headerlink" title="获取class对象的几种方法"></a>获取class对象的几种方法</h2><ol>
+<li><p>通过一个对象调用getClass方法</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-type">Person</span> <span class="hljs-variable">p</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Person</span>();<br><span class="hljs-type">Class</span> <span class="hljs-variable">c</span> <span class="hljs-operator">=</span> p.getClacc();<br></code></pre></td></tr></table></figure></li>
+<li><p>通过调用某个类的class属性来获取该类对应的Class对象</p>
+</li>
+<li><p>使用Class类的静态方法forName()方法(最安全性能最好)，当我们获得了我们想要的类的Class对象后，可以通过Class类中的方法获取并查看该类中的方法和属性。</p>
+<ul>
+<li>获取方法：getDeclaredMethods()</li>
+<li>获取字段：getDeclaredFileds()</li>
+<li>获取构造方法：getDeclaredConstructors();</li>
+</ul>
+</li>
+</ol>
+<h2 id="利用反射动态创建对象实例"><a href="#利用反射动态创建对象实例" class="headerlink" title="利用反射动态创建对象实例"></a>利用反射动态创建对象实例</h2><ol>
+<li><p>使用Class对象的newInstance()方法来创建该class对象对应类的实例，但是这种方式会要求该class对象对应的类有默认的空构造器。</p>
+</li>
+<li><p>先使用class对象获取指定的constructor对象，在调用constructor的newInstance方法</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-type">Constructor</span> <span class="hljs-variable">c</span> <span class="hljs-operator">=</span> class.getDeclaredConstructor(String.class,Integer.class);<br><span class="hljs-type">Person</span> <span class="hljs-variable">p</span> <span class="hljs-operator">=</span> c.newInstance(<span class="hljs-string">&quot;zahngsan&quot;</span>,<span class="hljs-number">18</span>);<br></code></pre></td></tr></table></figure></li>
+</ol>
+<h2 id="反射相关的API"><a href="#反射相关的API" class="headerlink" title="反射相关的API"></a>反射相关的API</h2><p><img src="02.png" srcset="/img/loading.gif" lazyload alt="02"></p>
+<p><strong>一个类在内存中只有一个class对象，一个类在被加载后，类得整个结构都会被封装在Class对象中。</strong></p>
+<h2 id="Class类"><a href="#Class类" class="headerlink" title="Class类"></a>Class类</h2><p><img src="03.png" srcset="/img/loading.gif" lazyload alt="03"></p>
+<h3 id="Class类的常用方法"><a href="#Class类的常用方法" class="headerlink" title="Class类的常用方法"></a>Class类的常用方法</h3><p><img src="04.png" srcset="/img/loading.gif" lazyload alt="04"></p>
+<h3 id="获取class类的实例"><a href="#获取class类的实例" class="headerlink" title="获取class类的实例"></a>获取class类的实例</h3><p><img src="05.png" srcset="/img/loading.gif" lazyload alt="05"></p>
+<h2 id="Java内存分析"><a href="#Java内存分析" class="headerlink" title="Java内存分析"></a>Java内存分析</h2><p><img src="06.png" srcset="/img/loading.gif" lazyload alt="06"></p>
+<h2 id="类的加载过程"><a href="#类的加载过程" class="headerlink" title="类的加载过程"></a>类的加载过程</h2><p><strong>当程序主动使用某个类时，如果该类还未加载到内存，则系统会通过如下三个步骤对该类进行初始化。</strong></p>
+<p><img src="07.png" srcset="/img/loading.gif" lazyload alt="07"></p>
+<p><img src="08.png" srcset="/img/loading.gif" lazyload alt="08"></p>
+<h2 id="类的加载与ClassLoader的理解"><a href="#类的加载与ClassLoader的理解" class="headerlink" title="类的加载与ClassLoader的理解"></a>类的加载与ClassLoader的理解</h2><p><img src="09.png" srcset="/img/loading.gif" lazyload alt="09"></p>
+<h2 id="什么时候会发生类的初始化"><a href="#什么时候会发生类的初始化" class="headerlink" title="什么时候会发生类的初始化"></a>什么时候会发生类的初始化</h2><p><img src="10.png" srcset="/img/loading.gif" lazyload alt="10"></p>
+<h2 id="通过反设调用方法"><a href="#通过反设调用方法" class="headerlink" title="通过反设调用方法"></a>通过反设调用方法</h2><p><img src="11.png" srcset="/img/loading.gif" lazyload alt="11"></p>
+<h2 id="通过反射操作属性"><a href="#通过反射操作属性" class="headerlink" title="通过反射操作属性"></a>通过反射操作属性</h2><p><img src="12.png" srcset="/img/loading.gif" lazyload alt="12"></p>
+<h2 id="SetAccessible"><a href="#SetAccessible" class="headerlink" title="SetAccessible"></a>SetAccessible</h2><p><img src="13.png" srcset="/img/loading.gif" lazyload alt="13"></p>
+
+            </div>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                  <div class="post-meta mr-3">
+                    <i class="iconfont icon-category"></i>
+                    
+                      <a class="hover-with-bg" href="/categories/%E5%90%8E%E7%AB%AF/">后端</a>
+                    
+                  </div>
+                
+                
+                  <div class="post-meta">
+                    <i class="iconfont icon-tags"></i>
+                    
+                      <a class="hover-with-bg" href="/tags/java%E9%AB%98%E9%98%B6/">java高阶</a>
+                    
+                  </div>
+                
+              </div>
+              
+                <p class="note note-warning">
+                  
+                    本博客所有文章除特别声明外，均采用 <a target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！
+                  
+                </p>
+              
+              
+                <div class="post-prevnext">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2022/04/03/java%E9%9D%A2%E8%AF%95%E4%B9%8BRabbitMQ/">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">java面试之RabbitMQ</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2022/04/01/java%E9%9D%A2%E8%AF%95%E4%B9%8BIO%E6%B5%81/">
+                        <span class="hidden-mobile">java面试之IO流</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+              <!-- Comments -->
+              <article class="comments" id="comments" lazyload>
+                
+                  
+                
+                
+  <div id="valine"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#valine', function() {
+      Fluid.utils.createScript('https://cdn.jsdelivr.net/npm/valine@1/dist/Valine.min.js', function() {
+        var options = Object.assign(
+          {"appId":"nGD612Gu0HScFjNTtkQ975DQ-gzGzoHsz","appKey":"uQWFCWpfdpmUcF3iVKDcak3s","path":"window.location.pathname","placeholder":"说点什么","avatar":"retro","meta":["nick","mail","link"],"requiredFields":[],"pageSize":10,"lang":"zh-CN","highlight":false,"recordIP":false,"serverURLs":"","emojiCDN":null,"emojiMaps":null,"enableQQ":false},
+          {
+            el: "#valine",
+            path: window.location.pathname
+          }
+        )
+        new Valine(options);
+        Fluid.utils.waitElementVisible('#valine .vcontent', () => {
+          Fluid.plugins.initFancyBox('#valine .vcontent img:not(.vemoji)');
+        })
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+              </article>
+            
+          </article>
+        </div>
+      </div>
+    </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+      </div>
+    
+  </div>
+</div>
+
+<!-- Custom -->
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+
+    
+  </main>
+
+  <footer class="text-center mt-5 py-3">
+  <div class="footer-content">
+     <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+  </div>
+  
+  <div class="statistics">
+    
+    
+
+    
+      
+        <!-- LeanCloud 统计PV -->
+        <span id="leancloud-site-pv-container" style="display: none">
+            总访问量 
+            <span id="leancloud-site-pv"></span>
+             次
+          </span>
+      
+      
+        <!-- LeanCloud 统计UV -->
+        <span id="leancloud-site-uv-container" style="display: none">
+            总访客数 
+            <span id="leancloud-site-uv"></span>
+             人
+          </span>
+      
+
+    
+  </div>
+
+
+  
+
+  
+</footer>
+
+
+  <!-- SCRIPTS -->
+  
+  <script  src="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js" ></script>
+<script  src="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+<!-- Plugins -->
+
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+  
+
+
+
+  
+    <script  src="https://cdn.jsdelivr.net/npm/tocbot@4/dist/tocbot.min.js" ></script>
+  
+  
+    <script  src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.js" ></script>
+  
+  
+    <script  src="https://cdn.jsdelivr.net/npm/anchor-js@4/anchor.min.js" ></script>
+  
+  
+    <script defer src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js" ></script>
+  
+
+
+
+
+  <script defer src="/js/leancloud.js" ></script>
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/typed.js@2/lib/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var title = document.getElementById('subtitle').title;
+      
+        typing(title);
+      
+    })(window, document);
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+
+
+<!-- 主题的启动项 保持在最底部 -->
+<script  src="/js/boot.js" ></script>
+
+
+</body>
+</html>

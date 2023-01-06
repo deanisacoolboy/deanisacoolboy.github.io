@@ -1,0 +1,604 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/siteicon.jpg">
+  <link rel="icon" href="/img/siteicon.jpg">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="John Doe">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="线程详解线程 在传统的操作系统中，每个进程都有一个地址空间和一个控制线程。事实上，这是大部分进程的定义。 不过，在许多情况下，经常存在同一地址空间中运行多个控制线程的情形，这些线程就像是分离的进程。  线程的使用或许这个疑问也是你的疑问，为什么要在进程的基础上再创建一个线程的概念，准确的说，这其实是进程模型和线程模型的讨论，回答这个问题，可能需要分三步来回答：•多线程之间会共享同一块地址空间和所有">
+<meta property="og:type" content="article">
+<meta property="og:title" content="OS--线程">
+<meta property="og:url" content="http://example.com/2022/11/09/OS-%E7%BA%BF%E7%A8%8B/index.html">
+<meta property="og:site_name" content="野草技术社区">
+<meta property="og:description" content="线程详解线程 在传统的操作系统中，每个进程都有一个地址空间和一个控制线程。事实上，这是大部分进程的定义。 不过，在许多情况下，经常存在同一地址空间中运行多个控制线程的情形，这些线程就像是分离的进程。  线程的使用或许这个疑问也是你的疑问，为什么要在进程的基础上再创建一个线程的概念，准确的说，这其实是进程模型和线程模型的讨论，回答这个问题，可能需要分三步来回答：•多线程之间会共享同一块地址空间和所有">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="d:/personalcode/hexo-blog/hexo-blog/source_posts/OS-线程/image-20221109110721367.png">
+<meta property="og:image" content="http://example.com/2022/11/09/OS-%E7%BA%BF%E7%A8%8B/image-20221109110721367.png">
+<meta property="og:image" content="d:/personalcode/hexo-blog/hexo-blog/source_posts/OS-线程/image-20221109110523130.png">
+<meta property="og:image" content="http://example.com/2022/11/09/OS-%E7%BA%BF%E7%A8%8B/image-20221109110523130.png">
+<meta property="og:image" content="d:/personalcode/hexo-blog/hexo-blog/source_posts/OS-线程/image-20221109110602117.png">
+<meta property="og:image" content="http://example.com/2022/11/09/OS-%E7%BA%BF%E7%A8%8B/image-20221109110602117.png">
+<meta property="og:image" content="d:/personalcode/hexo-blog/hexo-blog/source_posts/OS-线程/image-20221109110626261.png">
+<meta property="og:image" content="http://example.com/2022/11/09/OS-%E7%BA%BF%E7%A8%8B/image-20221109110626261.png">
+<meta property="article:published_time" content="2022-11-09T03:00:41.000Z">
+<meta property="article:modified_time" content="2022-11-09T03:56:20.575Z">
+<meta property="article:author" content="John Doe">
+<meta property="article:tag" content="java高阶">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="d:/personalcode/hexo-blog/hexo-blog/source_posts/OS-线程/image-20221109110721367.png">
+  
+  
+  <title>OS--线程 - 野草技术社区</title>
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/css/bootstrap.min.css" />
+
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@4/github-markdown.min.css" />
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hint.css@2/hint.min.css" />
+
+  
+    
+    
+      
+      <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@10/styles/github-gist.min.css" />
+    
+  
+
+  
+    <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.css" />
+  
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_ba1fz6golrf.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.8.14","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"copy_btn":true,"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":"nGD612Gu0HScFjNTtkQ975DQ-gzGzoHsz","app_key":"uQWFCWpfdpmUcF3iVKDcak3s","server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+<meta name="generator" content="Hexo 5.4.1"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>野草技术社区</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="banner" id="banner" parallax=true
+         style="background: url('/img/bg01.jpg') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="page-header text-center fade-in-up">
+            <span class="h2" id="subtitle" title="OS--线程">
+              
+            </span>
+
+            
+              <div class="mt-3">
+  
+  
+    <span class="post-meta">
+      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+      <time datetime="2022-11-09 11:00" pubdate>
+        2022年11月9日 上午
+      </time>
+    </span>
+  
+</div>
+
+<div class="mt-1">
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      2.9k 字
+    </span>
+  
+
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      24 分钟
+    </span>
+  
+
+  
+  
+    
+      <!-- LeanCloud 统计文章PV -->
+      <span id="leancloud-page-views-container" class="post-meta" style="display: none">
+        <i class="iconfont icon-eye" aria-hidden="true"></i>
+        <span id="leancloud-page-views"></span> 次
+      </span>
+    
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">OS--线程</h1>
+            
+            <div class="markdown-body">
+              <h1 id="线程详解"><a href="#线程详解" class="headerlink" title="线程详解"></a>线程详解</h1><h2 id="线程"><a href="#线程" class="headerlink" title="线程"></a>线程</h2><ul>
+<li><strong>在传统的操作系统中，每个进程都有一个地址空间和一个控制线程。事实上，这是大部分进程的定义。</strong></li>
+<li>不过，在许多情况下，<code>经常存在同一地址空间中运行多个控制线程的情形，这些线程就像是分离的进程。</code></li>
+</ul>
+<h3 id="线程的使用"><a href="#线程的使用" class="headerlink" title="线程的使用"></a>线程的使用</h3><p>或许这个疑问也是你的疑问，为什么要在进程的基础上再创建一个线程的概念，准确的说，这其实是进程模型和线程模型的讨论，回答这个问题，可能需要分三步来回答：<br>•多线程之间会共享同一块地址空间和所有可用数据的能力，这是进程所不具备的<br>•线程要比进程更轻量级，由于线程更轻，所以它比进程更容易创建，也更容易撤销。在许多系统 中，创建一个线程要比创建一个进程快10-100倍。<br>•第三个原因可能是性能方面的探讨，如果多个线程都是CPU密集型的，那么并不能获得性能上的 增强，但是如果存在着大量的计算和大量的I/O处理，拥有多个线程能在这些活动中彼此重叠进 行，从而会加快应用程序的执行速度</p>
+<h3 id="多线程解决方案"><a href="#多线程解决方案" class="headerlink" title="多线程解决方案"></a><a target="_blank" rel="noopener" href="https://so.csdn.net/so/search?q=%E5%A4%9A%E7%BA%BF%E7%A8%8B&spm=1001.2101.3001.7020">多线程</a>解决方案</h3><ul>
+<li>现在考虑一个线程使用的例子：一个万维网服务器，对页面的请求发送给服务器，而所请求的页面发送 回客户端。</li>
+<li>在多数web站点上，<code>某些页面较其他页面相比有更多的访问</code>。</li>
+<li><strong><code>Web服务器可以把获得大量访问的页面集合保存在内存中，避 免到磁盘去调入这些页面，从而改善性能。</code></strong></li>
+<li><strong>这种页面的集合称为<code>高速缓存(cache),</code>高速缓存也应用 在许多场合中，比如说CPU缓存。</strong></li>
+</ul>
+<p><img src="D:\personalcode\hexo-blog\hexo-blog\source_posts\OS-线程\image-20221109110721367.png" srcset="/img/loading.gif" lazyload alt="image-20221109110721367"></p>
+<p><img src="image-20221109110721367.png" srcset="/img/loading.gif" lazyload alt="image-20221109110721367"></p>
+<p>编程其实是跟生活息息相关的，编程是可以映射到生活的，比如java是一种面向对象的编程语言，什么是对象，对象是对一组事物的特征抽象和行为抽象，每一个类都有自己的职责跟特点，对应到生活中就是不同职位上的工人，我们程序员对应的是什么角色呢？我们是这个抽象世界的领导者，我们要做的就是按照业务的规则让他们协调有序的工作。</p>
+<p>上面这张图理解起来其实很简单。进程间通信的方式有其中，其中一种就是套接字，套接字通信要依赖于端口号，所以基于套接字来说这个服务容器对外的暴漏的入口就是这个端口号。调度线程跟工作线程的关系就是领导者跟员工的关系，网络请求就相当于是客户来了需求，调度线程相当于就是项目经理，工作线程相当于就是程序员，项目经理将各个需求分到各个开发组，分工完成合作。</p>
+<ul>
+<li><strong>上面是一个web服务器的组织方式，一个叫做 <code>调度线程(dispatcher thread)的线程从网络中读 入工作请求，在调度线程检查完请求后，它会选择一个空闲的(阻塞的)工作线程来处理请求</code>，通常是 将消息的指针写入到每个线程关联的特殊字中。</strong></li>
+<li>然后<code>调度线程会唤醒正在睡眠中的工作线程，把工作线 程的状态从阻塞态变为就绪态。</code></li>
+<li><strong>当工作线程启动后，它会检查请求是否在web页面的高速缓存中存在，这个高速缓存是所有线程都可 以访问的。</strong></li>
+<li><code>如果高速缓存不存在这个web页面的话，它会调用一个read操作从磁盘中获取页面并且 阻塞线程直到磁盘操作完成</code>。</li>
+<li><strong><code>当线程阻塞在硬盘操作的期间，为了完成更多的工作，调度线程可能挑选 另一个线程运行，也可能把另一个当前就绪的工作线程投入运行。</code></strong></li>
+<li>这种模型允许将服务器编写为顺序线程的集合，在分派线程的程序中包含一个死循环，该循环用来获得 工作请求并且把请求派给工作线程。</li>
+<li><code>每个工作线程的代码包含一个从调度线程接收的请求，并且检查 web高速缓存中是否存在所需页面，如果有，直接把该页面返回给客户，接着工作线程阻塞，等待一个 新请求的到达。如果没有，工作线程就从磁盘调入该页面，将该页面返回给客户机，然后工作线程阻 塞，等待一个新请求</code>。</li>
+</ul>
+<h3 id="单线程解决方案"><a href="#单线程解决方案" class="headerlink" title="单线程解决方案"></a>单线程解决方案</h3><p>现在考虑没有多线程的情况下，如何编写Web服务器。</p>
+<ul>
+<li>我们很容易的就想象为单个线程了，Web服务 器的主循环获取请求并检查请求，并争取在下一个请求之前完成工作</li>
+<li><strong>在等待磁盘操作时，服务器空 转，并且不处理任何到来的其他请求。结果会导致每秒中只有很少的请求被处理</strong></li>
+</ul>
+<p>所以这个例子能够说 明多线程提高了程序的并行性并提高了程序的性能</p>
+<h2 id="经典的线程模型"><a href="#经典的线程模型" class="headerlink" title="经典的线程模型"></a>经典的线程模型</h2><p>理解进程的另一个角度是，用某种方法把相关资源集中在一起。</p>
+<ol>
+<li>进程有存放程序正文和数据以及其他资源的地址空间。这些资源包括打开的文件、子进程、即将发生的定时器、信号处理程序、账号信息等。把这些信息放在进程里比较好管理</li>
+<li>另一个概念是，线程中拥有一个执行的线程，通常简写为线程</li>
+<li>线程会有计数器，用来记录这要执行哪一条指令。线程还拥有寄存器，用来保存线程当前正在使用的变量。线程还会有堆栈，用来记录程序的执行路径</li>
+<li>尽管线程必须在某个进程内执行，但是进程和线程是完全不同的概念，并且他们可以分开处理。</li>
+<li>进程用于把资源集中在一起，而线程则是CPU上调度执行的实体</li>
+<li>线程给进程模型增加了一项内容，即在同一个进程中，允许彼此之间有较大的独立性且互不干扰</li>
+<li>在一 个进程中并行运行多个线程类似于在一台计算机上运行多个进程。</li>
+<li><strong><code>在多个线程中，各个线程共享同一地 址空间和其他资源。在多个进程中，进程共享物理内存、磁盘、打印机和其他资源。</code></strong></li>
+<li>因为线程会包含有一些进程的属性，所以线程被称为轻量的进程(lightweight processes)</li>
+<li>多线程 (multithreading) 一词还用于描述在同一进程中多个线程的情况。</li>
+</ol>
+<p>下图中，我们可以看到有一个进程三个线程的情况。每个线程都在相同的地址空间中运行</p>
+<p><img src="D:\personalcode\hexo-blog\hexo-blog\source_posts\OS-线程\image-20221109110523130.png" srcset="/img/loading.gif" lazyload alt="image-20221109110523130"></p>
+<p><img src="image-20221109110523130.png" srcset="/img/loading.gif" lazyload alt="image-20221109110523130"></p>
+<ul>
+<li><strong>线程不像是进程那样具备较强的独立性。同一个进程中的所有线程都会有完全一样的地址空间，这意味 着它们也共享同样的全局变量。</strong></li>
+<li><code>由于每个线程都可以访问进程地址空间内每个内存地址，因此一个线程 可以读取、写入甚至擦除另一个线程的堆栈。</code></li>
+</ul>
+<p>线程之间除了共享同一内存空间外，还具有如下不同的内 容</p>
+<p><img src="D:\personalcode\hexo-blog\hexo-blog\source_posts\OS-线程\image-20221109110602117.png" srcset="/img/loading.gif" lazyload alt="image-20221109110602117"></p>
+<p><img src="image-20221109110602117.png" srcset="/img/loading.gif" lazyload alt="image-20221109110602117"></p>
+<ul>
+<li>上图左边的是同一个进程中每个线程共享的内容，上图右边是每个线程中的内容。也就是说左边的列 表是进程的属性，右边的列表是线程的属性。</li>
+<li><strong>和进程一样，线程可以处于下面这几种状态：<code>运行中、阻塞、就绪和终止</code>（进程图中没有画）</strong></li>
+<li><strong><code>正在运 行的线程拥有CPU时间片并且状态是运行中。一个被阻塞的线程会等待某个释放它的事件。</code></strong></li>
+<li>例如，当 一个线程执行从键盘读入数据的系统调用时，该线程就被阻塞直到有输入为止。线程通常会被阻塞，直 到它等待某个外部事件的发生或者有其他线程来释放它。线程之间的状态转换和进程之间的状态转换是 —样的。</li>
+</ul>
+<p>每个线程都会有自己的堆栈，如下图所示：</p>
+<p><img src="D:\personalcode\hexo-blog\hexo-blog\source_posts\OS-线程\image-20221109110626261.png" srcset="/img/loading.gif" lazyload alt="image-20221109110626261"></p>
+<p><img src="image-20221109110626261.png" srcset="/img/loading.gif" lazyload alt="image-20221109110626261"></p>
+<h2 id="线程系统调用"><a href="#线程系统调用" class="headerlink" title="线程系统调用"></a>线程系统调用</h2><ul>
+<li>进程通常会从当前的某个单线程开始，然后这个<code>线程通过调用一个库函数（比如thread.create ） 创建新的线程。</code></li>
+<li>线程创建的函数会要求指定新创建线程的名称。创建的线程通常都返回一个线程标识 符，该标识符就是新线程的名字。</li>
+<li>当一个线程完成工作后，可以通过调用一个函数（比如thread_exit ）来退出</li>
+<li><strong>紧接着线程消失，状 态变为终止，不能再进行调度。在某些线程的运行过程中，可以通过调用函数例如thread_join , 表示一个线程可以等待另一个线程退出</strong></li>
+<li>这个过程阻塞调用线程直到等待特定的线程退出。在这种情况 下，线程的创建和终止非常类似于进程的创建和终止。</li>
+<li><strong>另一个常见的线程是调用thread-yield ,它允许线程自动放弃CPU从而让另一个线程运行。</strong></li>
+<li><strong><code>这样 一个调用还是很重要的，因为不同于进程，线程是无法利用时钟中断强制让线程让出CPU的。</code></strong></li>
+</ul>
+
+            </div>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                  <div class="post-meta mr-3">
+                    <i class="iconfont icon-category"></i>
+                    
+                      <a class="hover-with-bg" href="/categories/%E5%90%8E%E7%AB%AF/">后端</a>
+                    
+                  </div>
+                
+                
+                  <div class="post-meta">
+                    <i class="iconfont icon-tags"></i>
+                    
+                      <a class="hover-with-bg" href="/tags/java%E9%AB%98%E9%98%B6/">java高阶</a>
+                    
+                  </div>
+                
+              </div>
+              
+                <p class="note note-warning">
+                  
+                    本博客所有文章除特别声明外，均采用 <a target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！
+                  
+                </p>
+              
+              
+                <div class="post-prevnext">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2022/11/09/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Java%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B/">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">深入理解Java内存模型</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2022/11/09/%E5%9F%BA%E4%BA%8E%E4%BA%8B%E4%BB%B6%E9%A9%B1%E5%8A%A8%E5%8F%91%E9%80%81email%E3%80%81%E7%9F%AD%E4%BF%A1/">
+                        <span class="hidden-mobile">基于事件驱动发送email、短信</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+              <!-- Comments -->
+              <article class="comments" id="comments" lazyload>
+                
+                  
+                
+                
+  <div id="valine"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#valine', function() {
+      Fluid.utils.createScript('https://cdn.jsdelivr.net/npm/valine@1/dist/Valine.min.js', function() {
+        var options = Object.assign(
+          {"appId":"nGD612Gu0HScFjNTtkQ975DQ-gzGzoHsz","appKey":"uQWFCWpfdpmUcF3iVKDcak3s","path":"window.location.pathname","placeholder":"说点什么","avatar":"retro","meta":["nick","mail","link"],"requiredFields":[],"pageSize":10,"lang":"zh-CN","highlight":false,"recordIP":false,"serverURLs":"","emojiCDN":null,"emojiMaps":null,"enableQQ":false},
+          {
+            el: "#valine",
+            path: window.location.pathname
+          }
+        )
+        new Valine(options);
+        Fluid.utils.waitElementVisible('#valine .vcontent', () => {
+          Fluid.plugins.initFancyBox('#valine .vcontent img:not(.vemoji)');
+        })
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+              </article>
+            
+          </article>
+        </div>
+      </div>
+    </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+      </div>
+    
+  </div>
+</div>
+
+<!-- Custom -->
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+
+    
+  </main>
+
+  <footer class="text-center mt-5 py-3">
+  <div class="footer-content">
+     <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+  </div>
+  
+  <div class="statistics">
+    
+    
+
+    
+      
+        <!-- LeanCloud 统计PV -->
+        <span id="leancloud-site-pv-container" style="display: none">
+            总访问量 
+            <span id="leancloud-site-pv"></span>
+             次
+          </span>
+      
+      
+        <!-- LeanCloud 统计UV -->
+        <span id="leancloud-site-uv-container" style="display: none">
+            总访客数 
+            <span id="leancloud-site-uv"></span>
+             人
+          </span>
+      
+
+    
+  </div>
+
+
+  
+
+  
+</footer>
+
+
+  <!-- SCRIPTS -->
+  
+  <script  src="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js" ></script>
+<script  src="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+<!-- Plugins -->
+
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+  
+
+
+
+  
+    <script  src="https://cdn.jsdelivr.net/npm/tocbot@4/dist/tocbot.min.js" ></script>
+  
+  
+    <script  src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.js" ></script>
+  
+  
+    <script  src="https://cdn.jsdelivr.net/npm/anchor-js@4/anchor.min.js" ></script>
+  
+  
+    <script defer src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js" ></script>
+  
+
+
+
+
+  <script defer src="/js/leancloud.js" ></script>
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/typed.js@2/lib/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var title = document.getElementById('subtitle').title;
+      
+        typing(title);
+      
+    })(window, document);
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+
+
+<!-- 主题的启动项 保持在最底部 -->
+<script  src="/js/boot.js" ></script>
+
+
+</body>
+</html>

@@ -1,0 +1,670 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/siteicon.jpg">
+  <link rel="icon" href="/img/siteicon.jpg">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="John Doe">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="&#x2F;**  数据过滤处理   @author sj  &#x2F;@Aspect@Componentpublic class DataScopeAspect{  &#x2F;**  全部数据权限 &#x2F;public static final String DATA_SCOPE_ALL &#x3D; “1”;    &#x2F;**  自定数据权限 &#x2F;public static final String DATA_SCOPE_CUSTOM &#x3D;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="若依如何实现的数据范围过滤">
+<meta property="og:url" content="http://example.com/2022/03/13/%E8%8B%A5%E4%BE%9D%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0%E7%9A%84%E6%95%B0%E6%8D%AE%E8%8C%83%E5%9B%B4%E8%BF%87%E6%BB%A4/index.html">
+<meta property="og:site_name" content="野草技术社区">
+<meta property="og:description" content="&#x2F;**  数据过滤处理   @author sj  &#x2F;@Aspect@Componentpublic class DataScopeAspect{  &#x2F;**  全部数据权限 &#x2F;public static final String DATA_SCOPE_ALL &#x3D; “1”;    &#x2F;**  自定数据权限 &#x2F;public static final String DATA_SCOPE_CUSTOM &#x3D;">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-03-13T08:59:51.000Z">
+<meta property="article:modified_time" content="2022-03-13T09:00:43.424Z">
+<meta property="article:author" content="John Doe">
+<meta property="article:tag" content="后端框架">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  <title>若依如何实现的数据范围过滤 - 野草技术社区</title>
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/css/bootstrap.min.css" />
+
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@4/github-markdown.min.css" />
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hint.css@2/hint.min.css" />
+
+  
+    
+    
+      
+      <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@10/styles/github-gist.min.css" />
+    
+  
+
+  
+    <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.css" />
+  
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_ba1fz6golrf.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.8.14","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"copy_btn":true,"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":"nGD612Gu0HScFjNTtkQ975DQ-gzGzoHsz","app_key":"uQWFCWpfdpmUcF3iVKDcak3s","server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+<meta name="generator" content="Hexo 5.4.1"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>野草技术社区</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="banner" id="banner" parallax=true
+         style="background: url('/img/bg01.jpg') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="page-header text-center fade-in-up">
+            <span class="h2" id="subtitle" title="若依如何实现的数据范围过滤">
+              
+            </span>
+
+            
+              <div class="mt-3">
+  
+  
+    <span class="post-meta">
+      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+      <time datetime="2022-03-13 16:59" pubdate>
+        2022年3月13日 下午
+      </time>
+    </span>
+  
+</div>
+
+<div class="mt-1">
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      4k 字
+    </span>
+  
+
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      34 分钟
+    </span>
+  
+
+  
+  
+    
+      <!-- LeanCloud 统计文章PV -->
+      <span id="leancloud-page-views-container" class="post-meta" style="display: none">
+        <i class="iconfont icon-eye" aria-hidden="true"></i>
+        <span id="leancloud-page-views"></span> 次
+      </span>
+    
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">若依如何实现的数据范围过滤</h1>
+            
+            <div class="markdown-body">
+              <p>/**</p>
+<ul>
+<li><p>数据过滤处理</p>
+</li>
+<li></li>
+<li><p>@author sj</p>
+</li>
+<li><p>/<br>@Aspect<br>@Component<br>public class DataScopeAspect<br>{<br>  /**</p>
+<ul>
+<li>全部数据权限</li>
+<li>/<br>public static final String DATA_SCOPE_ALL = “1”;</li>
+</ul>
+<p>  /**</p>
+<ul>
+<li>自定数据权限</li>
+<li>/<br>public static final String DATA_SCOPE_CUSTOM = “2”;</li>
+</ul>
+<p>  /**</p>
+<ul>
+<li>部门数据权限</li>
+<li>/<br>public static final String DATA_SCOPE_DEPT = “3”;</li>
+</ul>
+<p>  /**</p>
+<ul>
+<li>部门及以下数据权限</li>
+<li>/<br>public static final String DATA_SCOPE_DEPT_AND_CHILD = “4”;</li>
+</ul>
+<p>  /**</p>
+<ul>
+<li>仅本人数据权限</li>
+<li>/<br>public static final String DATA_SCOPE_SELF = “5”;</li>
+</ul>
+<p>  /**</p>
+<ul>
+<li>数据权限过滤关键字</li>
+<li>/<br>public static final String DATA_SCOPE = “dataScope”;</li>
+</ul>
+<p>  // 配置织入点<br>  @Pointcut(“@annotation(com.sj.common.annotation.DataScope)”)<br>  public void dataScopePointCut()<br>  {<br>  }<br>  // 在织入点之前进行织入<br>  @Before(“dataScopePointCut()”)<br>  public void doBefore(JoinPoint point) throws Throwable<br>  {</p>
+<div class="code-wrapper"><pre><code class="hljs">  // 在织入点之前执行，根据当前登录的用户判断是否数据权限过滤
+  handleDataScope(point);
+</code></pre></div>
+<p>  }</p>
+<p>  protected void handleDataScope(final JoinPoint joinPoint)<br>  {</p>
+<div class="code-wrapper"><pre><code class="hljs">  // 获得注解
+  DataScope controllerDataScope = getAnnotationLog(joinPoint);
+  if (controllerDataScope == null)
+  &#123;
+      return;
+  &#125;
+  // 获取当前的用户
+  LoginUser loginUser = SpringUtils.getBean(TokenService.class).getLoginUser(ServletUtils.getRequest());
+  if (StringUtils.isNotNull(loginUser))
+  &#123;
+      SysUser currentUser = loginUser.getUser();
+      // 如果当前登录的用户不是管理员那就进行数据范围过滤
+      if (StringUtils.isNotNull(currentUser) &amp;&amp; !currentUser.isAdmin())
+      &#123;
+          dataScopeFilter(joinPoint, currentUser, controllerDataScope.deptAlias(),
+                  controllerDataScope.userAlias());
+      &#125;
+  &#125;
+</code></pre></div>
+<p>  }</p>
+<p>  /**</p>
+<ul>
+<li>数据范围过滤</li>
+<li></li>
+<li>@param joinPoint 切点</li>
+<li>@param user 用户</li>
+<li>@param userAlias 别名</li>
+<li>/<br>public static void dataScopeFilter(JoinPoint joinPoint, SysUser user, String deptAlias, String userAlias)<br>{<br>  // 构建字符串<br>  StringBuilder sqlString = new StringBuilder();<br>  // 遍历角色，一个用户可以有多个角色<br>  for (SysRole role : user.getRoles())<br>  {<div class="code-wrapper"><pre><code class="hljs">  // 获取到数据权限范围
+  String dataScope = role.getDataScope();
+  // 如果是全部数据权限则不需要构造拼接字符串
+  if (DATA_SCOPE_ALL.equals(dataScope))
+  &#123;
+      sqlString = new StringBuilder();
+      break;
+  &#125;
+  else if (DATA_SCOPE_CUSTOM.equals(dataScope))
+  &#123;
+      sqlString.append(StringUtils.format(
+              &quot; OR &#123;&#125;.dept_id IN ( SELECT dept_id FROM sys_role_dept WHERE role_id = &#123;&#125; ) &quot;, deptAlias,
+              role.getRoleId()));
+  &#125;
+  // 本部门的数据
+  else if (DATA_SCOPE_DEPT.equals(dataScope))
+  &#123;
+      sqlString.append(StringUtils.format(&quot; OR &#123;&#125;.dept_id = &#123;&#125; &quot;, deptAlias, user.getDeptId()));
+  &#125;
+  // 本部门及本部门以下
+  else if (DATA_SCOPE_DEPT_AND_CHILD.equals(dataScope))
+  &#123;
+      // dept_id等于本本部门的id或者dept_id在祖级列表里面
+      sqlString.append(StringUtils.format(
+              &quot; OR &#123;&#125;.dept_id IN ( SELECT dept_id FROM sys_dept WHERE dept_id = &#123;&#125; or find_in_set( &#123;&#125; , ancestors ) )&quot;,
+              deptAlias, user.getDeptId(), user.getDeptId()));
+  &#125;
+  else if (DATA_SCOPE_SELF.equals(dataScope))
+  &#123;
+      if (StringUtils.isNotBlank(userAlias))
+      &#123;
+          sqlString.append(StringUtils.format(&quot; OR &#123;&#125;.user_id = &#123;&#125; &quot;, userAlias, user.getUserId()));
+      &#125;
+      else
+      &#123;
+          // 数据权限为仅本人且没有userAlias别名不查询任何数据
+          sqlString.append(&quot; OR 1=0 &quot;);
+      &#125;
+  &#125;
+</code></pre></div>
+  }  // 将sqlString转换为String且当不为空时<br>  if (StringUtils.isNotBlank(sqlString.toString()))<br>  {<div class="code-wrapper"><pre><code class="hljs">  // 获取连接点的参数，
+  Object params = joinPoint.getArgs()[0];
+  // 如果参数不为空并且是一个实体
+  if (StringUtils.isNotNull(params) &amp;&amp; params instanceof BaseEntity)
+  &#123;
+      // 将参数转换为实体
+      BaseEntity baseEntity = (BaseEntity) params;
+      // 将拼接的Sql语句放到参数列表
+      baseEntity.getParams().put(DATA_SCOPE, &quot; AND (&quot; + sqlString.substring(4) + &quot;)&quot;);
+  &#125;
+</code></pre></div>
+  }<br>}</li>
+</ul>
+<p>  /**</p>
+<ul>
+<li>是否存在注解，如果存在就获取</li>
+<li>/<br>private DataScope getAnnotationLog(JoinPoint joinPoint)<br>{<br>  // 获取封装了签名信息的对象，在该对象中可以获取到目标方法名，所属类的class等信息<br>  Signature signature = joinPoint.getSignature();<br>  // 将签名对象转换为方法签名对象<br>  MethodSignature methodSignature = (MethodSignature) signature;<br>  // 获取到目标方法<br>  Method method = methodSignature.getMethod();<br>  // 如果目标方法不为空则返回目标方法上的注解<br>  if (method != null)<br>  {<div class="code-wrapper"><pre><code class="hljs">  return method.getAnnotation(DataScope.class);
+</code></pre></div>
+  }<br>  // 否则返回空<br>  return null;<br>}<br>}</li>
+</ul>
+</li>
+</ul>
+<p>// 作为前置知识需要了解角色管理页面中，可以配置下面几种数据范围<br> /**<br>     * 全部数据权限<br>     <em>/<br>    public static final String DATA_SCOPE_ALL = “1”;<br> /</em>*<br>     * 自定数据权限<br>     */<br>    public static final String DATA_SCOPE_CUSTOM = “2”;</p>
+<p>查询 部门角色对应表中，用户具备的角色可以管理那些部门<br> OR d.dept_id IN ( SELECT dept_id FROM sys_role_dept WHERE role_id = {rolelist} )    </p>
+<p>/**<br>     * 部门数据权限<br>     */<br>    public static final String DATA_SCOPE_DEPT = “3”;</p>
+<p>查询部门编号=用户所在部门编号的数据<br>OR {}.dept_id = {}  </p>
+<p>  /**<br>     * 部门及以下数据权限<br>     */<br>    public static final String DATA_SCOPE_DEPT_AND_CHILD = “4”;</p>
+<p>查询部门和子部门的权限</p>
+<div class="code-wrapper"><pre><code class="hljs">/**
+ * 仅本人数据权限
+ */
+public static final String DATA_SCOPE_SELF = &quot;5&quot;;
+
+if (StringUtils.isNotBlank(userAlias))
+</code></pre></div>
+<p>{<br>    sqlString.append(StringUtils.format(“ OR {}.user_id = {} “, userAlias, user.getUserId()));<br>}<br>else<br>{<br>    // 数据权限为仅本人且没有userAlias别名不查询任何数据<br>    sqlString.append(“ OR 1=0 “);<br>}</p>
+
+            </div>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                  <div class="post-meta mr-3">
+                    <i class="iconfont icon-category"></i>
+                    
+                      <a class="hover-with-bg" href="/categories/%E5%90%8E%E7%AB%AF/">后端</a>
+                    
+                  </div>
+                
+                
+                  <div class="post-meta">
+                    <i class="iconfont icon-tags"></i>
+                    
+                      <a class="hover-with-bg" href="/tags/%E5%90%8E%E7%AB%AF%E6%A1%86%E6%9E%B6/">后端框架</a>
+                    
+                  </div>
+                
+              </div>
+              
+                <p class="note note-warning">
+                  
+                    本博客所有文章除特别声明外，均采用 <a target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！
+                  
+                </p>
+              
+              
+                <div class="post-prevnext">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2022/03/17/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">设计模式</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2022/03/13/SpringAop/">
+                        <span class="hidden-mobile">SpringAop</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+              <!-- Comments -->
+              <article class="comments" id="comments" lazyload>
+                
+                  
+                
+                
+  <div id="valine"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#valine', function() {
+      Fluid.utils.createScript('https://cdn.jsdelivr.net/npm/valine@1/dist/Valine.min.js', function() {
+        var options = Object.assign(
+          {"appId":"nGD612Gu0HScFjNTtkQ975DQ-gzGzoHsz","appKey":"uQWFCWpfdpmUcF3iVKDcak3s","path":"window.location.pathname","placeholder":"说点什么","avatar":"retro","meta":["nick","mail","link"],"requiredFields":[],"pageSize":10,"lang":"zh-CN","highlight":false,"recordIP":false,"serverURLs":"","emojiCDN":null,"emojiMaps":null,"enableQQ":false},
+          {
+            el: "#valine",
+            path: window.location.pathname
+          }
+        )
+        new Valine(options);
+        Fluid.utils.waitElementVisible('#valine .vcontent', () => {
+          Fluid.plugins.initFancyBox('#valine .vcontent img:not(.vemoji)');
+        })
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+              </article>
+            
+          </article>
+        </div>
+      </div>
+    </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+      </div>
+    
+  </div>
+</div>
+
+<!-- Custom -->
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+
+    
+  </main>
+
+  <footer class="text-center mt-5 py-3">
+  <div class="footer-content">
+     <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+  </div>
+  
+  <div class="statistics">
+    
+    
+
+    
+      
+        <!-- LeanCloud 统计PV -->
+        <span id="leancloud-site-pv-container" style="display: none">
+            总访问量 
+            <span id="leancloud-site-pv"></span>
+             次
+          </span>
+      
+      
+        <!-- LeanCloud 统计UV -->
+        <span id="leancloud-site-uv-container" style="display: none">
+            总访客数 
+            <span id="leancloud-site-uv"></span>
+             人
+          </span>
+      
+
+    
+  </div>
+
+
+  
+
+  
+</footer>
+
+
+  <!-- SCRIPTS -->
+  
+  <script  src="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js" ></script>
+<script  src="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+<!-- Plugins -->
+
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+  
+
+
+
+  
+    <script  src="https://cdn.jsdelivr.net/npm/tocbot@4/dist/tocbot.min.js" ></script>
+  
+  
+    <script  src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.js" ></script>
+  
+  
+    <script  src="https://cdn.jsdelivr.net/npm/anchor-js@4/anchor.min.js" ></script>
+  
+  
+    <script defer src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js" ></script>
+  
+
+
+
+
+  <script defer src="/js/leancloud.js" ></script>
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/typed.js@2/lib/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var title = document.getElementById('subtitle').title;
+      
+        typing(title);
+      
+    })(window, document);
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+
+
+<!-- 主题的启动项 保持在最底部 -->
+<script  src="/js/boot.js" ></script>
+
+
+</body>
+</html>

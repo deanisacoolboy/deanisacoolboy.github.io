@@ -1,0 +1,580 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/siteicon.jpg">
+  <link rel="icon" href="/img/siteicon.jpg">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="John Doe">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="基于事件驱动发送email、短信发送邮件就发送邮件呗，为什么说是基于事件驱动呢？因为发送邮件是一个相对耗时的操作，我们基于事件驱动可以异步解耦， 同时通过@Async做一步操作降低接口的耦合性和响应时间。 spring事件驱动组成spring事件驱动由3个部分组成 1、ApplicationEvent：表示事件本身，自定义事件需要继承该类。用来定义事件 2、ApplicationEventPubl">
+<meta property="og:type" content="article">
+<meta property="og:title" content="基于事件驱动发送email、短信">
+<meta property="og:url" content="http://example.com/2022/11/09/%E5%9F%BA%E4%BA%8E%E4%BA%8B%E4%BB%B6%E9%A9%B1%E5%8A%A8%E5%8F%91%E9%80%81email%E3%80%81%E7%9F%AD%E4%BF%A1/index.html">
+<meta property="og:site_name" content="野草技术社区">
+<meta property="og:description" content="基于事件驱动发送email、短信发送邮件就发送邮件呗，为什么说是基于事件驱动呢？因为发送邮件是一个相对耗时的操作，我们基于事件驱动可以异步解耦， 同时通过@Async做一步操作降低接口的耦合性和响应时间。 spring事件驱动组成spring事件驱动由3个部分组成 1、ApplicationEvent：表示事件本身，自定义事件需要继承该类。用来定义事件 2、ApplicationEventPubl">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-11-09T02:50:46.000Z">
+<meta property="article:modified_time" content="2022-11-09T03:00:11.829Z">
+<meta property="article:author" content="John Doe">
+<meta property="article:tag" content="java高阶">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  <title>基于事件驱动发送email、短信 - 野草技术社区</title>
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/css/bootstrap.min.css" />
+
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@4/github-markdown.min.css" />
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hint.css@2/hint.min.css" />
+
+  
+    
+    
+      
+      <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@10/styles/github-gist.min.css" />
+    
+  
+
+  
+    <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.css" />
+  
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_ba1fz6golrf.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.8.14","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"copy_btn":true,"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":"nGD612Gu0HScFjNTtkQ975DQ-gzGzoHsz","app_key":"uQWFCWpfdpmUcF3iVKDcak3s","server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+<meta name="generator" content="Hexo 5.4.1"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>野草技术社区</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="banner" id="banner" parallax=true
+         style="background: url('/img/bg01.jpg') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="page-header text-center fade-in-up">
+            <span class="h2" id="subtitle" title="基于事件驱动发送email、短信">
+              
+            </span>
+
+            
+              <div class="mt-3">
+  
+  
+    <span class="post-meta">
+      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+      <time datetime="2022-11-09 10:50" pubdate>
+        2022年11月9日 上午
+      </time>
+    </span>
+  
+</div>
+
+<div class="mt-1">
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      17k 字
+    </span>
+  
+
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      140 分钟
+    </span>
+  
+
+  
+  
+    
+      <!-- LeanCloud 统计文章PV -->
+      <span id="leancloud-page-views-container" class="post-meta" style="display: none">
+        <i class="iconfont icon-eye" aria-hidden="true"></i>
+        <span id="leancloud-page-views"></span> 次
+      </span>
+    
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">基于事件驱动发送email、短信</h1>
+            
+            <div class="markdown-body">
+              <p>基于事件驱动发送email、短信<br>发送邮件就发送邮件呗，为什么说是基于事件驱动呢？因为发送邮件是一个相对耗时的操作，我们基于事件驱动可以异步解耦，</p>
+<p>同时通过@Async做一步操作降低接口的耦合性和响应时间。</p>
+<p>spring事件驱动组成<br>spring事件驱动由3个部分组成</p>
+<p>1、ApplicationEvent：表示事件本身，自定义事件需要继承该类。用来定义事件</p>
+<p>2、ApplicationEventPublisherAware：事件发送器，需要实现该接口。主要用来发布事件.ApplicationContext 也实现了该接口，可以用于发布事件.</p>
+<p>Spring4.2之后，ApplicationEventPublisher自动被注入到容器中，采用Autowired即可获取。</p>
+<p>3、ApplicationListener：事件监听器接口。监听类实现ApplicationListener 里onApplicationEvent方法即可.</p>
+<p>在spring4.2以后我们可以以更加简洁的方式来监听event的发布，监听事件我们不必再实现ApplicationListener接口了，只要在方法上添加注解@EventListener即可.</p>
+<p>如果要监听多个事件类型的发布，可以在@EventListener(classes = {FaceEvent.class,ArmEvent.class})指定，spring会多次调用此方法来处理多个事件。但是注意此时，方法参数不能有多个，否则会发生转换异常，可以将使用多个事件的父类作为唯一的方法参数来接收处理事件，但除非必要否则并不推荐监听多个事件的发布。</p>
+<p>如果有多个监听器监听同一事件，我们可以在方法上使用spring的@order注解来定义多个监听器的顺序,order越小,优先级越高.</p>
+<p>@EventListener还有一个属性，condition（）里可以使用SPEL表达式来过滤监听到事件，即只有符合某种条件的才进行接收处理。比如：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><div class="code-wrapper"><pre><span class="line">1</span><br></pre></div></td><td class="code"><pre><code class="hljs java"><span class="hljs-meta">@EventListener(condition = &quot;event.message == &#x27;message&#x27;&quot;)</span><br></code></pre></td></tr></table></figure>
+<p>监听多个事件:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-meta">@EventListener(&#123;FaceEvent.class,ArmEvent.class&#125;)</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">onApplicationEvent3</span><span class="hljs-params">(Object event)</span> &#123;<br><br>    <span class="hljs-keyword">if</span>(event <span class="hljs-keyword">instanceof</span> FaceEvent)&#123;<br>        LOGGER.info(<span class="hljs-string">&quot;===&gt; B 收到人脸事件:  &#123;&#125;&quot;</span>,((FaceEvent) event).getEventData());<br>    &#125;<span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span>(event <span class="hljs-keyword">instanceof</span> ArmEvent)&#123;<br>        <span class="hljs-type">ArmEvent</span> <span class="hljs-variable">armEvent</span> <span class="hljs-operator">=</span> (ArmEvent) event;<br>        LOGGER.info(<span class="hljs-string">&quot;===&gt; B 收到臂膀事件:  &#123;&#125;&quot;</span>,armEvent.getEventData());<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+<p><strong>注意事项</strong></p>
+<ul>
+<li><p>事件没要处理的监听器，就会被抛弃。</p>
+</li>
+<li><p>一个事件可以同时被多个监听处理类监听处理。</p>
+</li>
+<li><p>默认情况下事件是同步的，即事件被publish后会等待Listener的处理。如果发布事件处的业务存在事务，监听器处理也会在相同的事务中。</p>
+</li>
+<li><p>如果对于事件的处理不想受到影响，可以onApplicationEvent方法上加@Async支持异步或者在有@EventListener的注解方法上加上@Async。注：启动类上同时要加上@EnableAsync</p>
+</li>
+</ul>
+<p><strong>利用@TransactionalEventListener实现监听事件时的事务隔离</strong><br>很多时候，只有事务提交之后我们才会发布相应的事件处理其他逻辑，比如用户注册之后，发送邮件或者短信。这时候就可以用注解@TransactionalEventListener。</p>
+<p>@TransactionalEventListener和@EventListener都可以监听事件，但前者可以对发布事件和监听事件进行一些事务上的隔离。</p>
+<p>@TransactionalEventListener是对@EventListener的一个扩展，允许将事件的监听器绑定到事务的某个阶段。可以绑定到以下事务阶段：</p>
+<ul>
+<li>AFTER_COMMIT （默认），事务提交后</li>
+<li>AFTER_ROLLBACK ，事务回滚后</li>
+<li>AFTER_COMPLETION ，事务完成，包括提交后和回滚后</li>
+<li>BEFORE_COMMIT ，事务提交前****<br>@TransactionalEventListener指不和发布事件的方法在同一个事务内，发布事件的方法事务结束后才会执行本监听方法，监听逻辑内发生异常不会回滚发布事件方法的事务。</li>
+</ul>
+<p>@TransactionalEventListener有一个属性为fallbackExecution，默认为false，指发布事件的方法没有事务控制时，监听器不进行监听事件，此为默认情况！fallbackExecution=true，则指发布事件的方法没有事务控制时，监听方法仍可以监听事件进行处理。</p>
+<p><strong>整合邮件功能</strong></p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">dependency</span>&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">groupId</span>&gt;</span>org.apache.commons<span class="hljs-tag">&lt;/<span class="hljs-name">groupId</span>&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">artifactId</span>&gt;</span>commons-email<span class="hljs-tag">&lt;/<span class="hljs-name">artifactId</span>&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">version</span>&gt;</span>1.5<span class="hljs-tag">&lt;/<span class="hljs-name">version</span>&gt;</span><br><span class="hljs-tag">&lt;/<span class="hljs-name">dependency</span>&gt;</span><br><span class="hljs-tag">&lt;<span class="hljs-name">dependency</span>&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">groupId</span>&gt;</span>javax.mail<span class="hljs-tag">&lt;/<span class="hljs-name">groupId</span>&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">artifactId</span>&gt;</span>mail<span class="hljs-tag">&lt;/<span class="hljs-name">artifactId</span>&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">version</span>&gt;</span>1.4<span class="hljs-tag">&lt;/<span class="hljs-name">version</span>&gt;</span><br><span class="hljs-tag">&lt;/<span class="hljs-name">dependency</span>&gt;</span><br></code></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">import</span> lombok.Data;<br><br><span class="hljs-meta">@Data</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">EmailInfo</span> &#123;<br><br>    <span class="hljs-comment">/**</span><br><span class="hljs-comment">     * 邮件标题</span><br><span class="hljs-comment">     */</span><br>    <span class="hljs-keyword">private</span> String title;<br><br>    <span class="hljs-comment">/**</span><br><span class="hljs-comment">     * 邮件内容</span><br><span class="hljs-comment">     */</span><br>    <span class="hljs-keyword">private</span> String content;<br><br>    <span class="hljs-comment">/**</span><br><span class="hljs-comment">     * 邮件主题</span><br><span class="hljs-comment">     */</span><br>    <span class="hljs-keyword">private</span> String subject;<br><br>    <span class="hljs-comment">/**</span><br><span class="hljs-comment">     * 收件者账号</span><br><span class="hljs-comment">     */</span><br>    <span class="hljs-keyword">private</span> String destination;<br><br>    <span class="hljs-comment">/**</span><br><span class="hljs-comment">     * 附件地址</span><br><span class="hljs-comment">     */</span><br>    <span class="hljs-keyword">private</span> String attachmentPath;<br><br>    <span class="hljs-comment">/**</span><br><span class="hljs-comment">     * 附件描述</span><br><span class="hljs-comment">     */</span><br>    <span class="hljs-keyword">private</span> String attachmentDescription;<br><br><br>    <span class="hljs-comment">/**</span><br><span class="hljs-comment">     * 附件名称</span><br><span class="hljs-comment">     */</span><br>    <span class="hljs-keyword">private</span> String attachmentName;<br>&#125;<br></code></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">import</span> lombok.Data;<br><br><span class="hljs-keyword">import</span> java.io.Serializable;<br><span class="hljs-keyword">import</span> java.util.Date;<br><br><span class="hljs-meta">@Data</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">EmailServer</span> <span class="hljs-keyword">implements</span> <span class="hljs-title class_">Serializable</span> &#123;<br>    <span class="hljs-keyword">private</span> Long id;<br><br>    <span class="hljs-comment">/**</span><br><span class="hljs-comment">     * smtp地址</span><br><span class="hljs-comment">     */</span><br>    <span class="hljs-keyword">private</span> String smtpAddr;<br><br>    <span class="hljs-comment">/**</span><br><span class="hljs-comment">     * 服务器端口号</span><br><span class="hljs-comment">     */</span><br>    <span class="hljs-keyword">private</span> Integer mailPort;<br><br>    <span class="hljs-comment">/**</span><br><span class="hljs-comment">     * 邮箱登陆用户名</span><br><span class="hljs-comment">     */</span><br>    <span class="hljs-keyword">private</span> String userName;<br><br>    <span class="hljs-comment">/**</span><br><span class="hljs-comment">     * 第三方登陆授权码</span><br><span class="hljs-comment">     */</span><br>    <span class="hljs-keyword">private</span> String password;<br><br>    <span class="hljs-comment">/**</span><br><span class="hljs-comment">     * https是否开启(0:开启  1：关闭)</span><br><span class="hljs-comment">     */</span><br>    <span class="hljs-keyword">private</span> Integer sslFlag;<br><br>    <span class="hljs-comment">/**</span><br><span class="hljs-comment">     * 邮件发送时间的限制，单位毫秒</span><br><span class="hljs-comment">     */</span><br>    <span class="hljs-keyword">private</span> Long sendTime;<br><br>    <span class="hljs-comment">/**</span><br><span class="hljs-comment">     * 连接时间，单位毫秒</span><br><span class="hljs-comment">     */</span><br>    <span class="hljs-keyword">private</span> Long connectTime;<br><br>    <span class="hljs-comment">/**</span><br><span class="hljs-comment">     * 邮件接收时间限制，单位毫秒</span><br><span class="hljs-comment">     */</span><br>    <span class="hljs-keyword">private</span> Long receiveTime;<br><br>    <span class="hljs-comment">/**</span><br><span class="hljs-comment">     * 发送者账号</span><br><span class="hljs-comment">     */</span><br>    <span class="hljs-keyword">private</span> String senderAccount;<br><br>    <span class="hljs-comment">/**</span><br><span class="hljs-comment">     * 邮件最大发送值</span><br><span class="hljs-comment">     */</span><br>    <span class="hljs-keyword">private</span> Integer maxQuantity;<br><br>    <span class="hljs-comment">/**</span><br><span class="hljs-comment">     * 创建时间</span><br><span class="hljs-comment">     */</span><br>    <span class="hljs-keyword">private</span> Date createTime;<br><br>    <span class="hljs-comment">/**</span><br><span class="hljs-comment">     * 修改时间</span><br><span class="hljs-comment">     */</span><br>    <span class="hljs-keyword">private</span> Date modifyTime;<br><br>    <span class="hljs-comment">/**</span><br><span class="hljs-comment">     * 账户状态（0：启用，1：禁用）</span><br><span class="hljs-comment">     */</span><br>    <span class="hljs-keyword">private</span> Integer status;<br><br>    <span class="hljs-comment">/**</span><br><span class="hljs-comment">     * 描述</span><br><span class="hljs-comment">     */</span><br>    <span class="hljs-keyword">private</span> String remark;<br><br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-type">long</span> <span class="hljs-variable">serialVersionUID</span> <span class="hljs-operator">=</span> <span class="hljs-number">1L</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+<p><strong>定义Event</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">import</span> com.ruoyi.aiot.domain.email.EmailInfo;<br><span class="hljs-keyword">import</span> com.ruoyi.aiot.domain.email.EmailServer;<br><span class="hljs-keyword">import</span> org.springframework.context.ApplicationEvent;<br><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">SendSimpleEmailEvent</span> <span class="hljs-keyword">extends</span> <span class="hljs-title class_">ApplicationEvent</span> &#123;<br><br>    <span class="hljs-keyword">private</span> EmailServer emailServer;<br><br>    <span class="hljs-keyword">private</span> EmailInfo emailInfo;<br><br>    <span class="hljs-keyword">public</span> <span class="hljs-title function_">SendSimpleEmailEvent</span><span class="hljs-params">(Object source)</span> &#123;<br>        <span class="hljs-built_in">super</span>(source);<br>    &#125;<br><br>    <span class="hljs-keyword">public</span> <span class="hljs-title function_">SendSimpleEmailEvent</span><span class="hljs-params">(Object source, EmailServer emailServer, EmailInfo emailInfo)</span> &#123;<br>        <span class="hljs-built_in">super</span>(source);<br>        <span class="hljs-built_in">this</span>.emailServer = emailServer;<br>        <span class="hljs-built_in">this</span>.emailInfo = emailInfo;<br>    &#125;<br><br>    <span class="hljs-keyword">public</span> EmailServer <span class="hljs-title function_">getEmailServer</span><span class="hljs-params">()</span> &#123;<br>        <span class="hljs-keyword">return</span> emailServer;<br>    &#125;<br><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">setEmailServer</span><span class="hljs-params">(EmailServer emailServer)</span> &#123;<br>        <span class="hljs-built_in">this</span>.emailServer = emailServer;<br>    &#125;<br><br>    <span class="hljs-keyword">public</span> EmailInfo <span class="hljs-title function_">getEmailInfo</span><span class="hljs-params">()</span> &#123;<br>        <span class="hljs-keyword">return</span> emailInfo;<br>    &#125;<br><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">setEmailInfo</span><span class="hljs-params">(EmailInfo emailInfo)</span> &#123;<br>        <span class="hljs-built_in">this</span>.emailInfo = emailInfo;<br>    &#125;<br><br>&#125;<br></code></pre></td></tr></table></figure>
+<p><strong>发送Event</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">import</span> cn.hutool.json.JSONObject;<br><span class="hljs-keyword">import</span> com.ruoyi.aiot.domain.email.EmailInfo;<br><span class="hljs-keyword">import</span> com.ruoyi.aiot.domain.email.EmailServer;<br><span class="hljs-keyword">import</span> com.ruoyi.aiot.domain.event.SendAttachmentEmailEvent;<br><span class="hljs-keyword">import</span> com.ruoyi.aiot.domain.event.SendSimpleEmailEvent;<br><span class="hljs-keyword">import</span> com.ruoyi.common.utils.StringUtils;<br><span class="hljs-keyword">import</span> org.springframework.context.ApplicationEventPublisher;<br><span class="hljs-keyword">import</span> org.springframework.stereotype.Component;<br><br><span class="hljs-keyword">import</span> javax.annotation.Resource;<br><br><span class="hljs-meta">@Component</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">EmailHandler</span> <span class="hljs-keyword">implements</span> <span class="hljs-title class_">NotifyHandler</span>&#123;<br><br>    <span class="hljs-comment">//通知类型</span><br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> <span class="hljs-type">String</span> <span class="hljs-variable">type</span> <span class="hljs-operator">=</span> <span class="hljs-string">&quot;Email&quot;</span>;<br>    <span class="hljs-comment">//通知供应商</span><br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> <span class="hljs-type">String</span> <span class="hljs-variable">provider</span> <span class="hljs-operator">=</span> <span class="hljs-string">&quot;EmailProvider&quot;</span>;<br><br>    <span class="hljs-meta">@Resource</span><br>    <span class="hljs-keyword">private</span> ApplicationEventPublisher applicationEventPublisher;<br><br>    <span class="hljs-meta">@Override</span><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">initClient</span><span class="hljs-params">(JSONObject initMessage)</span> <span class="hljs-keyword">throws</span> Exception &#123;<br>    &#125;<br><br>    <span class="hljs-meta">@Override</span><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">SendMessage</span><span class="hljs-params">(JSONObject sendMessage)</span> &#123;<br>        <span class="hljs-type">EmailServer</span> <span class="hljs-variable">emailServer</span> <span class="hljs-operator">=</span> sendMessage.get(<span class="hljs-string">&quot;emailServer&quot;</span>, EmailServer.class);<br>        <span class="hljs-type">EmailInfo</span> <span class="hljs-variable">emailInfo</span> <span class="hljs-operator">=</span> sendMessage.get(<span class="hljs-string">&quot;emailInfo&quot;</span>, EmailInfo.class);<br><br>        <span class="hljs-keyword">if</span> (StringUtils.isEmpty(emailInfo.getAttachmentPath()))&#123;<br>            <span class="hljs-type">SendSimpleEmailEvent</span> <span class="hljs-variable">sendSimpleEmailEvent</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">SendSimpleEmailEvent</span>(<span class="hljs-built_in">this</span>, emailServer, emailInfo);<br>            applicationEventPublisher.publishEvent(sendSimpleEmailEvent);<br>        &#125;<br>        <span class="hljs-type">SendAttachmentEmailEvent</span> <span class="hljs-variable">sendAttachmentEmailEvent</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">SendAttachmentEmailEvent</span>(<span class="hljs-built_in">this</span>, emailServer, emailInfo);<br>        applicationEventPublisher.publishEvent(sendAttachmentEmailEvent);<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+<p><strong>监听</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">import</span> com.alibaba.fastjson2.JSON;<br><span class="hljs-keyword">import</span> com.ruoyi.aiot.domain.email.EmailInfo;<br><span class="hljs-keyword">import</span> com.ruoyi.aiot.domain.email.EmailServer;<br><span class="hljs-keyword">import</span> com.ruoyi.aiot.domain.event.SendAttachmentEmailEvent;<br><span class="hljs-keyword">import</span> com.ruoyi.aiot.domain.event.SendSimpleEmailEvent;<br><span class="hljs-keyword">import</span> com.ruoyi.common.utils.StringUtils;<br><span class="hljs-keyword">import</span> lombok.extern.slf4j.Slf4j;<br><span class="hljs-keyword">import</span> org.apache.commons.mail.*;<br><span class="hljs-keyword">import</span> org.springframework.context.event.EventListener;<br><span class="hljs-keyword">import</span> org.springframework.scheduling.annotation.Async;<br><span class="hljs-keyword">import</span> org.springframework.stereotype.Component;<br><br><span class="hljs-keyword">import</span> java.util.Date;<br><span class="hljs-keyword">import</span> java.util.HashMap;<br><span class="hljs-keyword">import</span> java.util.Map;<br><br><span class="hljs-meta">@Slf4j</span><br><span class="hljs-meta">@Component</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">MyEmilUtils</span> &#123;<br><br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-type">String</span> <span class="hljs-variable">CHARSET_UTF8</span> <span class="hljs-operator">=</span> <span class="hljs-string">&quot;UTF-8&quot;</span>;<br><br>    <span class="hljs-meta">@Async</span><br>    <span class="hljs-meta">@EventListener</span><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">pushSimpleEmail</span><span class="hljs-params">(SendSimpleEmailEvent sendSimpleEmailEvent)</span> &#123;<br>        <span class="hljs-type">EmailServer</span> <span class="hljs-variable">server</span> <span class="hljs-operator">=</span> sendSimpleEmailEvent.getEmailServer();<br>        <span class="hljs-type">EmailInfo</span> <span class="hljs-variable">emailInfo</span> <span class="hljs-operator">=</span> sendSimpleEmailEvent.getEmailInfo();<br><br>        log.info(<span class="hljs-string">&quot;发送邮件：&#123;&#125;，至邮件服务器：&#123;&#125;&quot;</span>, JSON.toJSONString(emailInfo), JSON.toJSONString(server));<br>        <span class="hljs-type">Email</span> <span class="hljs-variable">email</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">SimpleEmail</span>();<br>        email.setHostName(server.getSmtpAddr());<br>        email.setSmtpPort(server.getMailPort());<br>        <span class="hljs-comment">//用户名称和授权码</span><br>        email.setAuthentication(server.getUserName(), server.getPassword());<br>        email.setCharset(CHARSET_UTF8);<br>        <span class="hljs-keyword">try</span> &#123;<br>            email.addTo(emailInfo.getDestination());<br>            email.setFrom(server.getUserName(), server.getSenderAccount());<br>            email.setSubject(emailInfo.getSubject());<br>            email.setMsg(emailInfo.getContent());<br>            email.setSSLOnConnect(server.getSslFlag() == <span class="hljs-number">0</span>);<br>            Map&lt;String, String&gt; map = <span class="hljs-keyword">new</span> <span class="hljs-title class_">HashMap</span>&lt;&gt;();<br>            <span class="hljs-keyword">if</span> (!StringUtils.isEmpty(emailInfo.getTitle())) &#123;<br>                map.put(<span class="hljs-string">&quot;主题&quot;</span>, emailInfo.getTitle());<br>            &#125; <span class="hljs-keyword">else</span> &#123;<br>                map.put(<span class="hljs-string">&quot;主题&quot;</span>, emailInfo.getSubject());<br>            &#125;<br>            email.setHeaders(map);<br>            email.setSentDate(<span class="hljs-keyword">new</span> <span class="hljs-title class_">Date</span>());<br>            email.send();<br>            log.info(<span class="hljs-string">&quot;邮件：&#123;&#125;,发送成功&quot;</span>, JSON.toJSONString(emailInfo));<br>        &#125; <span class="hljs-keyword">catch</span> (EmailException e) &#123;<br>            log.info(<span class="hljs-string">&quot;邮件发送失败message: &#123;&#125;&quot;</span>, e.getMessage());<br>        &#125;<br>    &#125;<br><br>    <span class="hljs-meta">@Async</span><br>    <span class="hljs-meta">@EventListener</span><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">pushAttachmentEmail</span><span class="hljs-params">(SendAttachmentEmailEvent sendAttachmentEmailEvent)</span> &#123;<br>        <span class="hljs-type">EmailServer</span> <span class="hljs-variable">server</span> <span class="hljs-operator">=</span> sendAttachmentEmailEvent.getEmailServer();<br>        <span class="hljs-type">EmailInfo</span> <span class="hljs-variable">emailInfo</span> <span class="hljs-operator">=</span> sendAttachmentEmailEvent.getEmailInfo();<br><br>        log.info(<span class="hljs-string">&quot;发送带附件的邮件：&#123;&#125;，至邮件服务器：&#123;&#125;&quot;</span>, JSON.toJSONString(emailInfo), JSON.toJSONString(server));<br>        <span class="hljs-type">EmailAttachment</span> <span class="hljs-variable">attachment</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">EmailAttachment</span>();<br>        attachment.setDescription(emailInfo.getAttachmentDescription());<br>        attachment.setDisposition(EmailAttachment.ATTACHMENT);<br>        attachment.setName(emailInfo.getAttachmentName());<br>        attachment.setPath(emailInfo.getAttachmentPath());<br><br>        <span class="hljs-type">MultiPartEmail</span> <span class="hljs-variable">email</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">MultiPartEmail</span>();<br>        email.setHostName(server.getSmtpAddr());<br>        email.setSmtpPort(server.getMailPort());<br>        <span class="hljs-comment">//用户名称和授权码</span><br>        email.setAuthentication(server.getUserName(), server.getPassword());<br>        email.setCharset(CHARSET_UTF8);<br>        <span class="hljs-keyword">try</span> &#123;<br>            email.addTo(emailInfo.getDestination());<br>            <span class="hljs-keyword">if</span> (server.getSslFlag() == <span class="hljs-number">0</span>) &#123;<br>                email.setSSLOnConnect(<span class="hljs-literal">true</span>);<br>            &#125; <span class="hljs-keyword">else</span> &#123;<br>                email.setSSLOnConnect(<span class="hljs-literal">false</span>);<br>            &#125;<br>            email.attach(attachment);<br>            email.setFrom(server.getUserName(), server.getSenderAccount());<br>            email.setSubject(emailInfo.getSubject());<br>            email.setMsg(emailInfo.getContent());<br>            Map&lt;String, String&gt; map = <span class="hljs-keyword">new</span> <span class="hljs-title class_">HashMap</span>&lt;&gt;();<br>            map.put(<span class="hljs-string">&quot;主题&quot;</span>, emailInfo.getTitle());<br>            email.send();<br>            email.setHeaders(map);<br>            log.info(<span class="hljs-string">&quot;带附件的邮件发送成功：&#123;&#125;&quot;</span>, JSON.toJSONString(attachment));<br>        &#125; <span class="hljs-keyword">catch</span> (EmailException e) &#123;<br>            log.info(<span class="hljs-string">&quot;邮件发送失败：&#123;&#125;,message:&#123;&#125;&quot;</span>, e, JSON.toJSONString(attachment));<br>        &#125;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+<p><strong>集成阿里云发送短信</strong></p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs xml"><span class="hljs-comment">&lt;!-- aliyun sms SDK --&gt;</span><br>        <span class="hljs-tag">&lt;<span class="hljs-name">dependency</span>&gt;</span><br>            <span class="hljs-tag">&lt;<span class="hljs-name">groupId</span>&gt;</span>com.aliyun<span class="hljs-tag">&lt;/<span class="hljs-name">groupId</span>&gt;</span><br>            <span class="hljs-tag">&lt;<span class="hljs-name">artifactId</span>&gt;</span>aliyun-java-sdk-core<span class="hljs-tag">&lt;/<span class="hljs-name">artifactId</span>&gt;</span><br>            <span class="hljs-tag">&lt;<span class="hljs-name">version</span>&gt;</span>4.6.2<span class="hljs-tag">&lt;/<span class="hljs-name">version</span>&gt;</span><br>        <span class="hljs-tag">&lt;/<span class="hljs-name">dependency</span>&gt;</span><br><br>        <span class="hljs-tag">&lt;<span class="hljs-name">dependency</span>&gt;</span><br>            <span class="hljs-tag">&lt;<span class="hljs-name">groupId</span>&gt;</span>com.aliyun<span class="hljs-tag">&lt;/<span class="hljs-name">groupId</span>&gt;</span><br>            <span class="hljs-tag">&lt;<span class="hljs-name">artifactId</span>&gt;</span>tea-openapi<span class="hljs-tag">&lt;/<span class="hljs-name">artifactId</span>&gt;</span><br>            <span class="hljs-tag">&lt;<span class="hljs-name">version</span>&gt;</span>0.2.6<span class="hljs-tag">&lt;/<span class="hljs-name">version</span>&gt;</span><br>        <span class="hljs-tag">&lt;/<span class="hljs-name">dependency</span>&gt;</span><br><br>        <span class="hljs-tag">&lt;<span class="hljs-name">dependency</span>&gt;</span><br>            <span class="hljs-tag">&lt;<span class="hljs-name">groupId</span>&gt;</span>com.aliyun<span class="hljs-tag">&lt;/<span class="hljs-name">groupId</span>&gt;</span><br>            <span class="hljs-tag">&lt;<span class="hljs-name">artifactId</span>&gt;</span>dysmsapi20170525<span class="hljs-tag">&lt;/<span class="hljs-name">artifactId</span>&gt;</span><br>            <span class="hljs-tag">&lt;<span class="hljs-name">version</span>&gt;</span>2.0.21<span class="hljs-tag">&lt;/<span class="hljs-name">version</span>&gt;</span><br>        <span class="hljs-tag">&lt;/<span class="hljs-name">dependency</span>&gt;</span><br></code></pre></td></tr></table></figure>
+<p><strong>定义事件</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">import</span> lombok.Data;<br><br><span class="hljs-keyword">import</span> java.util.Map;<br><br><span class="hljs-meta">@Data</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">AliyunSmsInfo</span> &#123;<br><br>    <span class="hljs-keyword">private</span> String signName;<br><br>    <span class="hljs-keyword">private</span> String phoneNumbers;<br><br>    <span class="hljs-keyword">private</span> String templateCode;<br><br>&#125;<br></code></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">import</span> lombok.Data;<br><br><span class="hljs-meta">@Data</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">AliyunSmsServer</span> &#123;<br><br>    <span class="hljs-keyword">private</span> String accessKeyId;<br><br>    <span class="hljs-keyword">private</span> String accessKeySecret;<br><br>    <span class="hljs-keyword">private</span> String orginId;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">import</span> com.ruoyi.aiot.domain.aliyunSms.AliyunSmsInfo;<br><span class="hljs-keyword">import</span> com.ruoyi.aiot.domain.aliyunSms.AliyunSmsServer;<br><span class="hljs-keyword">import</span> lombok.Data;<br><span class="hljs-keyword">import</span> org.springframework.context.ApplicationEvent;<br><br><span class="hljs-keyword">import</span> java.time.Clock;<br><span class="hljs-keyword">import</span> java.util.Map;<br><br><span class="hljs-comment">/**</span><br><span class="hljs-comment"> * 定义监听事件</span><br><span class="hljs-comment"> * 通过ApplicationContextAware我们可以把系统中所有ApplicationEvent传播给系统中所有的ApplicationListener。</span><br><span class="hljs-comment"> * 因此，我们只需要构造好我们自己的ApplicationEvent和ApplicationListener，就可以在系统中实现相应的监听器。</span><br><span class="hljs-comment"> */</span><br><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">SendAliyunSmsEvent</span> <span class="hljs-keyword">extends</span> <span class="hljs-title class_">ApplicationEvent</span> &#123;<br><br>    <span class="hljs-keyword">private</span> AliyunSmsInfo aliyunSmsInfo;<br><br>    <span class="hljs-keyword">private</span> AliyunSmsServer aliyunSmsServer;<br><br>    <span class="hljs-keyword">private</span> Map aliyunSmsParams;<br><br>    <span class="hljs-keyword">public</span> <span class="hljs-title function_">SendAliyunSmsEvent</span><span class="hljs-params">(Object source, AliyunSmsServer aliyunSmsServer, AliyunSmsInfo aliyunSmsInfo ,Map map)</span> &#123;<br>        <span class="hljs-built_in">super</span>(source);<br>        <span class="hljs-built_in">this</span>.aliyunSmsInfo = aliyunSmsInfo;<br>        <span class="hljs-built_in">this</span>.aliyunSmsServer = aliyunSmsServer;<br>        <span class="hljs-built_in">this</span>.aliyunSmsParams = map;<br>    &#125;<br><br>    <span class="hljs-keyword">public</span> Map <span class="hljs-title function_">getAliyunSmsParams</span><span class="hljs-params">()</span> &#123;<br>        <span class="hljs-keyword">return</span> aliyunSmsParams;<br>    &#125;<br><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">setAliyunSmsParams</span><span class="hljs-params">(Map aliyunSmsParams)</span> &#123;<br>        <span class="hljs-built_in">this</span>.aliyunSmsParams = aliyunSmsParams;<br>    &#125;<br><br>    <span class="hljs-keyword">public</span> <span class="hljs-title function_">SendAliyunSmsEvent</span><span class="hljs-params">(Object source, Clock clock)</span> &#123;<br>        <span class="hljs-built_in">super</span>(source, clock);<br>    &#125;<br><br>    <span class="hljs-keyword">public</span> AliyunSmsInfo <span class="hljs-title function_">getAliyunSmsInfo</span><span class="hljs-params">()</span> &#123;<br>        <span class="hljs-keyword">return</span> aliyunSmsInfo;<br>    &#125;<br><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">setAliyunSmsInfo</span><span class="hljs-params">(AliyunSmsInfo aliyunSmsInfo)</span> &#123;<br>        <span class="hljs-built_in">this</span>.aliyunSmsInfo = aliyunSmsInfo;<br>    &#125;<br><br>    <span class="hljs-keyword">public</span> AliyunSmsServer <span class="hljs-title function_">getAliyunSmsServer</span><span class="hljs-params">()</span> &#123;<br>        <span class="hljs-keyword">return</span> aliyunSmsServer;<br>    &#125;<br><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">setAliyunSmsServer</span><span class="hljs-params">(AliyunSmsServer aliyunSmsServer)</span> &#123;<br>        <span class="hljs-built_in">this</span>.aliyunSmsServer = aliyunSmsServer;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">import</span> cn.hutool.json.JSONObject;<br><span class="hljs-keyword">import</span> com.ruoyi.aiot.domain.aliyunSms.AliyunSmsInfo;<br><span class="hljs-keyword">import</span> com.ruoyi.aiot.domain.aliyunSms.AliyunSmsServer;<br><span class="hljs-keyword">import</span> com.ruoyi.aiot.domain.email.EmailServer;<br><span class="hljs-keyword">import</span> com.ruoyi.aiot.domain.event.SendAliyunSmsEvent;<br><span class="hljs-keyword">import</span> org.springframework.context.ApplicationEvent;<br><span class="hljs-keyword">import</span> org.springframework.context.ApplicationEventPublisher;<br><span class="hljs-keyword">import</span> org.springframework.stereotype.Component;<br><br><span class="hljs-keyword">import</span> javax.annotation.Resource;<br><span class="hljs-keyword">import</span> javax.jws.Oneway;<br><span class="hljs-keyword">import</span> java.util.Map;<br><span class="hljs-meta">@Component</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">AliyunSmsHandler</span> <span class="hljs-keyword">implements</span> <span class="hljs-title class_">NotifyHandler</span>&#123;<br>    <span class="hljs-comment">//通知类型</span><br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> <span class="hljs-type">String</span> <span class="hljs-variable">type</span> <span class="hljs-operator">=</span> <span class="hljs-string">&quot;ShortMessage&quot;</span>;<br>    <span class="hljs-comment">//通知供应商</span><br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> <span class="hljs-type">String</span> <span class="hljs-variable">provider</span> <span class="hljs-operator">=</span> <span class="hljs-string">&quot;ShortMessageAlibabaServer&quot;</span>;<br><br>    <span class="hljs-meta">@Resource</span><br>    <span class="hljs-keyword">private</span> ApplicationEventPublisher applicationEventPublisher;<br><br>    <span class="hljs-meta">@Override</span><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">initClient</span><span class="hljs-params">(JSONObject initMessage)</span> <span class="hljs-keyword">throws</span> Exception &#123;<br>    &#125;<br>    <span class="hljs-meta">@Override</span><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">SendMessage</span><span class="hljs-params">(JSONObject sendMessage)</span> &#123;<br>        <span class="hljs-type">AliyunSmsServer</span> <span class="hljs-variable">server</span> <span class="hljs-operator">=</span> sendMessage.getBean(<span class="hljs-string">&quot;configuration&quot;</span>, AliyunSmsServer.class);<br>        <span class="hljs-type">AliyunSmsInfo</span> <span class="hljs-variable">info</span> <span class="hljs-operator">=</span> sendMessage.getBean(<span class="hljs-string">&quot;template&quot;</span>,AliyunSmsInfo.class);<br>        <span class="hljs-type">Object</span> <span class="hljs-variable">templateParam</span> <span class="hljs-operator">=</span> sendMessage.get(<span class="hljs-string">&quot;templateParam&quot;</span>);<br>        Map&lt;String,String&gt; map = <span class="hljs-keyword">new</span> <span class="hljs-title class_">JSONObject</span>(templateParam).toBean(Map.class);<br>        <span class="hljs-type">SendAliyunSmsEvent</span> <span class="hljs-variable">sendAliyunSmsEvent</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">SendAliyunSmsEvent</span>(<span class="hljs-built_in">this</span>, server, info, map);<br>        applicationEventPublisher.publishEvent(sendAliyunSmsEvent);<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">import</span> cn.hutool.json.JSONObject;<br><span class="hljs-keyword">import</span> com.aliyun.dysmsapi20170525.models.SendSmsResponse;<br><span class="hljs-keyword">import</span> com.aliyun.tea.TeaException;<br><span class="hljs-keyword">import</span> com.ruoyi.common.exception.ServiceException;<br><span class="hljs-keyword">import</span> lombok.NonNull;<br><span class="hljs-keyword">import</span> org.slf4j.Logger;<br><span class="hljs-keyword">import</span> org.slf4j.LoggerFactory;<br><br><span class="hljs-keyword">import</span> java.util.Map;<br><br><span class="hljs-comment">/**</span><br><span class="hljs-comment"> * 阿里云异步短信工具类</span><br><span class="hljs-comment"> * <span class="hljs-doctag">@author</span> yecao</span><br><span class="hljs-comment"> */</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">AliyunSmsUtils</span> &#123;<br><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-type">Logger</span> <span class="hljs-variable">log</span> <span class="hljs-operator">=</span> LoggerFactory.getLogger(AliyunSmsUtils.class);<br><br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">volatile</span> com.aliyun.dysmsapi20170525.Client instance;<br><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">initClient</span><span class="hljs-params">(<span class="hljs-meta">@NonNull</span> String accessKeyId, <span class="hljs-meta">@NonNull</span> String accessKeySecret)</span> <span class="hljs-keyword">throws</span> Exception &#123;<br>        <span class="hljs-keyword">if</span> (<span class="hljs-literal">null</span> == instance)&#123;<br>            <span class="hljs-keyword">synchronized</span> (AliyunSmsUtils.class)&#123;<br>                <span class="hljs-keyword">if</span> (<span class="hljs-literal">null</span> == instance)&#123;<br>                    com.aliyun.teaopenapi.models.<span class="hljs-type">Config</span> <span class="hljs-variable">config</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">com</span>.aliyun.teaopenapi.models.Config()<br>                            <span class="hljs-comment">// 您的 AccessKey ID</span><br>                            .setAccessKeyId(accessKeyId)<br>                            <span class="hljs-comment">// 您的 AccessKey Secret</span><br>                            .setAccessKeySecret(accessKeySecret);<br>                    <span class="hljs-comment">// 访问的域名</span><br>                    config.endpoint = <span class="hljs-string">&quot;dysmsapi.aliyuncs.com&quot;</span>;<br>                    instance = <span class="hljs-keyword">new</span> <span class="hljs-title class_">com</span>.aliyun.dysmsapi20170525.Client(config);<br>                &#125;<br>            &#125;<br>        &#125;<br>    &#125;<br><br><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">sendSms</span><span class="hljs-params">(<span class="hljs-meta">@NonNull</span> String signName, <span class="hljs-meta">@NonNull</span> String phoneNumbers, <span class="hljs-meta">@NonNull</span> String templateCode,</span><br><span class="hljs-params">                               <span class="hljs-meta">@NonNull</span> Map templateParam)</span> &#123;<br>        com.aliyun.dysmsapi20170525.models.<span class="hljs-type">SendSmsRequest</span> <span class="hljs-variable">sendSmsRequest</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">com</span>.aliyun.dysmsapi20170525.models.SendSmsRequest();<br>        sendSmsRequest.setPhoneNumbers(phoneNumbers);<br>        sendSmsRequest.setTemplateCode(templateCode);<br>        sendSmsRequest.setTemplateParam(<span class="hljs-keyword">new</span> <span class="hljs-title class_">JSONObject</span>(templateParam).toString());<br>        sendSmsRequest.setSignName(signName);<br>        com.aliyun.teautil.models.<span class="hljs-type">RuntimeOptions</span> <span class="hljs-variable">runtime</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">com</span>.aliyun.teautil.models.RuntimeOptions();<br>        <span class="hljs-keyword">try</span> &#123;<br>            <span class="hljs-comment">// 复制代码运行请自行打印 API 的返回值</span><br>            <span class="hljs-type">SendSmsResponse</span> <span class="hljs-variable">sendSmsResponse</span> <span class="hljs-operator">=</span> instance.sendSmsWithOptions(sendSmsRequest, runtime);<br>            log.info(<span class="hljs-string">&quot;消息已发送至：&#123;&#125;，响应信息：&#123;&#125;&quot;</span>,phoneNumbers,sendSmsResponse.getBody().getMessage());<br>            <span class="hljs-keyword">if</span> (!<span class="hljs-string">&quot;OK&quot;</span>.equals(sendSmsResponse.getBody().getMessage()))&#123;<br>                <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">ServiceException</span>(sendSmsResponse.getBody().getMessage());<br>            &#125;<br>        &#125; <span class="hljs-keyword">catch</span> (TeaException error) &#123;<br>            <span class="hljs-comment">// 如有需要，请打印 error</span><br>            com.aliyun.teautil.Common.assertAsString(error.message);<br>        &#125; <span class="hljs-keyword">catch</span> (Exception errors) &#123;<br>            <span class="hljs-type">TeaException</span> <span class="hljs-variable">error</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">TeaException</span>(errors.getMessage(), errors);<br>            <span class="hljs-comment">// 如有需要，请打印 error</span><br>            com.aliyun.teautil.Common.assertAsString(error.message);<br>            <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">ServiceException</span>(error.message);<br>        &#125;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">import</span> com.ruoyi.aiot.domain.aliyunSms.AliyunSmsInfo;<br><span class="hljs-keyword">import</span> com.ruoyi.aiot.domain.aliyunSms.AliyunSmsServer;<br><span class="hljs-keyword">import</span> com.ruoyi.aiot.domain.event.SendAliyunSmsEvent;<br><span class="hljs-keyword">import</span> lombok.extern.slf4j.Slf4j;<br><span class="hljs-keyword">import</span> org.springframework.context.event.EventListener;<br><span class="hljs-keyword">import</span> org.springframework.scheduling.annotation.Async;<br><span class="hljs-keyword">import</span> org.springframework.stereotype.Component;<br><br><span class="hljs-keyword">import</span> java.util.Map;<br><span class="hljs-meta">@Slf4j</span><br><span class="hljs-meta">@Component</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">MyAliyunSmsUtils</span> &#123;<br>    <span class="hljs-meta">@Async</span><br>    <span class="hljs-meta">@EventListener</span><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">sendAliyunSms</span><span class="hljs-params">(SendAliyunSmsEvent sendAliyunSmsEvent)</span>&#123;<br>        <span class="hljs-type">AliyunSmsServer</span> <span class="hljs-variable">aliyunSmsServer</span> <span class="hljs-operator">=</span> sendAliyunSmsEvent.getAliyunSmsServer();<br>        <span class="hljs-type">AliyunSmsInfo</span> <span class="hljs-variable">aliyunSmsInfo</span> <span class="hljs-operator">=</span> sendAliyunSmsEvent.getAliyunSmsInfo();<br>        <span class="hljs-type">Map</span> <span class="hljs-variable">aliyunSmsParams</span> <span class="hljs-operator">=</span> sendAliyunSmsEvent.getAliyunSmsParams();<br>        <span class="hljs-keyword">try</span> &#123;<br>            AliyunSmsUtils.initClient(aliyunSmsServer.getAccessKeyId(),aliyunSmsServer.getAccessKeySecret());<br>            AliyunSmsUtils.sendSms(aliyunSmsInfo.getSignName(),<br>                    aliyunSmsInfo.getPhoneNumbers(),<br>                    aliyunSmsInfo.getTemplateCode(),<br>                    aliyunSmsParams);<br>        &#125; <span class="hljs-keyword">catch</span> (Exception e) &#123;<br>            e.printStackTrace();<br>        &#125;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+            </div>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                  <div class="post-meta mr-3">
+                    <i class="iconfont icon-category"></i>
+                    
+                      <a class="hover-with-bg" href="/categories/%E5%90%8E%E7%AB%AF/">后端</a>
+                    
+                  </div>
+                
+                
+                  <div class="post-meta">
+                    <i class="iconfont icon-tags"></i>
+                    
+                      <a class="hover-with-bg" href="/tags/java%E9%AB%98%E9%98%B6/">java高阶</a>
+                    
+                  </div>
+                
+              </div>
+              
+                <p class="note note-warning">
+                  
+                    本博客所有文章除特别声明外，均采用 <a target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！
+                  
+                </p>
+              
+              
+                <div class="post-prevnext">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2022/11/09/OS-%E7%BA%BF%E7%A8%8B/">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">OS--线程</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2022/11/05/%E6%9C%80%E5%BC%BA%E5%88%86%E5%B8%83%E5%BC%8F%E5%B7%A5%E5%85%B7Redisson/">
+                        <span class="hidden-mobile">最强分布式工具Redisson</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+              <!-- Comments -->
+              <article class="comments" id="comments" lazyload>
+                
+                  
+                
+                
+  <div id="valine"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#valine', function() {
+      Fluid.utils.createScript('https://cdn.jsdelivr.net/npm/valine@1/dist/Valine.min.js', function() {
+        var options = Object.assign(
+          {"appId":"nGD612Gu0HScFjNTtkQ975DQ-gzGzoHsz","appKey":"uQWFCWpfdpmUcF3iVKDcak3s","path":"window.location.pathname","placeholder":"说点什么","avatar":"retro","meta":["nick","mail","link"],"requiredFields":[],"pageSize":10,"lang":"zh-CN","highlight":false,"recordIP":false,"serverURLs":"","emojiCDN":null,"emojiMaps":null,"enableQQ":false},
+          {
+            el: "#valine",
+            path: window.location.pathname
+          }
+        )
+        new Valine(options);
+        Fluid.utils.waitElementVisible('#valine .vcontent', () => {
+          Fluid.plugins.initFancyBox('#valine .vcontent img:not(.vemoji)');
+        })
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+              </article>
+            
+          </article>
+        </div>
+      </div>
+    </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+      </div>
+    
+  </div>
+</div>
+
+<!-- Custom -->
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+
+    
+  </main>
+
+  <footer class="text-center mt-5 py-3">
+  <div class="footer-content">
+     <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+  </div>
+  
+  <div class="statistics">
+    
+    
+
+    
+      
+        <!-- LeanCloud 统计PV -->
+        <span id="leancloud-site-pv-container" style="display: none">
+            总访问量 
+            <span id="leancloud-site-pv"></span>
+             次
+          </span>
+      
+      
+        <!-- LeanCloud 统计UV -->
+        <span id="leancloud-site-uv-container" style="display: none">
+            总访客数 
+            <span id="leancloud-site-uv"></span>
+             人
+          </span>
+      
+
+    
+  </div>
+
+
+  
+
+  
+</footer>
+
+
+  <!-- SCRIPTS -->
+  
+  <script  src="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js" ></script>
+<script  src="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+<!-- Plugins -->
+
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+  
+
+
+
+  
+    <script  src="https://cdn.jsdelivr.net/npm/tocbot@4/dist/tocbot.min.js" ></script>
+  
+  
+    <script  src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.js" ></script>
+  
+  
+    <script  src="https://cdn.jsdelivr.net/npm/anchor-js@4/anchor.min.js" ></script>
+  
+  
+    <script defer src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js" ></script>
+  
+
+
+
+
+  <script defer src="/js/leancloud.js" ></script>
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/typed.js@2/lib/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var title = document.getElementById('subtitle').title;
+      
+        typing(title);
+      
+    })(window, document);
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+
+
+<!-- 主题的启动项 保持在最底部 -->
+<script  src="/js/boot.js" ></script>
+
+
+</body>
+</html>

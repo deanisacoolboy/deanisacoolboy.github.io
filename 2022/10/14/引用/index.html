@@ -1,0 +1,610 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/siteicon.jpg">
+  <link rel="icon" href="/img/siteicon.jpg">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="John Doe">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="强、弱引用强引用就是我们经常使用的引用，其写法如下 1StringBuffer buffer &#x3D; new StringBuffer();  这句话的意思是：  通过new StringBuffer创建了一个对象并在内存中开辟了一段存储空间 创建一个StringBuffer创建一个变量buffer并且指向new StringBuffer 我们可以通过buffer来使用new 的 StringBuff">
+<meta property="og:type" content="article">
+<meta property="og:title" content="引用">
+<meta property="og:url" content="http://example.com/2022/10/14/%E5%BC%95%E7%94%A8/index.html">
+<meta property="og:site_name" content="野草技术社区">
+<meta property="og:description" content="强、弱引用强引用就是我们经常使用的引用，其写法如下 1StringBuffer buffer &#x3D; new StringBuffer();  这句话的意思是：  通过new StringBuffer创建了一个对象并在内存中开辟了一段存储空间 创建一个StringBuffer创建一个变量buffer并且指向new StringBuffer 我们可以通过buffer来使用new 的 StringBuff">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="d:/note/assets/image-20221002204130186.png">
+<meta property="article:published_time" content="2022-10-14T13:41:46.000Z">
+<meta property="article:modified_time" content="2022-10-14T13:42:54.578Z">
+<meta property="article:author" content="John Doe">
+<meta property="article:tag" content="后端">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="d:/note/assets/image-20221002204130186.png">
+  
+  
+  <title>引用 - 野草技术社区</title>
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/css/bootstrap.min.css" />
+
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@4/github-markdown.min.css" />
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hint.css@2/hint.min.css" />
+
+  
+    
+    
+      
+      <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@10/styles/github-gist.min.css" />
+    
+  
+
+  
+    <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.css" />
+  
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_ba1fz6golrf.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.8.14","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"copy_btn":true,"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":"nGD612Gu0HScFjNTtkQ975DQ-gzGzoHsz","app_key":"uQWFCWpfdpmUcF3iVKDcak3s","server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+<meta name="generator" content="Hexo 5.4.1"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>野草技术社区</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="banner" id="banner" parallax=true
+         style="background: url('/img/bg01.jpg') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="page-header text-center fade-in-up">
+            <span class="h2" id="subtitle" title="引用">
+              
+            </span>
+
+            
+              <div class="mt-3">
+  
+  
+    <span class="post-meta">
+      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+      <time datetime="2022-10-14 21:41" pubdate>
+        2022年10月14日 晚上
+      </time>
+    </span>
+  
+</div>
+
+<div class="mt-1">
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      7k 字
+    </span>
+  
+
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      59 分钟
+    </span>
+  
+
+  
+  
+    
+      <!-- LeanCloud 统计文章PV -->
+      <span id="leancloud-page-views-container" class="post-meta" style="display: none">
+        <i class="iconfont icon-eye" aria-hidden="true"></i>
+        <span id="leancloud-page-views"></span> 次
+      </span>
+    
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">引用</h1>
+            
+            <div class="markdown-body">
+              <h1 id="强、弱引用"><a href="#强、弱引用" class="headerlink" title="强、弱引用"></a>强、弱引用</h1><p>强引用就是我们经常使用的引用，其写法如下</p>
+<figure class="highlight java"><table><tr><td class="gutter"><div class="code-wrapper"><pre><span class="line">1</span><br></pre></div></td><td class="code"><pre><code class="hljs java"><span class="hljs-type">StringBuffer</span> <span class="hljs-variable">buffer</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">StringBuffer</span>();<br></code></pre></td></tr></table></figure>
+
+<p>这句话的意思是：</p>
+<ol>
+<li>通过new StringBuffer创建了一个对象并在内存中开辟了一段存储空间</li>
+<li>创建一个StringBuffer创建一个变量buffer并且指向new StringBuffer</li>
+<li>我们可以通过buffer来使用new 的 StringBuffer</li>
+</ol>
+<p>这时我们称buffer是new StringBuiffer的强引用，强引用是不会被jvm回收的</p>
+<blockquote>
+<p>强引用是造成内存泄露的主要原因之一，为什么这么说呢？因为有强引用指向new StringBuffer所以Java认为他还在被使用，所以不会给我回收掉。经常使用idea做开发的同学可能会注意到，idea有时会给我们一个警告在变量上，说 xxx never be used,某某变量从未被使用过。这时候并不会被回收掉，但是会造成内存浪费。当引用被置空时，GC运行时才会被回收掉，因此想要被回收需要满足什么条件呢</p>
+</blockquote>
+<ol>
+<li><p>没有任何引用指向它</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-type">Object</span> <span class="hljs-variable">c</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Car</span>();<br>c=<span class="hljs-literal">null</span>;<br></code></pre></td></tr></table></figure></li>
+<li><p>GC运行时</p>
+</li>
+</ol>
+<p>但是手动置空是非常繁琐且不符合常理的，对于简单的情况，这些是不需要程序员来做的，因为在Java中，对于简单对象，当调用他的方法执行完毕后，指向它的引用就会被从stack中popup,所以在下一次GC运行时就可以把它回收掉。可以使用<code>java -verbose:gc</code>来观察gc的行为。怎么知道调用他的方法执行完了嘛，有一个计数器。</p>
+<p>但是也有特殊情况，当使用cache的时候，由于cache是程序行所需要的，那么程序只要在运行cache就不应该被GC回收掉，那么随着程序的运行这样的object会越来越多，这些Object的回收就要靠程序员自己来维护了。所以这时候引入了弱引用 <code>weak reference</code>相对于前面举例中的strong reference:</p>
+<h2 id="weak-reference"><a href="#weak-reference" class="headerlink" title="weak reference"></a>weak reference</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-type">Object</span> <span class="hljs-variable">c</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Car</span>(); <span class="hljs-comment">//只要c还指向car object, car object就不会被回收</span><br></code></pre></td></tr></table></figure>
+
+<p>当一个对象只被weak reference指向时而没有任何Strong reference 如果GC运行，那么这个对象就会被回收掉。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs Java">WeakRefernce&lt;Car&gt; weakCar = <span class="hljs-keyword">new</span> <span class="hljs-title class_">WeakReference</span>&lt;Car&gt;(car);<br></code></pre></td></tr></table></figure>
+
+<p>当需要获得weak reference 引用的Object时，首先需要判断是否被回收掉</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs java">weakCar.get();<br></code></pre></td></tr></table></figure>
+
+<p>如果为空说明weakCar指向的对象已经被回收掉了。</p>
+<p>看一个例子：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">package</span> weakreference; <br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">Car</span> &#123;<br>	<span class="hljs-keyword">private</span> <span class="hljs-type">double</span> price;<br>	<span class="hljs-keyword">private</span> String colour;<br>	<br>	<span class="hljs-keyword">public</span> <span class="hljs-title function_">Car</span><span class="hljs-params">(<span class="hljs-type">double</span> price, String colour)</span>&#123;<br>		<span class="hljs-built_in">this</span>.price = price;<br>		<span class="hljs-built_in">this</span>.colour = colour;<br>	&#125;<br>	<br>	<span class="hljs-keyword">public</span> <span class="hljs-type">double</span> <span class="hljs-title function_">getPrice</span><span class="hljs-params">()</span> &#123;<br>		<span class="hljs-keyword">return</span> price;<br>	&#125;<br>	<span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">setPrice</span><span class="hljs-params">(<span class="hljs-type">double</span> price)</span> &#123;<br>		<span class="hljs-built_in">this</span>.price = price;<br>	&#125;<br>	<span class="hljs-keyword">public</span> String <span class="hljs-title function_">getColour</span><span class="hljs-params">()</span> &#123;<br>		<span class="hljs-keyword">return</span> colour;<br>	&#125;<br>	<span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">setColour</span><span class="hljs-params">(String colour)</span> &#123;<br>		<span class="hljs-built_in">this</span>.colour = colour;<br>	&#125;<br>	<br>	<span class="hljs-keyword">public</span> String <span class="hljs-title function_">toString</span><span class="hljs-params">()</span>&#123;<br>		<span class="hljs-keyword">return</span> colour +<span class="hljs-string">&quot;car costs $&quot;</span>+price;<br>	&#125;<br>	<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">package</span> weakreference;<br><br><span class="hljs-keyword">import</span> java.lang.ref.WeakReference; <span class="hljs-comment">/** * <span class="hljs-doctag">@author</span> wison */</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">TestWeakReference</span> &#123;<br><br>	<span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">main</span><span class="hljs-params">(String[] args)</span> &#123;<br>		<br>		<span class="hljs-type">Car</span> <span class="hljs-variable">car</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Car</span>(<span class="hljs-number">22000</span>,<span class="hljs-string">&quot;silver&quot;</span>);<br>		WeakReference&lt;Car&gt; weakCar = <span class="hljs-keyword">new</span> <span class="hljs-title class_">WeakReference</span>&lt;Car&gt;(car);<br>		<span class="hljs-type">int</span> i=<span class="hljs-number">0</span>;<br>		<span class="hljs-keyword">while</span>(<span class="hljs-literal">true</span>)&#123;<br>			<span class="hljs-keyword">if</span>(weakCar.get()!=<span class="hljs-literal">null</span>)&#123;<br>				i++;<br>				System.out.println(<span class="hljs-string">&quot;Object is alive for &quot;</span>+i+<span class="hljs-string">&quot; loops - &quot;</span>+weakCar);<br>			&#125;<span class="hljs-keyword">else</span>&#123;<br>				System.out.println(<span class="hljs-string">&quot;Object has been collected.&quot;</span>);<br>				<span class="hljs-keyword">break</span>;<br>			&#125;<br>		&#125;<br>	&#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>在这段代码执行一段时间后，会输出<code>Object has been collected.</code>说明weak reference已经被回收了，值得注意的即使有car指向对象，且是强引用，weak reference指向的对象还是被回收了，这是因为进入while循环后，Java发现car再没有被使用过了，所以进行了优化（置空？）将代码修改一下;</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">package</span> weakreference;<br><br><span class="hljs-keyword">import</span> java.lang.ref.WeakReference; <span class="hljs-comment">/** * <span class="hljs-doctag">@author</span> wison */</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">TestWeakReference</span> &#123;<br><br>	<span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">main</span><span class="hljs-params">(String[] args)</span> &#123;<br>		<br>		<span class="hljs-type">Car</span> <span class="hljs-variable">car</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Car</span>(<span class="hljs-number">22000</span>,<span class="hljs-string">&quot;silver&quot;</span>);<br>		WeakReference&lt;Car&gt; weakCar = <span class="hljs-keyword">new</span> <span class="hljs-title class_">WeakReference</span>&lt;Car&gt;(car);<br>		<br>		<span class="hljs-type">int</span> i=<span class="hljs-number">0</span>;<br>		<br>		<span class="hljs-keyword">while</span>(<span class="hljs-literal">true</span>)&#123;<br>			System.out.println(<span class="hljs-string">&quot;here is the strong reference &#x27;car&#x27; &quot;</span>+car);<br>			<span class="hljs-keyword">if</span>(weakCar.get()!=<span class="hljs-literal">null</span>)&#123;<br>				i++;<br>				System.out.println(<span class="hljs-string">&quot;Object is alive for &quot;</span>+i+<span class="hljs-string">&quot; loops - &quot;</span>+weakCar);<br>			&#125;<span class="hljs-keyword">else</span>&#123;<br>				System.out.println(<span class="hljs-string">&quot;Object has been collected.&quot;</span>);<br>				<span class="hljs-keyword">break</span>;<br>			&#125;<br>		&#125;<br>	&#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>这时候weak reference指向的就不会被回收，因为他的一个strong reference被使用了。</p>
+<blockquote>
+<p>weak reference的一个特点就是它何时被回收是不确定的，因为这是由于GC的不确定性决定的。所以一般用weak reference引用的对象是有价值被cache的，而且很容易被重新构建，且很消耗内存的对象</p>
+</blockquote>
+<h2 id="reference-queen"><a href="#reference-queen" class="headerlink" title="reference queen"></a>reference queen</h2><p>在weak reference指向的对象被回收后，weak reference本身也没什么用了，Java提供了一个reference queen来保存那些所指向的对象已经被回收了的reference，用法是在定义WeakReference的时候将一个ReferenceQueen的对象作为参数传入构造函数</p>
+<h2 id="softreference"><a href="#softreference" class="headerlink" title="softreference"></a>softreference</h2><p>soft reference和weak reference一样，但是在被GC回收的时候多了一个条件，当内存不足时，soft reference指向的object才会被回收，soft reference比weak reference更适合做cache object的reference，因为它尽可能的retain cached objects减少重建他们的消耗  </p>
+<h2 id="Autowried-Map"><a href="#Autowried-Map" class="headerlink" title="Autowried Map"></a>Autowried Map</h2><p>spring boot的自动注入大家知道吧</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-meta">@Autowried</span><br><span class="hljs-keyword">private</span> Map&lt;String, UserService&gt; map; <span class="hljs-comment">// UserService用@Component注解标注</span><br></code></pre></td></tr></table></figure>
+
+<p>这种注入方式不知道大家有没有用过，通过这种方式会把所有实例化的UserService注入到这个Map中，然后key为这个这个Bean的id或者name。</p>
+<p>那么问题来了，现在这些实例化的Bean被存储到了map里面，他的key是这个Bean的name,如果这个Bean被销毁了，也就是不需要了，但是这时候这个map里面仍然存着他的相关数据，这样可能就会造成内存泄漏。</p>
+<h2 id="ThreadLocal"><a href="#ThreadLocal" class="headerlink" title="ThreadLocal"></a>ThreadLocal</h2><p>我们知道每个线程都有自己的私有变量，线程在操作的时候他不能直接操作元数据，他是拷贝一份到自己这里来，然后再来操作的。ThreadLocal就是用来存放这个线程的数据的，ThreadLocal在项目中的应用通常用来存储当前登陆者的个人信息，在数据库连接中用来存放session。</p>
+<p>怎么存储的呢？</p>
+<h3 id="ThreadLocalMap"><a href="#ThreadLocalMap" class="headerlink" title="ThreadLocalMap"></a>ThreadLocalMap</h3><p>ThreadLocal内部有一个静态内部类ThreadLocalMap，里面定义了Entry来保存数据，而且继承的是弱引用。在Entry的使用ThreadLocal来作为Map的key。</p>
+<p>那么问题来了，线程是有他的生命周期的，在它用完后他被销毁了也就是没有这个线程了，那么他的id啥的都没了，ThreadLocalMap又是使用线程作为key的，那现在key都没了，我们就没办法来拿到这个map里面的value了，这也就造成了内存的泄漏。</p>
+<p>那么ThreadLocal是怎么解决这个问题的呢</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">/**</span><br><span class="hljs-comment">     * ThreadLocalMap is a customized hash map suitable only for</span><br><span class="hljs-comment">     * maintaining thread local values. No operations are exported</span><br><span class="hljs-comment">     * outside of the ThreadLocal class. The class is package private to</span><br><span class="hljs-comment">     * allow declaration of fields in class Thread.  To help deal with</span><br><span class="hljs-comment">     * very large and long-lived usages, the hash table entries use</span><br><span class="hljs-comment">     * WeakReferences for keys. However, since reference queues are not</span><br><span class="hljs-comment">     * used, stale entries are guaranteed to be removed only when</span><br><span class="hljs-comment">     * the table starts running out of space.</span><br><span class="hljs-comment">     */</span><br><span class="hljs-keyword">static</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">ThreadLocalMap</span> &#123;<br>    <span class="hljs-comment">/**</span><br><span class="hljs-comment">         * The entries in this hash map extend WeakReference, using</span><br><span class="hljs-comment">         * its main ref field as the key (which is always a</span><br><span class="hljs-comment">         * ThreadLocal object).  Note that null keys (i.e. entry.get()</span><br><span class="hljs-comment">         * == null) mean that the key is no longer referenced, so the</span><br><span class="hljs-comment">         * entry can be expunged from table.  Such entries are referred to</span><br><span class="hljs-comment">         * as &quot;stale entries&quot; in the code that follows.</span><br><span class="hljs-comment">         */</span><br>    <span class="hljs-keyword">static</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">Entry</span> <span class="hljs-keyword">extends</span> <span class="hljs-title class_">WeakReference</span>&lt;ThreadLocal&lt;?&gt;&gt; &#123;<br>            <span class="hljs-comment">/** The value associated with this ThreadLocal. */</span><br>            Object value;<br><br>            Entry(ThreadLocal&lt;?&gt; k, Object v) &#123;<br>                <span class="hljs-built_in">super</span>(k);<br>                value = v;<br>            &#125;<br>        &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>注意这一行注释</p>
+<blockquote>
+<p>To help deal with very large and long-lived usages, the hash table entries use WeakReferences for keys.</p>
+</blockquote>
+<p>下面研究一下WeakReferences这个玩意</p>
+<h3 id="WeakReferences"><a href="#WeakReferences" class="headerlink" title="WeakReferences"></a>WeakReferences</h3><p>WeakReferences如字面意思，弱引用。当一个对象仅仅被weak references指向时，没有任何strong references指向的时候，这是会被GC回收掉不管当前的内存空间是否足够。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">WeakReference</span>&lt;T&gt; <span class="hljs-keyword">extends</span> <span class="hljs-title class_">Reference</span>&lt;T&gt; &#123;<br>    <span class="hljs-keyword">public</span> <span class="hljs-title function_">WeakReference</span><span class="hljs-params">(T referent)</span> &#123;<br>        <span class="hljs-built_in">super</span>(referent);<br>    &#125;<br><br>    <span class="hljs-keyword">public</span> <span class="hljs-title function_">WeakReference</span><span class="hljs-params">(T referent, ReferenceQueue&lt;? <span class="hljs-built_in">super</span> T&gt; q)</span> &#123;<br>        <span class="hljs-built_in">super</span>(referent, q);<br>    &#125;<br><br>&#125;<br></code></pre></td></tr></table></figure>
+
+<ul>
+<li><p>WeakReference(T referent)：referent就是被弱引用的对象（注意区分弱引用对象和被弱引用的对应，弱引用对象是指WeakReference的实例或者其子类的实例），比如有一个Apple实例apple，可以如下使用，并且通过get()方法来获取apple引用。也可以再创建一个继承WeakReference的类来对Apple进行弱引用，下面就会使用这种方式。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs java">WeakReference&lt;Apple&gt; appleWeakReference = <span class="hljs-keyword">new</span> <span class="hljs-title class_">WeakReference</span>&lt;&gt;(apple);<br><span class="hljs-type">Apple</span> <span class="hljs-variable">apple2</span> <span class="hljs-operator">=</span> appleWeakReference.get();<br></code></pre></td></tr></table></figure></li>
+<li><p>WeakReference(T referent, ReferenceQueue&lt;? super T&gt; q)：与上面的构造方法比较，多了个ReferenceQueue，在对象被回收后，会把弱引用对象，也就是WeakReference对象或者其子类的对象，放入队列ReferenceQueue中，注意不是被弱引用的对象，被弱引用的对象已经被回收了.</p>
+</li>
+</ul>
+<h3 id="ThreadLocal-和-ThreadLocalMap-是什么？"><a href="#ThreadLocal-和-ThreadLocalMap-是什么？" class="headerlink" title="ThreadLocal 和 ThreadLocalMap 是什么？"></a><strong>ThreadLocal 和 ThreadLocalMap 是什么？</strong></h3><ol>
+<li>ThreadLocalMap是用来存储Thread的数据的</li>
+<li>ThreadLocalMap是ThreadLocal的一个静态内部类</li>
+<li>ThreadLocal是操作ThreadLocalMap的一个工具，通过ThreadLocal可以将一些对象保存到线程上实现同一线程不同方法之间共享</li>
+</ol>
+<h3 id="Thread、ThreadLocal-与-ThreadLocalMap-之间的关系"><a href="#Thread、ThreadLocal-与-ThreadLocalMap-之间的关系" class="headerlink" title="Thread、ThreadLocal 与 ThreadLocalMap 之间的关系"></a><strong>Thread、ThreadLocal 与 ThreadLocalMap 之间的关系</strong></h3><p><code>ThreadLocal可以有多个，他只是一个供我们操作ThreadLocalMap的工具，ThreadLocalMap是一个线程只有一个的</code></p>
+<p><img src="D:\note\assets\image-20221002204130186.png" srcset="/img/loading.gif" lazyload alt="image-20221002204130186"></p>
+<h3 id="ThreadLocal导致的内存泄漏的原因是什么？"><a href="#ThreadLocal导致的内存泄漏的原因是什么？" class="headerlink" title="ThreadLocal导致的内存泄漏的原因是什么？"></a><strong>ThreadLocal导致的内存泄漏的原因是什么？</strong></h3><p><code>程序员使用完ThreadLocalMap中的数据后没有清除掉这些数据</code>,v是强引用如果不释放就会一直存在</p>
+<p>ThreadLocalMap是维护在线程内部的，意味着如果线程不退出，那ThreadLocalMap保存的对象引用就会一直存在，由于GC是根据可达性分析的，存在强引用的对象是不会被回收的。而ThreadLocalMap中存储的都是强引用。如果垃圾一直不能被回收可能就会出现OOM问题。</p>
+<h3 id="如何清理-ThreadLocalMap-存储的对象"><a href="#如何清理-ThreadLocalMap-存储的对象" class="headerlink" title="如何清理 ThreadLocalMap 存储的对象"></a><strong>如何清理 ThreadLocalMap 存储的对象</strong></h3><p>使用完ThreadLocalMap存储的对象后，只需要调用一下ThreadLocal的remove方法，就会将ThreadLocalMap中的K-V对的引用置空，垃圾收集器就会在合适的时机将k-v引用的对象所占的空间清空</p>
+<h3 id="为什么ThreadLocalMap使用弱引用key"><a href="#为什么ThreadLocalMap使用弱引用key" class="headerlink" title="为什么ThreadLocalMap使用弱引用key"></a><strong>为什么ThreadLocalMap使用弱引用key</strong></h3><p>ThreadLocalMap是与线程绑定的，线程不退出，强引用的key就不会被回收，当用户不能妥善处理好K-V时就会造成内存泄漏。使用弱引用，如果除了弱引用外没有强引用或者强引用没有被使用过就会在合适的时机被GC回收掉绝大多数的key（除static和全局key外），以减少内存泄漏</p>
+<p><code>实际上最需要回收的是value对象，弱引用key只是一种挽救措施</code></p>
+<h3 id="ThreadLocalMap-为什么使用强引用-value，而不是弱引用"><a href="#ThreadLocalMap-为什么使用强引用-value，而不是弱引用" class="headerlink" title="ThreadLocalMap 为什么使用强引用 value，而不是弱引用"></a><strong>ThreadLocalMap 为什么使用强引用 value，而不是弱引用</strong></h3><p>与key不同的是，key是作为索引使用的，实际用户需要的内容还是value，value需要在线程内共享</p>
+<p>当局部value对象所在的方法结束时，栈桢被清空时，局部的value对象引用会被销毁，GC会清除没有引用的对象。如果此时设置成弱引用装入map，value会在某次GC中消亡，这明显不是我们想要看到的，我们想要的是可以在线程内部共享。，只有强引用能达到这个目的。    </p>
+
+            </div>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                  <div class="post-meta mr-3">
+                    <i class="iconfont icon-category"></i>
+                    
+                      <a class="hover-with-bg" href="/categories/%E5%90%8E%E7%AB%AF/">后端</a>
+                    
+                  </div>
+                
+                
+                  <div class="post-meta">
+                    <i class="iconfont icon-tags"></i>
+                    
+                      <a class="hover-with-bg" href="/tags/%E5%90%8E%E7%AB%AF/">后端</a>
+                    
+                  </div>
+                
+              </div>
+              
+                <p class="note note-warning">
+                  
+                    本博客所有文章除特别声明外，均采用 <a target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！
+                  
+                </p>
+              
+              
+                <div class="post-prevnext">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2022/11/05/%E6%9C%80%E5%BC%BA%E5%88%86%E5%B8%83%E5%BC%8F%E5%B7%A5%E5%85%B7Redisson/">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">最强分布式工具Redisson</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2022/10/14/Cache/">
+                        <span class="hidden-mobile">Guava Cache</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+              <!-- Comments -->
+              <article class="comments" id="comments" lazyload>
+                
+                  
+                
+                
+  <div id="valine"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#valine', function() {
+      Fluid.utils.createScript('https://cdn.jsdelivr.net/npm/valine@1/dist/Valine.min.js', function() {
+        var options = Object.assign(
+          {"appId":"nGD612Gu0HScFjNTtkQ975DQ-gzGzoHsz","appKey":"uQWFCWpfdpmUcF3iVKDcak3s","path":"window.location.pathname","placeholder":"说点什么","avatar":"retro","meta":["nick","mail","link"],"requiredFields":[],"pageSize":10,"lang":"zh-CN","highlight":false,"recordIP":false,"serverURLs":"","emojiCDN":null,"emojiMaps":null,"enableQQ":false},
+          {
+            el: "#valine",
+            path: window.location.pathname
+          }
+        )
+        new Valine(options);
+        Fluid.utils.waitElementVisible('#valine .vcontent', () => {
+          Fluid.plugins.initFancyBox('#valine .vcontent img:not(.vemoji)');
+        })
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+              </article>
+            
+          </article>
+        </div>
+      </div>
+    </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+      </div>
+    
+  </div>
+</div>
+
+<!-- Custom -->
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+
+    
+  </main>
+
+  <footer class="text-center mt-5 py-3">
+  <div class="footer-content">
+     <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+  </div>
+  
+  <div class="statistics">
+    
+    
+
+    
+      
+        <!-- LeanCloud 统计PV -->
+        <span id="leancloud-site-pv-container" style="display: none">
+            总访问量 
+            <span id="leancloud-site-pv"></span>
+             次
+          </span>
+      
+      
+        <!-- LeanCloud 统计UV -->
+        <span id="leancloud-site-uv-container" style="display: none">
+            总访客数 
+            <span id="leancloud-site-uv"></span>
+             人
+          </span>
+      
+
+    
+  </div>
+
+
+  
+
+  
+</footer>
+
+
+  <!-- SCRIPTS -->
+  
+  <script  src="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js" ></script>
+<script  src="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+<!-- Plugins -->
+
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+  
+
+
+
+  
+    <script  src="https://cdn.jsdelivr.net/npm/tocbot@4/dist/tocbot.min.js" ></script>
+  
+  
+    <script  src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.js" ></script>
+  
+  
+    <script  src="https://cdn.jsdelivr.net/npm/anchor-js@4/anchor.min.js" ></script>
+  
+  
+    <script defer src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js" ></script>
+  
+
+
+
+
+  <script defer src="/js/leancloud.js" ></script>
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/typed.js@2/lib/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var title = document.getElementById('subtitle').title;
+      
+        typing(title);
+      
+    })(window, document);
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+
+
+<!-- 主题的启动项 保持在最底部 -->
+<script  src="/js/boot.js" ></script>
+
+
+</body>
+</html>

@@ -1,0 +1,599 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/siteicon.jpg">
+  <link rel="icon" href="/img/siteicon.jpg">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="John Doe">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="Optional认识并使用相信不少小伙伴已经被java的NPE(Null Pointer Exception)所谓的空指针异常搞的头昏脑涨,有大佬说过“防止 NPE，是程序员的基本修养。”但是修养归修养，也是我们程序员最头疼的问题之一，那么我们今天就要尽可能的利用Java8的新特性 Optional来尽量简化代码同时高效处理NPE（Null Pointer Exception 空指针异常） 简单来">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Optional">
+<meta property="og:url" content="http://example.com/2022/05/21/Optional/index.html">
+<meta property="og:site_name" content="野草技术社区">
+<meta property="og:description" content="Optional认识并使用相信不少小伙伴已经被java的NPE(Null Pointer Exception)所谓的空指针异常搞的头昏脑涨,有大佬说过“防止 NPE，是程序员的基本修养。”但是修养归修养，也是我们程序员最头疼的问题之一，那么我们今天就要尽可能的利用Java8的新特性 Optional来尽量简化代码同时高效处理NPE（Null Pointer Exception 空指针异常） 简单来">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-05-21T04:03:09.000Z">
+<meta property="article:modified_time" content="2022-05-21T12:05:48.851Z">
+<meta property="article:author" content="John Doe">
+<meta property="article:tag" content="java高阶">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  <title>Optional - 野草技术社区</title>
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/css/bootstrap.min.css" />
+
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@4/github-markdown.min.css" />
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hint.css@2/hint.min.css" />
+
+  
+    
+    
+      
+      <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@10/styles/github-gist.min.css" />
+    
+  
+
+  
+    <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.css" />
+  
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_ba1fz6golrf.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.8.14","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"copy_btn":true,"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":"nGD612Gu0HScFjNTtkQ975DQ-gzGzoHsz","app_key":"uQWFCWpfdpmUcF3iVKDcak3s","server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+<meta name="generator" content="Hexo 5.4.1"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>野草技术社区</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="banner" id="banner" parallax=true
+         style="background: url('/img/bg01.jpg') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="page-header text-center fade-in-up">
+            <span class="h2" id="subtitle" title="Optional">
+              
+            </span>
+
+            
+              <div class="mt-3">
+  
+  
+    <span class="post-meta">
+      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+      <time datetime="2022-05-21 12:03" pubdate>
+        2022年5月21日 中午
+      </time>
+    </span>
+  
+</div>
+
+<div class="mt-1">
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      5.7k 字
+    </span>
+  
+
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      48 分钟
+    </span>
+  
+
+  
+  
+    
+      <!-- LeanCloud 统计文章PV -->
+      <span id="leancloud-page-views-container" class="post-meta" style="display: none">
+        <i class="iconfont icon-eye" aria-hidden="true"></i>
+        <span id="leancloud-page-views"></span> 次
+      </span>
+    
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">Optional</h1>
+            
+            <div class="markdown-body">
+              <h1 id="Optional"><a href="#Optional" class="headerlink" title="Optional"></a>Optional</h1><h2 id="认识并使用"><a href="#认识并使用" class="headerlink" title="认识并使用"></a>认识并使用</h2><p>相信不少小伙伴已经被java的NPE(Null Pointer Exception)所谓的空指针异常搞的头昏脑涨,有大佬说过“防止 NPE，是程序员的基本修养。”但是修养归修养，也是我们程序员最头疼的问题之一，那么我们今天就要尽可能的利用Java8的新特性 Optional来尽量简化代码同时高效处理NPE（Null Pointer Exception 空指针异常）</p>
+<p>简单来说，Opitonal类就是Java提供的为了解决大家平时判断对象是否为空用 会用 null!=obj 这样的方式存在的判断，从而令人头疼导致NPE（Null Pointer Exception 空指针异常），同时Optional的存在可以让代码更加简单，可读性跟高，代码写起来更高效.</p>
+<p>常规判断：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><div class="code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></div></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">//对象 人</span><br><span class="hljs-comment">//属性有 name，age</span><br>Person person=<span class="hljs-keyword">new</span> <span class="hljs-title class_">Person</span>();<br><span class="hljs-keyword">if</span> (<span class="hljs-literal">null</span>==person)&#123;<br>   <span class="hljs-keyword">return</span> <span class="hljs-string">&quot;person为null&quot;</span>;<br>&#125;<br><span class="hljs-keyword">return</span> person;<br></code></pre></td></tr></table></figure>
+
+<p>使用Optional：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">//对象 人</span><br><span class="hljs-comment">//属性有 name，age</span><br>Person person=<span class="hljs-keyword">new</span> <span class="hljs-title class_">Person</span>();<br><span class="hljs-keyword">return</span> Optional.ofNullable(person).orElse(<span class="hljs-string">&quot;person为null&quot;</span>);<br></code></pre></td></tr></table></figure>
+
+<h2 id="Optional对象创建"><a href="#Optional对象创建" class="headerlink" title="Optional对象创建"></a>Optional对象创建</h2><p>首先我们先打开Optional的内部,去一探究竟 先把几个创建Optional对象的方法提取出来</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">Optional</span>&lt;T&gt; &#123;<br>    <span class="hljs-comment">// final 修饰的属性要么在定义处初始化要么在构造函数处初始化</span><br>   <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> Optional&lt;?&gt; EMPTY = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Optional</span>&lt;&gt;();<br>   <span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> T value;<br>   <span class="hljs-comment">//我们可以看到两个构造方格都是private 私有的</span><br>   <span class="hljs-comment">//说明 我们没办法在外面去new出来Optional对象</span><br>   <span class="hljs-keyword">private</span> <span class="hljs-title function_">Optional</span><span class="hljs-params">()</span> &#123;<br>        <span class="hljs-built_in">this</span>.value = <span class="hljs-literal">null</span>;<br>    &#125;<br>    <span class="hljs-comment">// 在构造函数出初始化</span><br>   <span class="hljs-keyword">private</span> <span class="hljs-title function_">Optional</span><span class="hljs-params">(T value)</span> &#123;<br>        <span class="hljs-built_in">this</span>.value = Objects.requireNonNull(value);<br>    &#125;<br>    <span class="hljs-comment">// 这个静态方法大致是创建出一个包装值为空的一个对象因为没有任何参数赋值</span><br>   <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span>&lt;T&gt; Optional&lt;T&gt; <span class="hljs-title function_">empty</span><span class="hljs-params">()</span> &#123;<br>        <span class="hljs-meta">@SuppressWarnings(&quot;unchecked&quot;)</span><br>        Optional&lt;T&gt; t = (Optional&lt;T&gt;) EMPTY;<br>        <span class="hljs-keyword">return</span> t;<br>    &#125;<br>    <span class="hljs-comment">// 这个静态方法大致是创建出一个包装值非空的一个对象因为做了赋值</span><br>   <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> &lt;T&gt; Optional&lt;T&gt; <span class="hljs-title function_">of</span><span class="hljs-params">(T value)</span> &#123;<br>        <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Optional</span>&lt;&gt;(value);<br>    &#125;<br>    <span class="hljs-comment">// 这个静态方法大致是如果参数value为空，则创建空对象，如果不为空，则创建有参对象</span><br>    <span class="hljs-comment">// 其实就是用来构造Optional对象的</span><br>   <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> &lt;T&gt; Optional&lt;T&gt; <span class="hljs-title function_">ofNullable</span><span class="hljs-params">(T value)</span> &#123;<br>        <span class="hljs-type">return</span> <span class="hljs-variable">value</span> <span class="hljs-operator">=</span>= <span class="hljs-literal">null</span> ? empty() : of(value);<br>    &#125;<br> &#125;<br></code></pre></td></tr></table></figure>
+
+<p>再做一个简单的实例展示 与上面对应</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// 1、创建一个包装对象值为空的Optional对象</span><br>Optional&lt;String&gt; optEmpty = Optional.empty();<br><span class="hljs-comment">// 2、创建包装对象值非空的Optional对象</span><br>Optional&lt;String&gt; optOf = Optional.of(<span class="hljs-string">&quot;optional&quot;</span>);<br><span class="hljs-comment">// 3、创建包装对象值允许为空也可以不为空的Optional对象</span><br>Optional&lt;String&gt; optOfNullable1 = Optional.ofNullable(<span class="hljs-literal">null</span>);<br>Optional&lt;String&gt; optOfNullable2 = Optional.ofNullable(<span class="hljs-string">&quot;optional&quot;</span>);<br></code></pre></td></tr></table></figure>
+
+<h2 id="Optional-get-方法-返回对象的值"><a href="#Optional-get-方法-返回对象的值" class="headerlink" title="Optional.get()方法(返回对象的值)"></a>Optional.get()方法(返回对象的值)</h2><p>get()方法是返回一个option的实例值</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> T <span class="hljs-title function_">get</span><span class="hljs-params">()</span> &#123;<br>    <span class="hljs-comment">// value为Optional的一个私有成员变量，通过of方法赋值，ofNullAble会调用of方法</span><br>    <span class="hljs-keyword">if</span> (value == <span class="hljs-literal">null</span>) &#123;<br>        <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">NoSuchElementException</span>(<span class="hljs-string">&quot;No value present&quot;</span>);<br>    &#125;<br>    <span class="hljs-keyword">return</span> value;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>也就是如果value不为空则做返回，如果为空则抛出异常 “No value present” 简单实例展示</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs java">Person person=<span class="hljs-keyword">new</span> <span class="hljs-title class_">Person</span>();<br>person.setAge(<span class="hljs-number">2</span>);<br>Optional.ofNullable(person).get();<br></code></pre></td></tr></table></figure>
+
+<h2 id="Optional-isPresent-方法-判读是否为空"><a href="#Optional-isPresent-方法-判读是否为空" class="headerlink" title="Optional.isPresent()方法(判读是否为空)"></a>Optional.isPresent()方法(判读是否为空)</h2><p>isPresent()方法就是会返回一个boolean类型值，如果对象不为空则为真，如果为空则false 源码:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// 通过Optional.ofNullAble()方法构造Optional对象然后通过isPresent判断是否为空</span><br><span class="hljs-keyword">public</span> Boolean <span class="hljs-title function_">isPresent</span><span class="hljs-params">()</span> &#123;<br>    <span class="hljs-keyword">return</span> value != <span class="hljs-literal">null</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>简单的实例展示:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs java">Person person=<span class="hljs-keyword">new</span> <span class="hljs-title class_">Person</span>();<br>person.setAge(<span class="hljs-number">2</span>);<br><span class="hljs-keyword">if</span> (Optional.ofNullable(person).isPresent())&#123;<br>    <span class="hljs-comment">//写不为空的逻辑</span><br>    System.out.println(<span class="hljs-string">&quot;不为空&quot;</span>);<br>&#125; <span class="hljs-keyword">else</span>&#123;<br>    <span class="hljs-comment">//写为空的逻辑</span><br>    System.out.println(<span class="hljs-string">&quot;为空&quot;</span>);<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h2 id="Optional-ifPresent-方法-判读是否为空并返回函数"><a href="#Optional-ifPresent-方法-判读是否为空并返回函数" class="headerlink" title="Optional.ifPresent()方法(判读是否为空并返回函数)"></a>Optional.ifPresent()方法(判读是否为空并返回函数)</h2><p>这个意思是如果对象非空，则运行函数体</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// 参数为一个消费者，如果不为空会执行消费者的方法，lamada表达式  </span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">ifPresent</span><span class="hljs-params">(Consumer&lt;? <span class="hljs-built_in">super</span> T&gt; consumer)</span> &#123;<br>        <span class="hljs-comment">//如果value不为空，则运行accept方法体</span><br>        <span class="hljs-keyword">if</span> (value != <span class="hljs-literal">null</span>)<br>            consumer.accept(value);<br>    &#125;<br></code></pre></td></tr></table></figure>
+
+<p>看实例：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs java">Person person=<span class="hljs-keyword">new</span> <span class="hljs-title class_">Person</span>();<br>person.setAge(<span class="hljs-number">2</span>);<br><span class="hljs-comment">// ifPresent的参数是一个消费者，消费者不会有返回值，所以如果你有返回值那么也将会被ignore</span><br><span class="hljs-comment">// Result of &#x27;Employee.getSalary()&#x27; is ignored</span><br>Optional.ofNullable(person).ifPresent(p -&gt; System.out.println(<span class="hljs-string">&quot;年龄&quot;</span>+p.getAge()));<br></code></pre></td></tr></table></figure>
+
+<h2 id="Optional-filter-方法-过滤对象"><a href="#Optional-filter-方法-过滤对象" class="headerlink" title="Optional.filter()方法(过滤对象)"></a>Optional.filter()方法(过滤对象)</h2><p>filter()方法大致意思是，接受一个对象，然后对他进行条件过滤，如果条件符合则返回Optional对象本身，如果不符合则返回空Optional</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> Optional&lt;T&gt; <span class="hljs-title function_">filter</span><span class="hljs-params">(Predicate&lt;? <span class="hljs-built_in">super</span> T&gt; predicate)</span> &#123;<br>    Objects.requireNonNull(predicate);<br>    <span class="hljs-comment">//如果为空直接返回this</span><br>    <span class="hljs-keyword">if</span> (!isPresent())<br>                <span class="hljs-keyword">return</span> <span class="hljs-built_in">this</span>; <span class="hljs-keyword">else</span><br>            <span class="hljs-comment">//判断返回本身还是空Optional</span><br>    <span class="hljs-keyword">return</span> predicate.test(value) ? <span class="hljs-built_in">this</span> : empty();<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>简单实例：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs java">Person person=<span class="hljs-keyword">new</span> <span class="hljs-title class_">Person</span>();<br>person.setAge(<span class="hljs-number">2</span>);<br>Optional.ofNullable(person).filter(p -&gt; p.getAge()&gt;<span class="hljs-number">50</span>);<br></code></pre></td></tr></table></figure>
+
+<h2 id="Optional-map-方法-对象进行二次包装"><a href="#Optional-map-方法-对象进行二次包装" class="headerlink" title="Optional.map()方法(对象进行二次包装)"></a>Optional.map()方法(对象进行二次包装)</h2><p>map()方法将对应Funcation函数式接口中的对象，进行二次运算，封装成新的对象然后返回在Optional中</p>
+<p>将一个Optional,转换为另一个Optional</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span>&lt;U&gt; Optional&lt;U&gt; <span class="hljs-title function_">map</span><span class="hljs-params">(Function&lt;? <span class="hljs-built_in">super</span> T, ? extends U&gt; mapper)</span> &#123;<br>       Objects.requireNonNull(mapper);<br>       <span class="hljs-comment">//如果为空返回自己</span><br>       <span class="hljs-keyword">if</span> (!isPresent())<br>           <span class="hljs-keyword">return</span> empty();<br>       <span class="hljs-keyword">else</span> &#123;<br>       <span class="hljs-comment">//否则返回用方法修饰过的Optional</span><br>           <span class="hljs-keyword">return</span> Optional.ofNullable(mapper.apply(value));<br>       &#125;<br>   &#125;<br></code></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs java">Person person1=<span class="hljs-keyword">new</span> <span class="hljs-title class_">Person</span>();<br>person.setAge(<span class="hljs-number">2</span>);<br><span class="hljs-type">String</span> <span class="hljs-variable">optName</span> <span class="hljs-operator">=</span> Optional.ofNullable(person).map(p -&gt; person.getName()).orElse(<span class="hljs-string">&quot;name为空&quot;</span>);<br></code></pre></td></tr></table></figure>
+
+<h2 id="Optional-orElse-方法-为空返回对象"><a href="#Optional-orElse-方法-为空返回对象" class="headerlink" title="Optional.orElse()方法(为空返回对象)"></a>Optional.orElse()方法(为空返回对象)</h2><p>常用方法之一，这个方法意思是如果包装对象为空的话，就执行orElse方法里的value，如果非空，则返回写入对象</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> T <span class="hljs-title function_">orElse</span><span class="hljs-params">(T other)</span> &#123;<br>    <span class="hljs-comment">//如果非空，返回value，如果为空，返回other</span><br>    <span class="hljs-keyword">return</span> value != <span class="hljs-literal">null</span> ? value : other;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h2 id="Optional-orElseGet-方法-为空返回Supplier对象"><a href="#Optional-orElseGet-方法-为空返回Supplier对象" class="headerlink" title="Optional.orElseGet()方法(为空返回Supplier对象)"></a>Optional.orElseGet()方法(为空返回Supplier对象)</h2><p>这个与orElse很相似，入参不一样，入参为Supplier对象，为空返回传入对象的.get()方法，如果非空则返回当前对象</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> T <span class="hljs-title function_">orElseGet</span><span class="hljs-params">(Supplier&lt;? extends T&gt; other)</span> &#123;<br>    <span class="hljs-keyword">return</span> value != <span class="hljs-literal">null</span> ? value : other.get();<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>实例：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs java">Optional&lt;Supplier&lt;Person&gt;&gt; sup=Optional.ofNullable(Person::<span class="hljs-keyword">new</span>);<br><span class="hljs-comment">//调用get()方法，此时才会调用对象的构造方法，即获得到真正对象</span><br>Optional.ofNullable(person).orElseGet(sup.get());<br></code></pre></td></tr></table></figure>
+
+<p>说真的对于Supplier对象我也懵逼了一下，去网上简单查阅才得知 Supplier也是创建对象的一种方式,简单来说，Suppiler是一个接口，是类似Spring的懒加载，声明之后并不会占用内存，只有执行了get()方法之后，才会调用构造方法创建出对象创建对象的语法的话就是<code>Supplier supPerson= Person::new;</code>需要使用时<code>supPerson.get()</code>即可</p>
+<h2 id="Optional-orElseThrow-方法-为空返回异常"><a href="#Optional-orElseThrow-方法-为空返回异常" class="headerlink" title="Optional.orElseThrow()方法(为空返回异常)"></a>Optional.orElseThrow()方法(为空返回异常)</h2><p>这个我个人在实战中也经常用到这个方法，方法作用的话就是如果为空，就抛出你定义的异常，如果不为空返回当前对象，在实战中所有异常肯定是要处理好的，为了代码的可读性</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> &lt;X <span class="hljs-keyword">extends</span> <span class="hljs-title class_">Throwable</span>&gt; T <span class="hljs-title function_">orElseThrow</span><span class="hljs-params">(Supplier&lt;? extends X&gt; exceptionSupplier)</span> <span class="hljs-keyword">throws</span> X &#123;<br>    <span class="hljs-keyword">if</span> (value != <span class="hljs-literal">null</span>) &#123;<br>        <span class="hljs-keyword">return</span> value;<br>    &#125; <span class="hljs-keyword">else</span> &#123;<br>        <span class="hljs-keyword">throw</span> exceptionSupplier.get();<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">//简单的一个查询</span><br><span class="hljs-type">Member</span> <span class="hljs-variable">member</span> <span class="hljs-operator">=</span> memberService.selectByPhone(request.getPhone());<br>Optional.ofNullable(member).orElseThrow(() -&gt; <span class="hljs-keyword">new</span> <span class="hljs-title class_">ServiceException</span>(<span class="hljs-string">&quot;没有查询的相关数据&quot;</span>));<br></code></pre></td></tr></table></figure>
+
+<h2 id="相似方法进行对比分析"><a href="#相似方法进行对比分析" class="headerlink" title="相似方法进行对比分析"></a>相似方法进行对比分析</h2><p>可能小伙伴看到这，没用用过的话会觉得orElse()和orElseGet()还有orElseThrow()很相似，map()和flatMap()好相似</p>
+<p>哈哈哈不用着急，都是从这一步过来的，我再给大家总结一下不同方法的异同点</p>
+<p><strong>orElse()和orElseGet()和orElseThrow()的异同点</strong></p>
+<p>方法效果类似，如果对象不为空，则返回对象，如果为空，则返回方法体中的对应参数，所以可以看出这三个方法体中参数是不一样的</p>
+<ul>
+<li>orElse（T 对象）</li>
+<li>orElseGet（Supplier &lt; T &gt;对象）</li>
+<li>orElseThrow（异常）</li>
+</ul>
+<p><strong>map()和orElseGet的异同点</strong></p>
+<ul>
+<li>方法效果类似，对方法参数进行二次包装，并返回,入参不同</li>
+<li>map（function函数）</li>
+<li>flatmap（Optional&lt; function &gt;函数）</li>
+</ul>
+<p>具体要怎么用，要根据业务场景以及代码规范来定义，下面可以简单看一下我在实战中怎用使用神奇的Optional</p>
+
+            </div>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                  <div class="post-meta mr-3">
+                    <i class="iconfont icon-category"></i>
+                    
+                      <a class="hover-with-bg" href="/categories/%E5%90%8E%E7%AB%AF/">后端</a>
+                    
+                  </div>
+                
+                
+                  <div class="post-meta">
+                    <i class="iconfont icon-tags"></i>
+                    
+                      <a class="hover-with-bg" href="/tags/java%E9%AB%98%E9%98%B6/">java高阶</a>
+                    
+                  </div>
+                
+              </div>
+              
+                <p class="note note-warning">
+                  
+                    本博客所有文章除特别声明外，均采用 <a target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！
+                  
+                </p>
+              
+              
+                <div class="post-prevnext">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2022/05/22/application/">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">bootstrap application</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2022/05/11/js%E6%97%B6%E9%97%B4%E6%A0%BC%E5%BC%8F%E5%8C%96%E6%96%B9%E6%B3%95/">
+                        <span class="hidden-mobile">js时间格式化方法</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+              <!-- Comments -->
+              <article class="comments" id="comments" lazyload>
+                
+                  
+                
+                
+  <div id="valine"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#valine', function() {
+      Fluid.utils.createScript('https://cdn.jsdelivr.net/npm/valine@1/dist/Valine.min.js', function() {
+        var options = Object.assign(
+          {"appId":"nGD612Gu0HScFjNTtkQ975DQ-gzGzoHsz","appKey":"uQWFCWpfdpmUcF3iVKDcak3s","path":"window.location.pathname","placeholder":"说点什么","avatar":"retro","meta":["nick","mail","link"],"requiredFields":[],"pageSize":10,"lang":"zh-CN","highlight":false,"recordIP":false,"serverURLs":"","emojiCDN":null,"emojiMaps":null,"enableQQ":false},
+          {
+            el: "#valine",
+            path: window.location.pathname
+          }
+        )
+        new Valine(options);
+        Fluid.utils.waitElementVisible('#valine .vcontent', () => {
+          Fluid.plugins.initFancyBox('#valine .vcontent img:not(.vemoji)');
+        })
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+              </article>
+            
+          </article>
+        </div>
+      </div>
+    </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+      </div>
+    
+  </div>
+</div>
+
+<!-- Custom -->
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+
+    
+  </main>
+
+  <footer class="text-center mt-5 py-3">
+  <div class="footer-content">
+     <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+  </div>
+  
+  <div class="statistics">
+    
+    
+
+    
+      
+        <!-- LeanCloud 统计PV -->
+        <span id="leancloud-site-pv-container" style="display: none">
+            总访问量 
+            <span id="leancloud-site-pv"></span>
+             次
+          </span>
+      
+      
+        <!-- LeanCloud 统计UV -->
+        <span id="leancloud-site-uv-container" style="display: none">
+            总访客数 
+            <span id="leancloud-site-uv"></span>
+             人
+          </span>
+      
+
+    
+  </div>
+
+
+  
+
+  
+</footer>
+
+
+  <!-- SCRIPTS -->
+  
+  <script  src="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js" ></script>
+<script  src="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+<!-- Plugins -->
+
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+  
+
+
+
+  
+    <script  src="https://cdn.jsdelivr.net/npm/tocbot@4/dist/tocbot.min.js" ></script>
+  
+  
+    <script  src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.js" ></script>
+  
+  
+    <script  src="https://cdn.jsdelivr.net/npm/anchor-js@4/anchor.min.js" ></script>
+  
+  
+    <script defer src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js" ></script>
+  
+
+
+
+
+  <script defer src="/js/leancloud.js" ></script>
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/typed.js@2/lib/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var title = document.getElementById('subtitle').title;
+      
+        typing(title);
+      
+    })(window, document);
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+
+
+<!-- 主题的启动项 保持在最底部 -->
+<script  src="/js/boot.js" ></script>
+
+
+</body>
+</html>

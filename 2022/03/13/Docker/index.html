@@ -1,0 +1,676 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/siteicon.jpg">
+  <link rel="icon" href="/img/siteicon.jpg">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="John Doe">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="Docker Compose简介之前的流程： Docker –&gt; Dockerfile —&gt; build –&gt; run 全部是手动操作，单个容器！  Docker Compose 来轻松高效的管理容器。定义运行多个容器！  使用Docker Compose 的三部曲   使用 定义您的应用程序的环境，Dockerfile以便它可以在任何地方复制。 Dockerfile保证我们的项">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Docker">
+<meta property="og:url" content="http://example.com/2022/03/13/Docker/index.html">
+<meta property="og:site_name" content="野草技术社区">
+<meta property="og:description" content="Docker Compose简介之前的流程： Docker –&gt; Dockerfile —&gt; build –&gt; run 全部是手动操作，单个容器！  Docker Compose 来轻松高效的管理容器。定义运行多个容器！  使用Docker Compose 的三部曲   使用 定义您的应用程序的环境，Dockerfile以便它可以在任何地方复制。 Dockerfile保证我们的项">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/2022/03/13/Docker/1.png">
+<meta property="og:image" content="http://example.com/2022/03/13/Docker/2.png">
+<meta property="og:image" content="http://example.com/2022/03/13/Docker/3.png">
+<meta property="og:image" content="http://example.com/2022/03/13/Docker/4.png">
+<meta property="og:image" content="http://example.com/2022/03/13/Docker/5.png">
+<meta property="og:image" content="http://example.com/2022/03/13/Docker/6.png">
+<meta property="og:image" content="http://example.com/2022/03/13/Docker/7.png">
+<meta property="article:published_time" content="2022-03-13T07:58:13.000Z">
+<meta property="article:modified_time" content="2022-03-13T08:14:55.289Z">
+<meta property="article:author" content="John Doe">
+<meta property="article:tag" content="运维必会">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="http://example.com/2022/03/13/Docker/1.png">
+  
+  
+  <title>Docker - 野草技术社区</title>
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/css/bootstrap.min.css" />
+
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@4/github-markdown.min.css" />
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hint.css@2/hint.min.css" />
+
+  
+    
+    
+      
+      <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@10/styles/github-gist.min.css" />
+    
+  
+
+  
+    <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.css" />
+  
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_ba1fz6golrf.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.8.14","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"copy_btn":true,"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":"nGD612Gu0HScFjNTtkQ975DQ-gzGzoHsz","app_key":"uQWFCWpfdpmUcF3iVKDcak3s","server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+<meta name="generator" content="Hexo 5.4.1"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>野草技术社区</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="banner" id="banner" parallax=true
+         style="background: url('/img/bg01.jpg') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="page-header text-center fade-in-up">
+            <span class="h2" id="subtitle" title="Docker">
+              
+            </span>
+
+            
+              <div class="mt-3">
+  
+  
+    <span class="post-meta">
+      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+      <time datetime="2022-03-13 15:58" pubdate>
+        2022年3月13日 下午
+      </time>
+    </span>
+  
+</div>
+
+<div class="mt-1">
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      12k 字
+    </span>
+  
+
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      96 分钟
+    </span>
+  
+
+  
+  
+    
+      <!-- LeanCloud 统计文章PV -->
+      <span id="leancloud-page-views-container" class="post-meta" style="display: none">
+        <i class="iconfont icon-eye" aria-hidden="true"></i>
+        <span id="leancloud-page-views"></span> 次
+      </span>
+    
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">Docker</h1>
+            
+            <div class="markdown-body">
+              <h1 id="Docker-Compose"><a href="#Docker-Compose" class="headerlink" title="Docker Compose"></a>Docker Compose</h1><h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>之前的流程： Docker –&gt; Dockerfile —&gt; build –&gt; run 全部是手动操作，单个容器！</p>
+<p> Docker Compose 来轻松高效的管理容器。定义运行多个容器！</p>
+<blockquote>
+<p>使用Docker Compose 的三部曲</p>
+</blockquote>
+<ol>
+<li>使用 定义您的应用程序的环境，<code>Dockerfile</code>以便它可以在任何地方复制。<ul>
+<li>Dockerfile保证我们的项目在任何地方运行</li>
+</ul>
+</li>
+<li>定义组成您的应用程序的服务，<code>docker-compose.yml</code> 以便它们可以在隔离的环境中一起运行。<ul>
+<li>service 什么是服务</li>
+<li>docker-compose.yml这个文件怎么写</li>
+</ul>
+</li>
+<li>使用Docker-compose up启动</li>
+</ol>
+<p>作用：批量容器编排！</p>
+<blockquote>
+<p>理解</p>
+</blockquote>
+<p>Compose是Docker官方的开源项目，需要安装！</p>
+<blockquote>
+<p>compose 的重要概念</p>
+</blockquote>
+<ul>
+<li>服务service ，容器应用。（web、redis、mysql）</li>
+<li>项目project。一组关联的容器。博客</li>
+</ul>
+<h2 id="安装compose"><a href="#安装compose" class="headerlink" title="安装compose"></a>安装compose</h2><ol>
+<li><p><img src="1.png" srcset="/img/loading.gif" lazyload alt="1"></p>
+<figure class="highlight awk"><table><tr><td class="gutter"><div class="code-wrapper"><pre><span class="line">1</span><br></pre></div></td><td class="code"><pre><code class="hljs awk">curl -L <span class="hljs-string">&quot;https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)&quot;</span> -o <span class="hljs-regexp">/usr/</span>local<span class="hljs-regexp">/bin/</span>docker-compose<br></code></pre></td></tr></table></figure></li>
+<li><p>授权</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">chmod +x docker-compose<br></code></pre></td></tr></table></figure></li>
+<li><p>安装成功</p>
+<p><img src="2.png" srcset="/img/loading.gif" lazyload alt="2"></p>
+</li>
+</ol>
+<h3 id="体验"><a href="#体验" class="headerlink" title="体验"></a>体验</h3><ol>
+<li><p>给我们的项目创建一个文件夹</p>
+</li>
+<li><p>在项目文件夹下创建一个文件，app.py</p>
+</li>
+<li><p>在我们的项目目录下requirements.txt文件，并且黏贴 flask redis。这个是python的依赖文件，项目依赖的都放在这里，就是pip install 的时候下载的就是这里的。</p>
+</li>
+<li><p>创建一个Dockerfile</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs shell">FROM python:3.7-alpine<br>WORKDIR /code<br>ENV FLASK_APP=app.py<br>ENV FLASK_RUN_HOST=0.0.0.0<br>RUN apk add --no-cache gcc musl-dev linux-headers<br>COPY requirements.txt requirements.txt<br>RUN pip install -r requirements.txt<br>EXPOSE 5000<br>COPY . .<br>CMD [&quot;flask&quot;, &quot;run&quot;]<br></code></pre></td></tr></table></figure>
+
+<p>这是告诉docker：</p>
+<ul>
+<li>从Python3.7开始构建镜像</li>
+<li>将工作目录设置为 /code</li>
+<li>设置flask命令使用的环境变量</li>
+<li>安装gcc和其他依赖</li>
+<li>复制requirements.txt并安装Python其他依赖项</li>
+<li>将元数据添加到镜像以描述容器正在监听5000端口</li>
+<li>将项目中的当前目录复制到镜像中的工作目录</li>
+<li>将容器的默认命令设置为 flask run</li>
+</ul>
+</li>
+<li><p>创建一个docker-compose.yml</p>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs yml"><span class="hljs-attr">version:</span> <span class="hljs-string">&quot;3.9&quot;</span><br><span class="hljs-attr">services:</span><br>  <span class="hljs-attr">web:</span><br>    <span class="hljs-attr">build:</span> <span class="hljs-string">.</span><br>    <span class="hljs-attr">ports:</span><br>      <span class="hljs-bullet">-</span> <span class="hljs-string">&quot;5000:5000&quot;</span><br>  <span class="hljs-attr">redis:</span><br>    <span class="hljs-attr">image:</span> <span class="hljs-string">&quot;redis:alpine&quot;</span><br></code></pre></td></tr></table></figure>
+
+<p>这个yml定义了两个服务，一个web服务和一个redis服务，web服务是用本地的Dockerfile文件build的，如果Dockerfile文件的名字本身就是Dockerfile那么build的时候可以不用指定文件名</p>
+<p><strong>Web</strong></p>
+<p>该web服务使用从Dockerfile当前目录结构中的镜像文件。然后它将容器和主机绑定到暴漏的端口5000，此示例使用flask web服务器的默认端口5000</p>
+<p><strong>Redis</strong></p>
+<p>该redis服务使用的是从Docker hub注册表中提取的公共的Redis镜像。</p>
+</li>
+<li><p>使用Compose构建并运行应用程序</p>
+<ol>
+<li><p>从项目目录下，通过指令 docker-compose up 启动</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br></pre></td><td class="code"><pre><code class="hljs shell">// 给我们创建了一个Docker网络<br>Creating network &quot;composetest_default&quot; with the default driver<br>// 创建web服务<br>Building web<br>Sending build context to Docker daemon  5.632kB<br>Step 1/10 : FROM python:3.7-alpine<br>3.7-alpine: Pulling from library/python<br>29291e31a76a: Pull complete<br>3626a090061d: Pull complete<br>dccff05a79ae: Pull complete<br>328cb1305811: Pull complete<br>e91eabc5840c: Pull complete<br>Digest: sha256:cb74758aca3c66b1213e5d84fb943f425c7d44a07ba4949e4cf5c690cd855cae<br>Status: Downloaded newer image for python:3.7-alpine<br><span class="hljs-meta prompt_"> ---&gt; </span><span class="language-bash">9231c59cd582</span><br>Step 2/10 : WORKDIR /code<br><span class="hljs-meta prompt_"> ---&gt; </span><span class="language-bash">Running <span class="hljs-keyword">in</span> 997c380ce6eb</span><br>Removing intermediate container 997c380ce6eb<br><span class="hljs-meta prompt_"> ---&gt; </span><span class="language-bash">257507eadcdc</span><br>Step 3/10 : ENV FLASK_APP=app.py<br><span class="hljs-meta prompt_"> ---&gt; </span><span class="language-bash">Running <span class="hljs-keyword">in</span> 7b760f227db1</span><br>Removing intermediate container 7b760f227db1<br><span class="hljs-meta prompt_"> ---&gt; </span><span class="language-bash">f18da21d848a</span><br>Step 4/10 : ENV FLASK_RUN_HOST=0.0.0.0<br><span class="hljs-meta prompt_"> ---&gt; </span><span class="language-bash">Running <span class="hljs-keyword">in</span> 40dbe5f5170c</span><br>Removing intermediate container 40dbe5f5170c<br><span class="hljs-meta prompt_"> ---&gt; </span><span class="language-bash">486a51ae8e63</span><br>Step 5/10 : RUN apk add --no-cache gcc musl-dev linux-headers<br><span class="hljs-meta prompt_"> ---&gt; </span><span class="language-bash">Running <span class="hljs-keyword">in</span> b08135697f69</span><br>fetch https://dl-cdn.alpinelinux.org/alpine/v3.14/main/x86_64/APKINDEX.tar.gz<br>fetch https://dl-cdn.alpinelinux.org/alpine/v3.14/community/x86_64/APKINDEX.tar.gz<br>(1/13) Installing libgcc (10.3.1_git20210424-r2)<br>(2/13) Installing libstdc++ (10.3.1_git20210424-r2)<br>(3/13) Installing binutils (2.35.2-r2)<br>(4/13) Installing libgomp (10.3.1_git20210424-r2)<br>(5/13) Installing libatomic (10.3.1_git20210424-r2)<br>(6/13) Installing libgphobos (10.3.1_git20210424-r2)<br>(7/13) Installing gmp (6.2.1-r0)<br>(8/13) Installing isl22 (0.22-r0)<br>(9/13) Installing mpfr4 (4.1.0-r0)<br>(10/13) Installing mpc1 (1.2.1-r0)<br>(11/13) Installing gcc (10.3.1_git20210424-r2)<br>(12/13) Installing linux-headers (5.10.41-r0)<br>(13/13) Installing musl-dev (1.2.2-r3)<br>Executing busybox-1.33.1-r3.trigger<br>OK: 140 MiB in 48 packages<br>Removing intermediate container b08135697f69<br><span class="hljs-meta prompt_"> ---&gt; </span><span class="language-bash">fd47d993b371</span><br>Step 6/10 : COPY requirements.txt requirements.txt<br><span class="hljs-meta prompt_"> ---&gt; </span><span class="language-bash">1e7a7c4aa5cc</span><br>Step 7/10 : RUN pip install  -r requirements.txt<br><span class="hljs-meta prompt_"> ---&gt; </span><span class="language-bash">Running <span class="hljs-keyword">in</span> ce3c8b5b666c</span><br>Collecting flask<br>  Downloading Flask-2.0.1-py3-none-any.whl (94 kB)<br>Collecting redis<br>  Downloading redis-3.5.3-py2.py3-none-any.whl (72 kB)<br>Collecting Jinja2&gt;=3.0<br>  Downloading Jinja2-3.0.1-py3-none-any.whl (133 kB)<br>Collecting Werkzeug&gt;=2.0<br>  Downloading Werkzeug-2.0.1-py3-none-any.whl (288 kB)<br>Collecting click&gt;=7.1.2<br>  Downloading click-8.0.1-py3-none-any.whl (97 kB)<br>Collecting itsdangerous&gt;=2.0<br>  Downloading itsdangerous-2.0.1-py3-none-any.whl (18 kB)<br>Collecting importlib-metadata<br>  Downloading importlib_metadata-4.6.4-py3-none-any.whl (17 kB)<br>Collecting MarkupSafe&gt;=2.0<br>  Downloading MarkupSafe-2.0.1.tar.gz (18 kB)<br>Collecting zipp&gt;=0.5<br>  Downloading zipp-3.5.0-py3-none-any.whl (5.7 kB)<br>Collecting typing-extensions&gt;=3.6.4<br>  Downloading typing_extensions-3.10.0.0-py3-none-any.whl (26 kB)<br>Building wheels for collected packages: MarkupSafe<br>  Building wheel for MarkupSafe (setup.py): started<br>  Building wheel for MarkupSafe (setup.py): finished with status &#x27;done&#x27;<br>  Created wheel for MarkupSafe: filename=MarkupSafe-2.0.1-cp37-cp37m-linux_x86_64.whl size=14616 sha256=843490b6047c7c0e0d1585883ac846f7dc827a7aa018a8b74ac3cdf69d96ce9a<br>  Stored in directory: /root/.cache/pip/wheels/1a/18/04/e3b5bd888f000c2716bccc94a565239f9defc47ef93d9e7bea<br>Successfully built MarkupSafe<br>Installing collected packages: zipp, typing-extensions, MarkupSafe, importlib-metadata, Werkzeug, Jinja2, itsdangerous, click, redis, flask<br>Successfully installed Jinja2-3.0.1 MarkupSafe-2.0.1 Werkzeug-2.0.1 click-8.0.1 flask-2.0.1 importlib-metadata-4.6.4 itsdangerous-2.0.1 redis-3.5.3 typing-extensions-3.10.0.0 zipp-3.5.0<br>WARNING: Running pip as the &#x27;root&#x27; user can result in broken permissions and conflicting behaviour with the system package manager. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv<br>Removing intermediate container ce3c8b5b666c<br><span class="hljs-meta prompt_"> ---&gt; </span><span class="language-bash">99033542c096</span><br>Step 8/10 : EXPOSE 5000<br><span class="hljs-meta prompt_"> ---&gt; </span><span class="language-bash">Running <span class="hljs-keyword">in</span> b66e733039a0</span><br>Removing intermediate container b66e733039a0<br><span class="hljs-meta prompt_"> ---&gt; </span><span class="language-bash">56b2d4c0c31f</span><br>Step 9/10 : COPY . .<br><span class="hljs-meta prompt_"> ---&gt; </span><span class="language-bash">3b613f01e9cd</span><br>Step 10/10 : CMD [&quot;flask&quot;, &quot;run&quot;]<br><span class="hljs-meta prompt_"> ---&gt; </span><span class="language-bash">Running <span class="hljs-keyword">in</span> 68654b0c33c8</span><br>Removing intermediate container 68654b0c33c8<br><span class="hljs-meta prompt_"> ---&gt; </span><span class="language-bash">1ec852680c44</span><br>Successfully built 1ec852680c44<br>Successfully tagged composetest_web:latest<br>WARNING: Image for service web was built because it did not already exist. To rebuild this image you must use `docker-compose build` or `docker-compose up --build`.<br>Pulling redis (redis:alpine)...<br>alpine: Pulling from library/redis<br>29291e31a76a: Already exists<br>16bbd9479e91: Pull complete<br>d4bb2b90a23b: Pull complete<br>011b05d94792: Pull complete<br>3a615fd1f2fd: Pull complete<br>bd76b8efa6e9: Pull complete<br>Digest: sha256:b658aeb0824fa240bd04b5017de2379d9707a433cb7040332328996d63c265f6<br>Status: Downloaded newer image for redis:alpine<br>// 启动了两个服务<br>Creating composetest_web_1   ... done<br>Creating composetest_redis_1 ... done<br>Attaching to composetest_redis_1, composetest_web_1<br>redis_1  | 1:C 25 Aug 2021 14:00:36.627 # oO0OoO0OoO0Oo Redis is starting oO0OoO0OoO0Oo<br>redis_1  | 1:C 25 Aug 2021 14:00:36.627 # Redis version=6.2.5, bits=64, commit=00000000, modified=0, pid=1, just started<br>redis_1  | 1:C 25 Aug 2021 14:00:36.627 # Warning: no config file specified, using the default config. In order to specify a config file use redis-server /path/to/redis.conf<br>redis_1  | 1:M 25 Aug 2021 14:00:36.628 * monotonic clock: POSIX clock_gettime<br>redis_1  | 1:M 25 Aug 2021 14:00:36.629 * Running mode=standalone, port=6379.<br>redis_1  | 1:M 25 Aug 2021 14:00:36.629 # WARNING: The TCP backlog setting of 511 cannot be enforced because /proc/sys/net/core/somaxconn is set to the lower value of 128.<br>redis_1  | 1:M 25 Aug 2021 14:00:36.629 # Server initialized<br>redis_1  | 1:M 25 Aug 2021 14:00:36.629 # WARNING overcommit_memory is set to 0! Background save may fail under low memory condition. To fix this issue add &#x27;vm.overcommit_memory = 1&#x27; to /etc/sysctl.conf and then reboot or run the command &#x27;sysctl vm.overcommit_memory=1&#x27; for this to take effect.<br>redis_1  | 1:M 25 Aug 2021 14:00:36.629 * Ready to accept connections<br>web_1    |  * Serving Flask app &#x27;app.py&#x27; (lazy loading)<br>web_1    |  * Environment: production<br>web_1    |    WARNING: This is a development server. Do not use it in a production deployment.<br>web_1    |    Use a production WSGI server instead.<br>web_1    |  * Debug mode: off<br>web_1    |  * Running on all addresses.<br>web_1    |    WARNING: This is a development server. Do not use it in a production deployment.<br>// 至此启动成功<br>web_1    |  * Running on http://172.18.0.2:5000/ (Press CTRL+C to quit)<br></code></pre></td></tr></table></figure>
+
+<p>这里有一个警告</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">WARNING: Image for service web was built because it did not already exist. To rebuild this image you must use `docker-compose build` or `docker-compose up --build`.<br></code></pre></td></tr></table></figure>
+
+<p>重新build一下,然后再up</p>
+<p><img src="3.png" srcset="/img/loading.gif" lazyload alt="3"></p>
+<p>启动成功！</p>
+<blockquote>
+<p>看一下Docker为我们下载了哪些东西</p>
+</blockquote>
+<p><img src="4.png" srcset="/img/loading.gif" lazyload alt="4"></p>
+<p><strong>Docker 为我们自动下载了docker-compose.yml里面所需要的依赖</strong></p>
+<h2 id="网络"><a href="#网络" class="headerlink" title="网络"></a>网络</h2><p><img src="5.png" srcset="/img/loading.gif" lazyload alt="5"></p>
+<p>compomse为我们生成了一个默认的网络，项目中的内容在同一个网络下，可以通过域名访问。</p>
+<blockquote>
+<p>查看一下网络细节</p>
+</blockquote>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><code class="hljs shell">docker network inspect composetest_default<br><br>[<br>    &#123;<br>        &quot;Name&quot;: &quot;composetest_default&quot;,<br>        &quot;Id&quot;: &quot;8976c9ff627bb4b9ed59e37fe2bd85fb9d44d80cf69d2c4c58fd34ee34b982dd&quot;,<br>        &quot;Created&quot;: &quot;2021-08-25T21:56:27.082056201+08:00&quot;,<br>        &quot;Scope&quot;: &quot;local&quot;,<br>        &quot;Driver&quot;: &quot;bridge&quot;,<br>        &quot;EnableIPv6&quot;: false,<br>        &quot;IPAM&quot;: &#123;<br>            &quot;Driver&quot;: &quot;default&quot;,<br>            &quot;Options&quot;: null,<br>            &quot;Config&quot;: [<br>                &#123;<br>                    &quot;Subnet&quot;: &quot;172.18.0.0/16&quot;,<br>                    &quot;Gateway&quot;: &quot;172.18.0.1&quot;<br>                &#125;<br>            ]<br>        &#125;,<br>        &quot;Internal&quot;: false,<br>        &quot;Attachable&quot;: true,<br>        &quot;Ingress&quot;: false,<br>        &quot;ConfigFrom&quot;: &#123;<br>            &quot;Network&quot;: &quot;&quot;<br>        &#125;,<br>        &quot;ConfigOnly&quot;: false,<br>        // 两个服务在同一个网络下，在访问的的时候就可以通过域名访问<br>        &quot;Containers&quot;: &#123;<br>            &quot;a841fa30f1638622b3940e6e0878305fb760f7442cd3f288245af4e709e85dd2&quot;: &#123;<br>                &quot;Name&quot;: &quot;composetest_redis_1&quot;,<br>                &quot;EndpointID&quot;: &quot;f79f990ac02776b47914b59f85fae80762e4eabf3f65c1fad553a0a9c58364e2&quot;,<br>                &quot;MacAddress&quot;: &quot;02:42:ac:12:00:03&quot;,<br>                &quot;IPv4Address&quot;: &quot;172.18.0.3/16&quot;,<br>                &quot;IPv6Address&quot;: &quot;&quot;<br>            &#125;,<br>            &quot;bf24d8a60dfe24a83d08cff57cf761fa41d18beade38a0ab9fb18cb9f1562c53&quot;: &#123;<br>                &quot;Name&quot;: &quot;composetest_web_1&quot;,<br>                &quot;EndpointID&quot;: &quot;2daacdf34e07ead0712a74b091c5e25d57f52f37094bdb30e4abc33cb8809780&quot;,<br>                &quot;MacAddress&quot;: &quot;02:42:ac:12:00:02&quot;,<br>                &quot;IPv4Address&quot;: &quot;172.18.0.2/16&quot;,<br>                &quot;IPv6Address&quot;: &quot;&quot;<br>            &#125;<br>        &#125;,<br>        &quot;Options&quot;: &#123;&#125;,<br>        &quot;Labels&quot;: &#123;<br>            &quot;com.docker.compose.network&quot;: &quot;default&quot;,<br>            &quot;com.docker.compose.project&quot;: &quot;composetest&quot;,<br>            &quot;com.docker.compose.version&quot;: &quot;1.29.2&quot;<br>        &#125;<br>    &#125;<br>]<br><br></code></pre></td></tr></table></figure>
+
+<p><img src="6.png" srcset="/img/loading.gif" lazyload alt="6"></p>
+<blockquote>
+<p>再次理解compose</p>
+</blockquote>
+<p>以前都是单个容器，项目启动的时候你得一个一个的启动，就 很麻烦，现在有了compose，就可以一件启停。所以说docker-compose里面放着我们这个项目所需要的所有的容器</p>
+<h3 id="Docker小结"><a href="#Docker小结" class="headerlink" title="Docker小结"></a>Docker小结</h3><ol>
+<li>images  run =&gt; 容器</li>
+<li>Dockerfile build 构建镜像</li>
+<li>docker-compose 启动项目</li>
+<li>Docker网络</li>
+</ol>
+<h3 id="编写Dockerfile"><a href="#编写Dockerfile" class="headerlink" title="编写Dockerfile"></a>编写Dockerfile</h3><blockquote>
+<p>什么是Dockerfile</p>
+</blockquote>
+<p>Dockerfile是用来描述文件构成的文本文档</p>
+</li>
+</ol>
+</li>
+</ol>
+<p><img src="7.png" srcset="/img/loading.gif" lazyload alt="7"></p>
+<h3 id="如何优雅的编写Dockerfile"><a href="#如何优雅的编写Dockerfile" class="headerlink" title="如何优雅的编写Dockerfile"></a>如何优雅的编写Dockerfile</h3><ul>
+<li>文件不宜太长，层级越多制作出来的镜像就越大</li>
+<li>构建出来的镜像不要包含不需要的内容，如日志、安装临时文件等</li>
+<li>尽量使用运行时的基础镜像，不需要将构建时的过程也放到运行时的Dockerfile里</li>
+</ul>
+<blockquote>
+<p>对比一下</p>
+</blockquote>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs shell">FROM ubuntn:16.04<br>RUN apt-get update<br>RUN apt-get install -y apt-utils libjeg-dev \<br>python-pip<br>RUN pip install --upgrade pip<br>RUN easy_install -U setuptools<br>run apt-get clean<br></code></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs shell">form ubuntu:16.04<br>run apt-get update &amp;&amp; apt-get install -y apt-utils \ <br>   libjpeg-dev python-pip \<br>   &amp;&amp;  pip install --upgrade pip \<br>    &amp;&amp; easy_install -U setuptools \<br>    &amp;&amp; apt-get clean<br></code></pre></td></tr></table></figure>
+
+<p>分析一下</p>
+<ol>
+<li>第一分全部分层写的，我们知道docker 就像是堆积木是一层一层的，那么第一份就相当于堆了很多层，那么就会占用相对多的内存，当然这点内存对我们来说也不算什么。</li>
+<li>说一下优点，因为第一层分层了，那么当镜像出现错误的时候需要重修build是，那些没有出错的层就不用重新build了，那么就节省了重构的时间。但是如果Dockerfile非常长的话就要考虑减少层次了，因为Dockerfile做高只能有127层</li>
+</ol>
+<p>分析一下第二份</p>
+<ol>
+<li>这一份和第一份最大的区别在于，他都放在一层写了，那就导致如果这一层有出错的话，就得全部重构那么就比较耗时了，虽然他占用的内存比较少。</li>
+</ol>
+<h3 id="如何优雅的写Docker-compose-yml"><a href="#如何优雅的写Docker-compose-yml" class="headerlink" title="如何优雅的写Docker-compose.yml"></a>如何优雅的写Docker-compose.yml</h3><blockquote>
+<p>什么是docker-compoes</p>
+</blockquote>
+<p>docker-compose 把所有需要的镜像包括各种参数和顺序写在一个yml文件里，直接运行这一个配置文件就可以按照你所需要的方法和步骤运行容器。所以称<strong>docker-compose为一种镜像编排的方式</strong>。</p>
+<p>看一下实例</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><code class="hljs shell">version: &quot;3&quot;<br>services:<br>  web:<br>    image: beginor/geoserver:2.11.1<br>    container_name: geoserver-web<br>    hostname:geosover-web<br>    ports:<br>      -8080:8080<br>    volumes:<br>      - ./web/data_dir: /geoserver/data_dir<br>      - ./web/logs: /geoserver/logs<br>    restart: unless-stopped<br>    links:<br>      - database:database<br>   database:<br>     iamge: beginor/postgis:9.3<br>     container_name: postgis<br>     hostname: postgis<br>     ports:<br>       - 5432:5432<br>     volumes:<br>       - ./database/data: /var/lib/postgresql/data<br>     environment:<br>       POSTGRES_PASSWORD: 123456<br>     restart: unless-stopped<br></code></pre></td></tr></table></figure>
+
+
+
+<h1 id="Docker-Swarm"><a href="#Docker-Swarm" class="headerlink" title="Docker Swarm"></a>Docker Swarm</h1><h1 id="Docker-Stack"><a href="#Docker-Stack" class="headerlink" title="Docker Stack"></a>Docker Stack</h1><h1 id="Docker-Secret"><a href="#Docker-Secret" class="headerlink" title="Docker Secret"></a>Docker Secret</h1><h1 id="Docker-Config"><a href="#Docker-Config" class="headerlink" title="Docker Config"></a>Docker Config</h1><h1 id="K8s"><a href="#K8s" class="headerlink" title="K8s"></a>K8s</h1>
+            </div>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                  <div class="post-meta mr-3">
+                    <i class="iconfont icon-category"></i>
+                    
+                      <a class="hover-with-bg" href="/categories/%E8%BF%90%E7%BB%B4/">运维</a>
+                    
+                  </div>
+                
+                
+                  <div class="post-meta">
+                    <i class="iconfont icon-tags"></i>
+                    
+                      <a class="hover-with-bg" href="/tags/%E8%BF%90%E7%BB%B4%E5%BF%85%E4%BC%9A/">运维必会</a>
+                    
+                  </div>
+                
+              </div>
+              
+                <p class="note note-warning">
+                  
+                    本博客所有文章除特别声明外，均采用 <a target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！
+                  
+                </p>
+              
+              
+                <div class="post-prevnext">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2022/03/13/Reactor/">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Reactor</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2022/03/13/JUC/">
+                        <span class="hidden-mobile">JUC</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+              <!-- Comments -->
+              <article class="comments" id="comments" lazyload>
+                
+                  
+                
+                
+  <div id="valine"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#valine', function() {
+      Fluid.utils.createScript('https://cdn.jsdelivr.net/npm/valine@1/dist/Valine.min.js', function() {
+        var options = Object.assign(
+          {"appId":"nGD612Gu0HScFjNTtkQ975DQ-gzGzoHsz","appKey":"uQWFCWpfdpmUcF3iVKDcak3s","path":"window.location.pathname","placeholder":"说点什么","avatar":"retro","meta":["nick","mail","link"],"requiredFields":[],"pageSize":10,"lang":"zh-CN","highlight":false,"recordIP":false,"serverURLs":"","emojiCDN":null,"emojiMaps":null,"enableQQ":false},
+          {
+            el: "#valine",
+            path: window.location.pathname
+          }
+        )
+        new Valine(options);
+        Fluid.utils.waitElementVisible('#valine .vcontent', () => {
+          Fluid.plugins.initFancyBox('#valine .vcontent img:not(.vemoji)');
+        })
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+              </article>
+            
+          </article>
+        </div>
+      </div>
+    </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+      </div>
+    
+  </div>
+</div>
+
+<!-- Custom -->
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+
+    
+  </main>
+
+  <footer class="text-center mt-5 py-3">
+  <div class="footer-content">
+     <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+  </div>
+  
+  <div class="statistics">
+    
+    
+
+    
+      
+        <!-- LeanCloud 统计PV -->
+        <span id="leancloud-site-pv-container" style="display: none">
+            总访问量 
+            <span id="leancloud-site-pv"></span>
+             次
+          </span>
+      
+      
+        <!-- LeanCloud 统计UV -->
+        <span id="leancloud-site-uv-container" style="display: none">
+            总访客数 
+            <span id="leancloud-site-uv"></span>
+             人
+          </span>
+      
+
+    
+  </div>
+
+
+  
+
+  
+</footer>
+
+
+  <!-- SCRIPTS -->
+  
+  <script  src="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js" ></script>
+<script  src="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+<!-- Plugins -->
+
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+  
+
+
+
+  
+    <script  src="https://cdn.jsdelivr.net/npm/tocbot@4/dist/tocbot.min.js" ></script>
+  
+  
+    <script  src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.js" ></script>
+  
+  
+    <script  src="https://cdn.jsdelivr.net/npm/anchor-js@4/anchor.min.js" ></script>
+  
+  
+    <script defer src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js" ></script>
+  
+
+
+
+
+  <script defer src="/js/leancloud.js" ></script>
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/typed.js@2/lib/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var title = document.getElementById('subtitle').title;
+      
+        typing(title);
+      
+    })(window, document);
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+
+
+<!-- 主题的启动项 保持在最底部 -->
+<script  src="/js/boot.js" ></script>
+
+
+</body>
+</html>

@@ -1,0 +1,856 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/siteicon.jpg">
+  <link rel="icon" href="/img/siteicon.jpg">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="John Doe">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="ElasticSearch ElasticSearch和Lucene的关系  ElasticSearch是基于Lucene做了一些封装和增强的 核心概念 索引 字段类型（mapping） 文档  概述Node 与 ClusterElastic本质上是一个分布式数据库，允许多台服务器协同工作，每台服务器可以运行多个elastic实例。单个elastic称为一个节点（node）。一组节点构成一个集群（">
+<meta property="og:type" content="article">
+<meta property="og:title" content="es">
+<meta property="og:url" content="http://example.com/2022/03/12/es/index.html">
+<meta property="og:site_name" content="野草技术社区">
+<meta property="og:description" content="ElasticSearch ElasticSearch和Lucene的关系  ElasticSearch是基于Lucene做了一些封装和增强的 核心概念 索引 字段类型（mapping） 文档  概述Node 与 ClusterElastic本质上是一个分布式数据库，允许多台服务器协同工作，每台服务器可以运行多个elastic实例。单个elastic称为一个节点（node）。一组节点构成一个集群（">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="c:/Users/Lenovo/hexo-blog/source/_posts/es.assets/image-20210818170935687.png">
+<meta property="og:image" content="c:/Users/Lenovo/hexo-blog/source/_posts/es.assets/image-20210818171053767.png">
+<meta property="og:image" content="c:/Users/Lenovo/hexo-blog/source_posts/es.assets/image-20210818173234918.png">
+<meta property="og:image" content="c:/Users/Lenovo/hexo-blog/source_posts/es.assets/image-20210818175204320.png">
+<meta property="og:image" content="c:/Users/Lenovo/hexo-blog/source_posts/es.assets/image-20210818175433324.png">
+<meta property="og:image" content="c:/Users/Lenovo/hexo-blog/source_posts/es.assets/image-20210818181524735.png">
+<meta property="og:image" content="c:/Users/Lenovo/hexo-blog/source_posts/es.assets/image-20210818182617047.png">
+<meta property="og:image" content="c:/Users/Lenovo/hexo-blog/source_posts/es.assets/image-20210818195903364.png">
+<meta property="og:image" content="c:/Users/Lenovo/hexo-blog/source_posts/es.assets/image-20210818201754160.png">
+<meta property="og:image" content="c:/Users/Lenovo/hexo-blog/source_posts/es.assets/image-20210818202509587.png">
+<meta property="og:image" content="c:/Users/Lenovo/hexo-blog/source_posts/es.assets/image-20210818213035706.png">
+<meta property="og:image" content="c:/Users/Lenovo/hexo-blog/source_posts/es.assets/image-20210818212805059.png">
+<meta property="og:image" content="c:/Users/Lenovo/hexo-blog/source_posts/es.assets/image-20210818214001508.png">
+<meta property="og:image" content="c:/Users/Lenovo/hexo-blog/source_posts/es.assets/image-20210818214631688.png">
+<meta property="og:image" content="c:/Users/Lenovo/hexo-blog/source_posts/es.assets/image-20210818214940948.png">
+<meta property="og:image" content="c:/Users/Lenovo/hexo-blog/source_posts/es.assets/image-20210819155215150.png">
+<meta property="og:image" content="c:/Users/Lenovo/hexo-blog/source_posts/es.assets/image-20210819162238583.png">
+<meta property="og:image" content="c:/Users/Lenovo/hexo-blog/source_posts/es.assets/image-20210819162734350.png">
+<meta property="og:image" content="c:/Users/Lenovo/hexo-blog/source_posts/es.assets/image-20210819163140511.png">
+<meta property="og:image" content="c:/Users/Lenovo/hexo-blog/source_posts/es.assets/image-20210819164610288.png">
+<meta property="og:image" content="c:/Users/Lenovo/hexo-blog/source_posts/es.assets/image-20210819164828608.png">
+<meta property="og:image" content="c:/Users/Lenovo/hexo-blog/source_posts/es.assets/image-20210819165444903.png">
+<meta property="og:image" content="c:/Users/Lenovo/hexo-blog/source/_posts/es.assets/image-20210819175705264.png">
+<meta property="og:image" content="c:/Users/Lenovo/hexo-blog/source_posts/es.assets/image-20210821114536794.png">
+<meta property="article:published_time" content="2022-03-12T10:12:13.000Z">
+<meta property="article:modified_time" content="2022-03-13T08:15:52.414Z">
+<meta property="article:author" content="John Doe">
+<meta property="article:tag" content="搜索引擎">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="c:/Users/Lenovo/hexo-blog/source/_posts/es.assets/image-20210818170935687.png">
+  
+  
+  <title>es - 野草技术社区</title>
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/css/bootstrap.min.css" />
+
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@4/github-markdown.min.css" />
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hint.css@2/hint.min.css" />
+
+  
+    
+    
+      
+      <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@10/styles/github-gist.min.css" />
+    
+  
+
+  
+    <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.css" />
+  
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_ba1fz6golrf.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.8.14","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"copy_btn":true,"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":"nGD612Gu0HScFjNTtkQ975DQ-gzGzoHsz","app_key":"uQWFCWpfdpmUcF3iVKDcak3s","server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+<meta name="generator" content="Hexo 5.4.1"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>野草技术社区</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="banner" id="banner" parallax=true
+         style="background: url('/img/bg01.jpg') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="page-header text-center fade-in-up">
+            <span class="h2" id="subtitle" title="es">
+              
+            </span>
+
+            
+              <div class="mt-3">
+  
+  
+    <span class="post-meta">
+      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+      <time datetime="2022-03-12 18:12" pubdate>
+        2022年3月12日 晚上
+      </time>
+    </span>
+  
+</div>
+
+<div class="mt-1">
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      17k 字
+    </span>
+  
+
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      141 分钟
+    </span>
+  
+
+  
+  
+    
+      <!-- LeanCloud 统计文章PV -->
+      <span id="leancloud-page-views-container" class="post-meta" style="display: none">
+        <i class="iconfont icon-eye" aria-hidden="true"></i>
+        <span id="leancloud-page-views"></span> 次
+      </span>
+    
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">es</h1>
+            
+            <div class="markdown-body">
+              <h1 id="ElasticSearch"><a href="#ElasticSearch" class="headerlink" title="ElasticSearch"></a>ElasticSearch</h1><blockquote>
+<p>ElasticSearch和Lucene的关系</p>
+</blockquote>
+<p>ElasticSearch是基于Lucene做了一些封装和增强的</p>
+<h2 id="核心概念"><a href="#核心概念" class="headerlink" title="核心概念"></a>核心概念</h2><ol>
+<li>索引</li>
+<li>字段类型（mapping）</li>
+<li>文档</li>
+</ol>
+<h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><h3 id="Node-与-Cluster"><a href="#Node-与-Cluster" class="headerlink" title="Node 与 Cluster"></a>Node 与 Cluster</h3><p>Elastic本质上是一个分布式数据库，允许多台服务器协同工作，每台服务器可以运行多个elastic实例。单个elastic称为一个节点（node）。一组节点构成一个集群（cluster）</p>
+<h3 id="index"><a href="#index" class="headerlink" title="index"></a>index</h3><p><strong>Elastic会索引所有字段，经过处理后会写入一个反向索引</strong>（inverted index）。查找数据的时候，直接查找该索引。所以，Elastic数据管理顶层单位就叫做index索引。他是单个数据库的同义词。每个index即数据库的名字必须是小写。通过一下命令查看所有的索引</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><div class="code-wrapper"><pre><span class="line">1</span><br></pre></div></td><td class="code"><pre><code class="hljs shell">GET &#x27;127.0.0.1:9200/_cat/indices?v&#x27;<br></code></pre></td></tr></table></figure>
+
+<h3 id="document"><a href="#document" class="headerlink" title="document"></a>document</h3><p><strong>Index里面的单条记录又称为Document（文档），多条document构成了一个Index。</strong></p>
+<p>Document使用Json格式表示</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs json"><span class="hljs-punctuation">&#123;</span><br>    <span class="hljs-attr">&quot;user&quot;</span><span class="hljs-punctuation">:</span><span class="hljs-string">&quot;zhangsan&quot;</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-attr">&quot;title&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;工程师&quot;</span><span class="hljs-punctuation">,</span><br><span class="hljs-punctuation">&#125;</span><br></code></pre></td></tr></table></figure>
+
+<p>同一个index里面的document不要求有相同的结构scheme，但是最好保持相同，这样有利于提高搜索效率。</p>
+<h3 id="type"><a href="#type" class="headerlink" title="type"></a>type</h3><p>Document可以分组，比如weather这个index里面可以按城市分组（北京上海），也可以按照其后分组，这种分组叫做type，他是虚拟的逻辑分组，用来过滤document。</p>
+<p>不同的type应该有相似的结构scheme，举例来说，id字段不能 在这个组里是字符串在另一个组里是数值。这与关系型数据库截然不同。MySQL里面不同表里的相同字段的类型是不受彼此影响的。现在在elastic里面性质完全不同的数据比如product和logs应该存成两个index而不是一个index里面的两个type（虽然可以做到）</p>
+<p>下面可以列出每个index所包含的type</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">curl &quot;127.0.0.1:9200/_mapping?pretty=true&quot;<br></code></pre></td></tr></table></figure>
+
+<p>在elastic 6.X中每个index只允许包含一个type，7.X版本将彻底移除type</p>
+<p>简称es,<strong>是一个开源的高扩展的分布式全文检索</strong>引擎，它可以近乎实时的存储、检索数据；本身的扩展性很好，可以扩展到上百台服务器，处理PB级别的数据。es也是用Java开发并使用Lucene作为其核心来实现所有的索引和搜索的功能，但是他的目的是通过简单的restfulAPI来隐藏Lucene的复杂性，从而让全文搜索变得简单。</p>
+<h2 id="历史"><a href="#历史" class="headerlink" title="历史"></a>历史</h2><p>多年前，一个叫做Shay Banon的刚结婚不久的失业开发者，由于妻子要去伦敦学习厨师，她便跟着去了。在找工作的过程中为了给妻子构建一个食谱的搜索引擎，他便开始构建一个早期版本的Luence。</p>
+<p>直接基于Luence的工作比较困难，所以Shay开始抽象Luence代码以便Java程序员可以在应用中添加搜索功能。他发布了他的第一个开源项目叫做<strong>Compass</strong></p>
+<p>后来Shay找到一份工作，这份工作在高性能和内存数据网格的分布式环境中，因此高性能的、实时的、分布式的搜索引擎也是理所当然的。然后他决定重写Compass库使其成为一个独立的服务叫做<strong>ElasticSearch</strong></p>
+<p>第一个公开版本出现于2010年二月分，在那之后ElasticSearch已经成为GitHub上最受欢迎的项目之一，代码贡献者超过300人。一家主营ElasticSearch的公司就此成立，他们一边提供服务一边开发新功能</p>
+<h2 id="ElasticSearch和solr的差别"><a href="#ElasticSearch和solr的差别" class="headerlink" title="ElasticSearch和solr的差别"></a>ElasticSearch和solr的差别</h2><p>Elasticsearch是一个实时分布式搜索和分析引擎。它让你以前所未有的速度处理大数据成为可能。它用于全文搜索、结构化搜索、分析以及将这三者混合使用︰维基百科使用Elasticsearch提供全文搜索并高亮关键字，以及输入实时搜索(search-asyou-type)和搜索纠错(did-you-mean)等搜索建议功能。英国卫报使用Elasticsearch结合用户日志和社交网络数据提供给他们的编辑以实时的反馈，以便及时了解公众对新发表的文章的回应。StackOverflow结合全文搜索与地理位置查询，以及more-like-this功能来找到相关的问题和答案。Github使用Elasticsearch检索1300亿行的代码。但是Elasticsearch不仅用于大型企业，它还让像DataDog以及Klout这样的创业公司将最初的想法变成可扩展的解决方案。Elasticsearch可以在你的笔记本上运行，也可以在数以百计的服务器上处理PB级别的数据。Elasticsearch是一个基于Apache Lucene(TM)的开源搜索引擎。无论在开源还是专有领域，Lucene可以被认为是迄今为止最先进、性能最好的、功能最全的搜索引擎库。Elasticsearch也使用lava开发并使用Lucene作为其核心来实现所有索引和搜索的功能，但是它的目的是通过简单的RESTful API来隐藏Lucene的复杂性，从而让全文搜索变得简单。Elasticsearch也使用lava开发并使用Lucene作为其核心来实现所有索引和搜索的功能，但是它的目的是通过简单的RESTful API来隐藏Lucene的复杂性，从而让全文搜索变得简单。</p>
+<h2 id="Solr简介"><a href="#Solr简介" class="headerlink" title="Solr简介"></a>Solr简介</h2><p>Solr是Apache下的一个顶级开源项目，采用lava开发，它是基于Lucene的全文搜索服务器。Solr提供了比Lucene更为丰富的查询语言，同时实现了可配置、可扩展，并对索引、搜索性能进行了优化Solr可以独立运行，运行在Jetty、Tomcat等这些Servlet容器中，Solr索引的实现方法很简单，用POST方法向Solr服务器发送一个描述Field及其内容的XML文档，Solr根据xml文档添加、删除、更新索引。Solr搜索只需要发送HTTP GET请求，然后对Solr返回Xml、json等格式的查询结果进行解析，组织页面布局。Solr不提供构建UI的功能，Solr提供了一个管理界面，通过管理界面可以查询Solr的配置和运行情况。Solr是一个独立的企业级搜索应用服务器，它对外提供类似于Web-service的API接口。用户可以通过http请求，向搜索引擎服务器提交一定格式的文件，生成索引;也可以通过提出查找请求，并得到返回结果。Solr是一个独立的企业级搜索应用服务器，它对外提供类似于Web-service的API接口。用户可以通过http请求，向搜索引擎服务器提交一定格式的文件，生成索引;也可以通过提出查找请求，并得到返回结果。</p>
+<h2 id="ElasticSearch和Solr的比较"><a href="#ElasticSearch和Solr的比较" class="headerlink" title="ElasticSearch和Solr的比较"></a>ElasticSearch和Solr的比较</h2><img src="C:\Users\Lenovo\hexo-blog\source\_posts\es.assets\image-20210818170935687.png" srcset="/img/loading.gif" lazyload alt="image-20210818170935687" style="zoom:80%;" />
+
+<img src="C:\Users\Lenovo\hexo-blog\source\_posts\es.assets\image-20210818171053767.png" srcset="/img/loading.gif" lazyload alt="image-20210818171053767" style="zoom:80%;" />
+
+<p>ElasticSearch VS Solr总结</p>
+<ol>
+<li>es 开箱即用，解压就可以用，非常简单。Solr安装比较复杂</li>
+<li>Solr利用zookeeper进行分布式管路，而ElasticSearch自身带有分布式协调管理的功能</li>
+<li>Solr支持更多的格式，比如Json、xml、CSV、,而es仅支持JSON但是当前用的最多 的还是JSON</li>
+<li>Solr提供更多的功能，而ES本身更注重于核心功能，高级的功能由第三方插件提供比如IK，和图形界面kibana</li>
+<li>Solr查询快，但是更新索引时慢（即插入删除慢），用于电商等查询多的应用；ES建立索引快（即查询快）及时性查询快，用于Facebook新浪等搜索。Solr是传统搜索应用的有利解决方案，但是ElasticSearch更适用于新型的实时搜索应用</li>
+<li>Solr比较成熟没有一个更大、更成熟的用户、开发和贡献者社区，而es相对开发维护者比较少，更新太快学习成本高</li>
+</ol>
+<h2 id="下载"><a href="#下载" class="headerlink" title="下载"></a>下载</h2><p><img src="C:\Users\Lenovo\hexo-blog\source_posts\es.assets\image-20210818173234918.png" srcset="/img/loading.gif" lazyload alt="image-20210818173234918"></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs bash">/bin 启动文件<br>/config 配置文件<br>      /log4j2  日志文件<br>      /jvm.options java虚拟机相关的配置 内存小的可以配置 -Xms <br>      /elasticsearch.yml es的配置文件 默认9200端口 跨域问题<br>/lib 相关jar包<br>/logs 日志<br>/modules 功能模块<br>/plugins 插件 ik<br></code></pre></td></tr></table></figure>
+
+<p>默认情况下ES只允许本机访问，如果需要远程访问可以修改ES安装目录下面的config/elasticsearch.yml文件，去掉network.host的注释，将他的值改为0.0.0.0，然后重新启动</p>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs yml"><span class="hljs-comment"># 0.0.0.0可以让任何人访问，上线时应该时具体的IP地址</span><br><span class="hljs-string">network.host:0.0.0.0</span><br></code></pre></td></tr></table></figure>
+
+
+
+<h2 id="启动"><a href="#启动" class="headerlink" title="启动"></a>启动</h2><p>双击/bin/elasticsearch.bat 文件</p>
+<p><img src="C:\Users\Lenovo\hexo-blog\source_posts\es.assets\image-20210818175204320.png" srcset="/img/loading.gif" lazyload alt="image-20210818175204320"></p>
+<p><img src="C:\Users\Lenovo\hexo-blog\source_posts\es.assets\image-20210818175433324.png" srcset="/img/loading.gif" lazyload alt="image-20210818175433324"></p>
+<blockquote>
+<p>安装可视化界面</p>
+</blockquote>
+<ol>
+<li><p>配置跨域</p>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs yml"><span class="hljs-comment"># 打开跨域支持</span><br><span class="hljs-attr">http.cors.enabled:</span> <span class="hljs-literal">true</span><br><span class="hljs-comment"># 设置为允许所有人访问</span><br><span class="hljs-attr">http.cors.allow-origin:</span> <span class="hljs-string">&quot;*&quot;</span><br></code></pre></td></tr></table></figure>
+
+<p><img src="C:\Users\Lenovo\hexo-blog\source_posts\es.assets\image-20210818181524735.png" srcset="/img/loading.gif" lazyload alt="image-20210818181524735"></p>
+</li>
+<li><p>启动指令</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-number">1.</span> npm install<br><span class="hljs-number">2.</span> net run start <br></code></pre></td></tr></table></figure></li>
+</ol>
+<p><img src="C:\Users\Lenovo\hexo-blog\source_posts\es.assets\image-20210818182617047.png" srcset="/img/loading.gif" lazyload alt="image-20210818182617047"></p>
+<p>初学可以把es当作数据库，可以建立索引（库），文档（库中的数据）<strong>这个head我们就把它当作数据展示工具</strong></p>
+<blockquote>
+<p>了解Elk</p>
+</blockquote>
+<p>ELK是Elasticsearch、Logstash、Kibana三大开源框架首字母大写简称。市面上也被成为Elastic Stack。其中Elasticsearch是一个基于Lucene、分布式、通过Restful方式进行交互的近实时搜索平台框架。像类似百度、谷歌这种大数据全文搜索引擎的场景都可以使用Elasticsearch作为底层支持框架，可见Elasticsearch提供的搜索能力确实强大,市面上很多时候我们简称Elasticsearch为es。Logstash是ELK的中央数据流引擎，用于从不同目标（文件/数据存储/MQ）收集的不同格式数据，经过过滤后支持输出到不同目的地（文件/MQ/redis/elasticsearch/kafka等 )。Kibana可以将elasticsearch的数据通过友好的页面展示出来，提供实时分析的功能。市面上很多开发只要提到ELK能够一致说出它是一个日志分析架构技术栈总称，但实际上ELK不仅仅适用于日志分析，它还可以支持其它任何数据分析和收集的场景，日志分析和收集只是更具有代表性。并非唯一性。</p>
+<p><img src="C:\Users\Lenovo\hexo-blog\source_posts\es.assets\image-20210818195903364.png" srcset="/img/loading.gif" lazyload alt="image-20210818195903364"></p>
+<blockquote>
+<p>安装Kibana</p>
+</blockquote>
+<p>Kibana是一个针对Elasticsearch的开源分析及可视化平台，用来搜索、查看交互存储在Elasticsearch索引中的数据。使用Kibana ,可以通过各种图表进行高级数据分析及展示。Kibana让海量数据更容易理解。它操作简单，基于浏览器的用户界面可以快速创建仪表板( dashboard )实时显示Elasticseaich查询动态。设置Kibana非常简单。无需编码或者额外的基础架构，几分钟内就可以完成Kibana安装并启动Elasticsearch索引监测。</p>
+<blockquote>
+<p>目录</p>
+</blockquote>
+<p><img src="C:\Users\Lenovo\hexo-blog\source_posts\es.assets\image-20210818201754160.png" srcset="/img/loading.gif" lazyload alt="image-20210818201754160"></p>
+<p><img src="C:\Users\Lenovo\hexo-blog\source_posts\es.assets\image-20210818202509587.png" srcset="/img/loading.gif" lazyload alt="image-20210818202509587"></p>
+<p><strong>在/config/kibana.yml里面进行汉化</strong></p>
+<blockquote>
+<p>elasticsearch是面向文档的，关系型数据库和elasticsearch的对比</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>关系型数据库</th>
+<th>ElasticSearch</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>数据库 DB</td>
+<td>索引（includes）</td>
+</tr>
+<tr>
+<td>表（tables）</td>
+<td>types（慢慢在弃用）</td>
+</tr>
+<tr>
+<td>行（rows）</td>
+<td>document</td>
+</tr>
+<tr>
+<td>字段（columns）</td>
+<td>fields</td>
+</tr>
+</tbody></table>
+<p>elasticsearch（集群）中可以包含多个索引（数据库），每个索引中可以包含多个类型（表），每个类型下又包含多个文档（行），每个文档中又包括多个字段（列）</p>
+<h2 id="物理设计"><a href="#物理设计" class="headerlink" title="物理设计"></a>物理设计</h2><p>elasticsearch在后台把每个 <strong>索引划分成多个分片</strong> ，每分分片可以在集群中的不同服务器间迁移，一个人就是一个集群！默认的集群名就是elasticsearch </p>
+<blockquote>
+<p>文档</p>
+</blockquote>
+<p>就是我们的一条条数据</p>
+<p>之前说es是面向文档的，那么就意味着索引和搜索数据的最小单位是文档，elasticsearch中，文档有几个重要属性</p>
+<ul>
+<li>自我包含，一篇文档同时包含字段和对应的值，也就是同时包含key:value</li>
+<li>可以是层次型的，一个文档中包含自文档，复杂的逻辑实体就是这么来的。{就是一个json对象，fastjson进行自动转换！}</li>
+<li>灵活的结构，文档不依赖预先定义的模式，我们知道关系型数据库中要提前定义字段才能使用，在elasticsearch中，对于字段是非常灵活的，有时候，我们可以忽略该字段，或者动态的添加一个新字段。</li>
+</ul>
+<p>尽管我们可以灵活的新增或者忽略某个字段，但是，每个字段的类型非常重要，比如一个年龄字段类型可以是字符串也可以是整形，因为elasticsearch会保存字段和类型之间的映射及其他设置。这种映射具体到每个映射的每种类型，这也是为什么在elasticsearch中，类型有时候也称为映射类型</p>
+<blockquote>
+<p>类型</p>
+</blockquote>
+<p><strong>类型是文档的逻辑容器</strong>，<strong>就像关系型数据库一样，表格是行的容器</strong>。类型中对于字段的定义称为映射，比如name映射为字符串类型。我们说文档是无模式的，它们不需要拥有映射中所定义的所有字段，比如新增一个字段，那么elasticsearch是怎么做的呢?elasticsearch会自动的将新字段加入映射，但是这个字段的不确定它是什么类型，elasticsearch就开始猜，如果这个值是18，那么elasticsearch会认为它是整形。但是elasticsearch也可能猜不对，所以最安全的方式就是提前定义好所需要的映射，这点跟关系型数据库殊途同归了，先定义好字段，然后再使用，别整什么幺蛾子。</p>
+<blockquote>
+<p>索引</p>
+</blockquote>
+<p><strong>就是数据库</strong> 索引是映射类型的容器。elasticsearch中的索引是一个非常大的文档集合。索引存储了映射类型的字段和其他设置。然后他们被存储到各个分片上了。我们来研究下分片是如何工作的</p>
+<p><strong>物理设计：节点和分片如何工作</strong></p>
+<p><img src="C:\Users\Lenovo\hexo-blog\source_posts\es.assets\image-20210818213035706.png" srcset="/img/loading.gif" lazyload alt="image-20210818213035706"></p>
+<p>一个集群这至少有一个节点，而一个 节点就是一个elasticsearch进程，节点可以有多个索引默认的，如果你创建索引，那么索引将会有五个分片（primary shard,又称主分片）构成的，每一个主分片 会有一个副本（replica shard，又称复制分片）</p>
+<p><img src="C:\Users\Lenovo\hexo-blog\source_posts\es.assets\image-20210818212805059.png" srcset="/img/loading.gif" lazyload alt="image-20210818212805059"></p>
+<h2 id="倒排锁引"><a href="#倒排锁引" class="headerlink" title="倒排锁引"></a>倒排锁引</h2><p>elasticsearch使用的是一种称为倒排锁引的结构，采用Luence倒排锁引作为底层。这种结构适用于快速的全文搜索，一个锁引有文档中所有不重复的列表构成，对于每一个词，都有一个包含他的文档列表。例如，现在有两个文档，每个文档包含如下内容：</p>
+<p><img src="C:\Users\Lenovo\hexo-blog\source_posts\es.assets\image-20210818214001508.png" srcset="/img/loading.gif" lazyload alt="image-20210818214001508"></p>
+<p>为了创建倒排锁引，我们首先要将每个文档拆分成独立的词（或称为词条或者tokens），然后创建一个包含所有不重复的词条的排序列表，然后列出每个词条出现哪个文档：</p>
+<p><img src="C:\Users\Lenovo\hexo-blog\source_posts\es.assets\image-20210818214631688.png" srcset="/img/loading.gif" lazyload alt="image-20210818214631688"></p>
+<p>现在我们试图搜索to forever,只需要查看包含每个词条的文档 score</p>
+<p><img src="C:\Users\Lenovo\hexo-blog\source_posts\es.assets\image-20210818214940948.png" srcset="/img/loading.gif" lazyload alt="image-20210818214940948"></p>
+<p>​    两个文档都匹配，但是第一个文档比第二个匹配程度更高。如果没有别的条件，现在，这两个包含关键字的文档都将返回。</p>
+<h2 id="IK分词器"><a href="#IK分词器" class="headerlink" title="IK分词器"></a>IK分词器</h2><blockquote>
+<p>安装 </p>
+</blockquote>
+<ol>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/medcl/elasticsearch-analysis-ik">https://github.com/medcl/elasticsearch-analysis-ik</a></p>
+</li>
+<li><p>下载完毕之后解压放到elasticsearch插件中即可</p>
+</li>
+<li><p>重启ElasticSearch</p>
+<p><img src="C:\Users\Lenovo\hexo-blog\source_posts\es.assets\image-20210819155215150.png" srcset="/img/loading.gif" lazyload alt="image-20210819155215150"></p>
+</li>
+<li><p>也可以通过elasticsearch-plugin list来查看加载进来的插件</p>
+</li>
+<li><p>使用kibana测试</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><code class="hljs json">GET _analyze<br><span class="hljs-punctuation">&#123;</span><br>  <span class="hljs-attr">&quot;analyzer&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;ik_smart&quot;</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">&quot;text&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Dean&quot;</span><br><span class="hljs-punctuation">&#125;</span><br><br>GET _analyze<br><span class="hljs-punctuation">&#123;</span><br>  <span class="hljs-attr">&quot;analyzer&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;ik_max_word&quot;</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">&quot;text&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;隔壁老樊&quot;</span><br><span class="hljs-punctuation">&#125;</span><br><span class="hljs-comment">//</span><br><span class="hljs-punctuation">&#123;</span><br>  <span class="hljs-attr">&quot;tokens&quot;</span> <span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span><br>    <span class="hljs-punctuation">&#123;</span><br>      <span class="hljs-attr">&quot;token&quot;</span> <span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;隔壁&quot;</span><span class="hljs-punctuation">,</span><br>      <span class="hljs-attr">&quot;start_offset&quot;</span> <span class="hljs-punctuation">:</span> <span class="hljs-number">0</span><span class="hljs-punctuation">,</span><br>      <span class="hljs-attr">&quot;end_offset&quot;</span> <span class="hljs-punctuation">:</span> <span class="hljs-number">2</span><span class="hljs-punctuation">,</span><br>      <span class="hljs-attr">&quot;type&quot;</span> <span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;CN_WORD&quot;</span><span class="hljs-punctuation">,</span><br>      <span class="hljs-attr">&quot;position&quot;</span> <span class="hljs-punctuation">:</span> <span class="hljs-number">0</span><br>    <span class="hljs-punctuation">&#125;</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-punctuation">&#123;</span><br>      <span class="hljs-attr">&quot;token&quot;</span> <span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;老&quot;</span><span class="hljs-punctuation">,</span><br>      <span class="hljs-attr">&quot;start_offset&quot;</span> <span class="hljs-punctuation">:</span> <span class="hljs-number">2</span><span class="hljs-punctuation">,</span><br>      <span class="hljs-attr">&quot;end_offset&quot;</span> <span class="hljs-punctuation">:</span> <span class="hljs-number">3</span><span class="hljs-punctuation">,</span><br>      <span class="hljs-attr">&quot;type&quot;</span> <span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;CN_CHAR&quot;</span><span class="hljs-punctuation">,</span><br>      <span class="hljs-attr">&quot;position&quot;</span> <span class="hljs-punctuation">:</span> <span class="hljs-number">1</span><br>    <span class="hljs-punctuation">&#125;</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-punctuation">&#123;</span><br>      <span class="hljs-attr">&quot;token&quot;</span> <span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;樊&quot;</span><span class="hljs-punctuation">,</span><br>      <span class="hljs-attr">&quot;start_offset&quot;</span> <span class="hljs-punctuation">:</span> <span class="hljs-number">3</span><span class="hljs-punctuation">,</span><br>      <span class="hljs-attr">&quot;end_offset&quot;</span> <span class="hljs-punctuation">:</span> <span class="hljs-number">4</span><span class="hljs-punctuation">,</span><br>      <span class="hljs-attr">&quot;type&quot;</span> <span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;CN_CHAR&quot;</span><span class="hljs-punctuation">,</span><br>      <span class="hljs-attr">&quot;position&quot;</span> <span class="hljs-punctuation">:</span> <span class="hljs-number">2</span><br>    <span class="hljs-punctuation">&#125;</span><br>  <span class="hljs-punctuation">]</span><br><span class="hljs-punctuation">&#125;</span><br></code></pre></td></tr></table></figure></li>
+<li><p>IK分词器增加自己的配置</p>
+<ul>
+<li><p>新建一个.dic文件</p>
+<p><img src="C:\Users\Lenovo\hexo-blog\source_posts\es.assets\image-20210819162238583.png" srcset="/img/loading.gif" lazyload alt="image-20210819162238583"></p>
+</li>
+<li><p>在里面添加我们需要的词语</p>
+</li>
+<li><p>把我们的字典配置ik的配置文件中</p>
+<p><img src="C:\Users\Lenovo\hexo-blog\source_posts\es.assets\image-20210819162734350.png" srcset="/img/loading.gif" lazyload alt="image-20210819162734350"></p>
+<p><img src="C:\Users\Lenovo\hexo-blog\source_posts\es.assets\image-20210819163140511.png" srcset="/img/loading.gif" lazyload alt="image-20210819163140511"></p>
+</li>
+<li><p>再次测试</p>
+<p><img src="C:\Users\Lenovo\hexo-blog\source_posts\es.assets\image-20210819164610288.png" srcset="/img/loading.gif" lazyload alt="image-20210819164610288"></p>
+</li>
+</ul>
+<h2 id="Rest风格说明"><a href="#Rest风格说明" class="headerlink" title="Rest风格说明"></a>Rest风格说明</h2><p><img src="C:\Users\Lenovo\hexo-blog\source_posts\es.assets\image-20210819164828608.png" srcset="/img/loading.gif" lazyload alt="image-20210819164828608"></p>
+<blockquote>
+<p>基础测试</p>
+</blockquote>
+<ol>
+<li><p>创建一个索引</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs bash">PUT /索引名/类型名/文档<span class="hljs-built_in">id</span><br>&#123;请求体&#125;<br>PUT /test1/type1/1<br>&#123;<br>  <span class="hljs-string">&quot;name&quot;</span>:<span class="hljs-string">&quot;Dean超给力&quot;</span>,<br>  <span class="hljs-string">&quot;age&quot;</span>:18<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p><img src="C:\Users\Lenovo\hexo-blog\source_posts\es.assets\image-20210819165444903.png" srcset="/img/loading.gif" lazyload alt="image-20210819165444903"></p>
+</li>
+<li><p>~~~ json<br>// 新建一个索引，这一个就相当于是一种规范对字段有约束，就类似于MySQL类里面的字段类型<br>PUT /test2<br>{<br>  “mappings”: {</p>
+<div class="code-wrapper"><pre><code class="hljs">&quot;properties&quot;: &#123;
+  &quot;name&quot;:&#123;
+    &quot;type&quot;: &quot;text&quot;
+  &#125;,
+  &quot;age&quot;:&#123;
+    &quot;type&quot;: &quot;long&quot;
+  &#125;,
+  &quot;birthday&quot;:&#123;
+    &quot;type&quot;: &quot;date&quot;
+  &#125;
+&#125;
+</code></pre></div>
+<p>  }<br>}</p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs routeros"><br>   如果我们的文档字段没有指定类型，那么es就会给我们配置默认的字段类型<br><br>**扩展**：通过命令查看elasticsearch索引情况<br><br>~~~ bash<br><span class="hljs-built_in">GET</span> _cat/<br></code></pre></td></tr></table></figure></li>
+</ol>
+<blockquote>
+<p>修改</p>
+</blockquote>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs json">POST /test2/_doc/<span class="hljs-number">2</span>/_update<br><span class="hljs-punctuation">&#123;</span><br>  <span class="hljs-attr">&quot;doc&quot;</span><span class="hljs-punctuation">:</span><span class="hljs-punctuation">&#123;</span><br>    <span class="hljs-attr">&quot;name&quot;</span><span class="hljs-punctuation">:</span><span class="hljs-string">&quot;法外狂徒王五&quot;</span><br>  <span class="hljs-punctuation">&#125;</span><br><span class="hljs-punctuation">&#125;</span><br></code></pre></td></tr></table></figure>
+
+<blockquote>
+<p>查</p>
+</blockquote>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs json"><span class="hljs-comment">// 查找所有的</span><br>POST /test2/_doc/_search<br><span class="hljs-comment">// 获取指定id的</span><br>GET /test2/_doc/<span class="hljs-number">2</span><br></code></pre></td></tr></table></figure>
+
+<blockquote>
+<p>删除索引</p>
+</blockquote>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs json">DELETE test1<br><span class="hljs-comment">// 删除指定的文档</span><br>DELETE /test2/_doc/<span class="hljs-number">2</span><br></code></pre></td></tr></table></figure>
+
+<h2 id="关于文档的操作"><a href="#关于文档的操作" class="headerlink" title="关于文档的操作"></a>关于文档的操作</h2><blockquote>
+<p>添加数据</p>
+</blockquote>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs json">PUT /test2/_doc/<span class="hljs-number">5</span><br><span class="hljs-punctuation">&#123;</span><br>  <span class="hljs-attr">&quot;name&quot;</span><span class="hljs-punctuation">:</span><span class="hljs-string">&quot;王富国&quot;</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">&quot;age&quot;</span><span class="hljs-punctuation">:</span><span class="hljs-number">18</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">&quot;birthday&quot;</span><span class="hljs-punctuation">:</span><span class="hljs-string">&quot;1999-03-07&quot;</span><br><span class="hljs-punctuation">&#125;</span><br></code></pre></td></tr></table></figure>
+
+<blockquote>
+<p>查询数据</p>
+</blockquote>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs json"><span class="hljs-comment">// 查询所有的数据</span><br>POST /test2/_search<br><span class="hljs-comment">// 查询指定的 </span><br>GET /test2/_doc/<span class="hljs-number">3</span><br></code></pre></td></tr></table></figure>
+
+<blockquote>
+<p>更新数据</p>
+</blockquote>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs json">PUT /test2/_doc/<span class="hljs-number">5</span><br><span class="hljs-punctuation">&#123;</span><br>  <span class="hljs-attr">&quot;name&quot;</span><span class="hljs-punctuation">:</span><span class="hljs-string">&quot;王国副&quot;</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">&quot;age&quot;</span><span class="hljs-punctuation">:</span><span class="hljs-number">18</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">&quot;birthday&quot;</span><span class="hljs-punctuation">:</span><span class="hljs-string">&quot;1999-03-07&quot;</span><br><span class="hljs-punctuation">&#125;</span><br></code></pre></td></tr></table></figure>
+
+<img src="C:\Users\Lenovo\hexo-blog\source\_posts\es.assets\image-20210819175705264.png" srcset="/img/loading.gif" lazyload alt="image-20210819175705264" style="zoom:80%;" /></li>
+</ol>
+<h2 id="集成springboot"><a href="#集成springboot" class="headerlink" title="集成springboot"></a>集成springboot</h2><blockquote>
+<p>导入依赖</p>
+</blockquote>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs xml">&lt;-- 导入依赖，一个高级客户端的依赖，一个服务的依赖，两个都必须要导入--&gt;<br><span class="hljs-tag">&lt;<span class="hljs-name">dependency</span>&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">groupId</span>&gt;</span>org.elasticsearch<span class="hljs-tag">&lt;/<span class="hljs-name">groupId</span>&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">artifactId</span>&gt;</span>elasticsearch<span class="hljs-tag">&lt;/<span class="hljs-name">artifactId</span>&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">version</span>&gt;</span>7.14.0<span class="hljs-tag">&lt;/<span class="hljs-name">version</span>&gt;</span><br><span class="hljs-tag">&lt;/<span class="hljs-name">dependency</span>&gt;</span><br><br><span class="hljs-tag">&lt;<span class="hljs-name">dependency</span>&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">groupId</span>&gt;</span>org.elasticsearch.client<span class="hljs-tag">&lt;/<span class="hljs-name">groupId</span>&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">artifactId</span>&gt;</span>elasticsearch-rest-high-level-client<span class="hljs-tag">&lt;/<span class="hljs-name">artifactId</span>&gt;</span><br>    <span class="hljs-tag">&lt;<span class="hljs-name">version</span>&gt;</span>7.14.0<span class="hljs-tag">&lt;/<span class="hljs-name">version</span>&gt;</span><br><span class="hljs-tag">&lt;/<span class="hljs-name">dependency</span>&gt;</span><br></code></pre></td></tr></table></figure>
+
+<blockquote>
+<p>配置配置类</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">package</span> com.dean.config;<br><br><br><span class="hljs-keyword">import</span> org.apache.http.HttpHost;<br><span class="hljs-keyword">import</span> org.elasticsearch.client.RestClient;<br><span class="hljs-keyword">import</span> org.elasticsearch.client.RestHighLevelClient;<br><span class="hljs-keyword">import</span> org.springframework.context.annotation.Bean;<br><span class="hljs-keyword">import</span> org.springframework.context.annotation.Configuration;<br><br><span class="hljs-meta">@Configuration</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">ElasticSearchConfig</span> &#123;<br><br>    <span class="hljs-meta">@Bean</span><br>    <span class="hljs-keyword">public</span> RestHighLevelClient <span class="hljs-title function_">restHighLevelClient</span><span class="hljs-params">()</span>&#123;<br>        <span class="hljs-type">RestHighLevelClient</span> <span class="hljs-variable">restHighLevelClient</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">RestHighLevelClient</span>(<br>                RestClient.builder(<br>                        <span class="hljs-keyword">new</span> <span class="hljs-title class_">HttpHost</span>(<span class="hljs-string">&quot;localhost&quot;</span>, <span class="hljs-number">9200</span>, <span class="hljs-string">&quot;http&quot;</span>),<br>                        <span class="hljs-keyword">new</span> <span class="hljs-title class_">HttpHost</span>(<span class="hljs-string">&quot;localhost&quot;</span>, <span class="hljs-number">9201</span>, <span class="hljs-string">&quot;http&quot;</span>)));<br>        <span class="hljs-keyword">return</span> restHighLevelClient;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<blockquote>
+<p>测试</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-meta">@Test</span><br>    <span class="hljs-keyword">void</span> <span class="hljs-title function_">contextLoads</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> IOException &#123;<br>        <span class="hljs-comment">// 创建索引请求</span><br>        <span class="hljs-type">CreateIndexRequest</span> <span class="hljs-variable">request</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">CreateIndexRequest</span>(<span class="hljs-string">&quot;dean3_index&quot;</span>);<br>        <span class="hljs-comment">// 执行请求</span><br>        <span class="hljs-type">CreateIndexResponse</span> <span class="hljs-variable">createIndexResponse</span> <span class="hljs-operator">=</span> restHighLevelClient<br>            .indices()<br>            .create(request, RequestOptions.DEFAULT);<br>        System.out.println(<span class="hljs-string">&quot;1111111111111110&quot;</span>);<br>        System.out.println(createIndexResponse);<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<blockquote>
+<p>获取客户端索引是否存在</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-meta">@Test</span><br>   <span class="hljs-keyword">void</span> <span class="hljs-title function_">testExistIndex</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> IOException &#123;<br>       <span class="hljs-type">GetIndexRequest</span> <span class="hljs-variable">request</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">GetIndexRequest</span>(<span class="hljs-string">&quot;dean3_index&quot;</span>);<br>       <span class="hljs-type">boolean</span> <span class="hljs-variable">exists</span> <span class="hljs-operator">=</span> restHighLevelClient.indices()<br>               .exists(request, RequestOptions.DEFAULT);<br>       System.out.println(exists);<br>   &#125;<br></code></pre></td></tr></table></figure>
+
+<p><img src="C:\Users\Lenovo\hexo-blog\source_posts\es.assets\image-20210821114536794.png" srcset="/img/loading.gif" lazyload alt="image-20210821114536794"></p>
+<blockquote>
+<p>添加一个文档</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><code class="hljs Java"><span class="hljs-meta">@Test</span><br>    <span class="hljs-keyword">void</span> <span class="hljs-title function_">testAddDoc</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> IOException &#123;<br>        <span class="hljs-type">User</span> <span class="hljs-variable">user</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">User</span>(<span class="hljs-string">&quot;Dean&quot;</span>,<span class="hljs-number">18</span>);<br>        <span class="hljs-comment">// 创建请求</span><br>        <span class="hljs-type">IndexRequest</span> <span class="hljs-variable">request</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">IndexRequest</span>(<span class="hljs-string">&quot;dean_index&quot;</span>);<br>        <span class="hljs-comment">// 规则</span><br>        request.id(<span class="hljs-string">&quot;1&quot;</span>);<br>        <span class="hljs-comment">// 设置超时时间</span><br>        request.timeout(<span class="hljs-string">&quot;1s&quot;</span>);<br>        <span class="hljs-comment">// 将我们的数据放入请求 json</span><br>        <span class="hljs-comment">// 把我们的数据转换为json，然后放到resource中</span><br>        request.source(JSON.toJSONString(user),XContentType.JSON);<br>        <span class="hljs-comment">// 客户端发送请求</span><br>        <span class="hljs-type">IndexResponse</span> <span class="hljs-variable">indexResponse</span> <span class="hljs-operator">=</span> restHighLevelClient.index(request, RequestOptions.DEFAULT);<br>        System.out.println(indexResponse.toString());<br><br>        <span class="hljs-comment">// 对应我们命令的返回状态CREATED</span><br>        System.out.println(indexResponse.status());<br>    &#125;<br></code></pre></td></tr></table></figure>
+
+<p>我们可以将需要添加的文档写成一个java实体，然后将 Java实体转换为json然后再放到请求体中</p>
+<blockquote>
+<p>判断文档是否存在</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-meta">@Test</span> <br>    <span class="hljs-keyword">void</span> <span class="hljs-title function_">testDocExit</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> IOException &#123;<br>        <span class="hljs-comment">// 首先构造一个get请求</span><br>        <span class="hljs-type">GetRequest</span> <span class="hljs-variable">getRequest</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">GetRequest</span>(<span class="hljs-string">&quot;dean_index&quot;</span>, <span class="hljs-string">&quot;1&quot;</span>);<br>        <span class="hljs-comment">// 然后在判断是否存在</span><br>        <span class="hljs-type">boolean</span> <span class="hljs-variable">exists</span> <span class="hljs-operator">=</span> restHighLevelClient.exists(getRequest, RequestOptions.DEFAULT);<br>        System.out.println(exists);<br>    &#125;<br></code></pre></td></tr></table></figure>
+
+<blockquote>
+<p>获取文档的相关信息</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-meta">@Test</span><br>   <span class="hljs-keyword">void</span> <span class="hljs-title function_">getDocument</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> IOException &#123;<br>       <span class="hljs-comment">// 首先还是构建get请求，哪个索引，哪个文档</span><br>       <span class="hljs-type">GetRequest</span> <span class="hljs-variable">getRequest</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">GetRequest</span>(<span class="hljs-string">&quot;dean_index&quot;</span>, <span class="hljs-string">&quot;1&quot;</span>);<br>       <span class="hljs-comment">// 获得请求响应</span><br>       <span class="hljs-type">GetResponse</span> <span class="hljs-variable">getResponse</span> <span class="hljs-operator">=</span> restHighLevelClient.get(getRequest, RequestOptions.DEFAULT);<br>       <span class="hljs-comment">//  响应里面有文档里所有的内容我们可以选择查看</span><br>       System.out.println(getResponse.getSource());<br>   &#125;<br></code></pre></td></tr></table></figure>
+
+<blockquote>
+<p>查询操作</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">void</span> <span class="hljs-title function_">testSearch</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> IOException &#123;<br>        <span class="hljs-comment">// 新建一个查询请求</span><br>        <span class="hljs-type">SearchRequest</span> <span class="hljs-variable">searchRequest</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">SearchRequest</span>(<span class="hljs-string">&quot;dean_index&quot;</span>);<br><br>        <span class="hljs-comment">// 构建搜索查询</span><br>        <span class="hljs-type">SearchSourceBuilder</span> <span class="hljs-variable">searchSourceBuilder</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">SearchSourceBuilder</span>();<br><br>        <span class="hljs-comment">// 构造查询条件，我们可以使用QueryBuilder工具来实现</span><br>        <span class="hljs-comment">// QueryBuilders.termQuery精确查询</span><br>        <span class="hljs-comment">// QueryBuilders.matchAllQuery匹配所有</span><br>        <span class="hljs-type">TermQueryBuilder</span> <span class="hljs-variable">termQueryBuilder</span> <span class="hljs-operator">=</span> QueryBuilders.termQuery(<span class="hljs-string">&quot;name&quot;</span>, <span class="hljs-string">&quot;dean&quot;</span>);<br>        searchSourceBuilder.query(termQueryBuilder);<br>        <span class="hljs-comment">// 设置查询超时时间</span><br>        searchSourceBuilder.timeout(<span class="hljs-keyword">new</span> <span class="hljs-title class_">TimeValue</span>(<span class="hljs-number">60</span>, TimeUnit.SECONDS));<br><br>        searchRequest.source(searchSourceBuilder);<br>        <span class="hljs-type">SearchResponse</span> <span class="hljs-variable">searchResponse</span> <span class="hljs-operator">=</span> restHighLevelClient.search(searchRequest,RequestOptions.DEFAULT);<br>        System.out.println(JSON.toJSONString(searchResponse.getHits()));<br>        System.out.println(<span class="hljs-string">&quot;===============&quot;</span>);<br>        <span class="hljs-keyword">for</span> (SearchHit documentFields : searchResponse.getHits().getHits()) &#123;<br>            System.out.println(documentFields.getSourceAsMap());<br>        &#125;<br>    &#125;<br></code></pre></td></tr></table></figure>
+
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><code class="hljs json"><span class="hljs-comment">// 这个就是searchReponse.getHits()</span><br><span class="hljs-punctuation">&#123;</span><br>    <span class="hljs-attr">&quot;fragment&quot;</span><span class="hljs-punctuation">:</span><span class="hljs-keyword">true</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-attr">&quot;hits&quot;</span><span class="hljs-punctuation">:</span><span class="hljs-punctuation">[</span><br>        <span class="hljs-punctuation">&#123;</span><span class="hljs-attr">&quot;fields&quot;</span><span class="hljs-punctuation">:</span><span class="hljs-punctuation">&#123;</span><span class="hljs-punctuation">&#125;</span><span class="hljs-punctuation">,</span><br>         <span class="hljs-attr">&quot;fragment&quot;</span><span class="hljs-punctuation">:</span><span class="hljs-keyword">false</span><span class="hljs-punctuation">,</span><br>         <span class="hljs-attr">&quot;highlightFields&quot;</span><span class="hljs-punctuation">:</span><span class="hljs-punctuation">&#123;</span><span class="hljs-punctuation">&#125;</span><span class="hljs-punctuation">,</span><br>         <span class="hljs-attr">&quot;id&quot;</span><span class="hljs-punctuation">:</span><span class="hljs-string">&quot;1&quot;</span><span class="hljs-punctuation">,</span><br>         <span class="hljs-attr">&quot;matchedQueries&quot;</span><span class="hljs-punctuation">:</span><span class="hljs-punctuation">[</span><span class="hljs-punctuation">]</span><span class="hljs-punctuation">,</span><br>         <span class="hljs-attr">&quot;primaryTerm&quot;</span><span class="hljs-punctuation">:</span><span class="hljs-number">0</span><span class="hljs-punctuation">,</span><br>         <span class="hljs-attr">&quot;rawSortValues&quot;</span><span class="hljs-punctuation">:</span><span class="hljs-punctuation">[</span><span class="hljs-punctuation">]</span><span class="hljs-punctuation">,</span><br>         <span class="hljs-attr">&quot;score&quot;</span><span class="hljs-punctuation">:</span><span class="hljs-number">1.540445</span><span class="hljs-punctuation">,</span><br>         <span class="hljs-attr">&quot;seqNo&quot;</span><span class="hljs-punctuation">:</span><span class="hljs-number">-2</span><span class="hljs-punctuation">,</span><br>         <span class="hljs-attr">&quot;sortValues&quot;</span><span class="hljs-punctuation">:</span><span class="hljs-punctuation">[</span><span class="hljs-punctuation">]</span><span class="hljs-punctuation">,</span><br>         <span class="hljs-attr">&quot;sourceAsMap&quot;</span><span class="hljs-punctuation">:</span><span class="hljs-punctuation">&#123;</span><span class="hljs-attr">&quot;name&quot;</span><span class="hljs-punctuation">:</span><span class="hljs-string">&quot;dean&quot;</span><span class="hljs-punctuation">,</span><span class="hljs-attr">&quot;age&quot;</span><span class="hljs-punctuation">:</span><span class="hljs-number">1</span><span class="hljs-punctuation">&#125;</span><span class="hljs-punctuation">,</span><br>         <span class="hljs-attr">&quot;sourceAsString&quot;</span><span class="hljs-punctuation">:</span><span class="hljs-string">&quot;&#123;\&quot;age\&quot;:1,\&quot;name\&quot;:\&quot;dean\&quot;&#125;&quot;</span><span class="hljs-punctuation">,</span><br>         <span class="hljs-attr">&quot;sourceRef&quot;</span><span class="hljs-punctuation">:</span><span class="hljs-punctuation">&#123;</span><span class="hljs-attr">&quot;fragment&quot;</span><span class="hljs-punctuation">:</span><span class="hljs-keyword">true</span><span class="hljs-punctuation">&#125;</span><span class="hljs-punctuation">,</span><br>         <span class="hljs-attr">&quot;type&quot;</span><span class="hljs-punctuation">:</span><span class="hljs-string">&quot;_doc&quot;</span><span class="hljs-punctuation">,</span><span class="hljs-attr">&quot;version&quot;</span><span class="hljs-punctuation">:</span><span class="hljs-number">-1</span><span class="hljs-punctuation">&#125;</span><br>    <span class="hljs-punctuation">]</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-attr">&quot;maxScore&quot;</span><span class="hljs-punctuation">:</span><span class="hljs-number">1.540445</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-attr">&quot;totalHits&quot;</span><span class="hljs-punctuation">:</span><span class="hljs-punctuation">&#123;</span><br>        <span class="hljs-attr">&quot;relation&quot;</span><span class="hljs-punctuation">:</span><span class="hljs-string">&quot;EQUAL_TO&quot;</span><span class="hljs-punctuation">,</span><br>        <span class="hljs-attr">&quot;value&quot;</span><span class="hljs-punctuation">:</span><span class="hljs-number">1</span><span class="hljs-punctuation">&#125;</span><br><span class="hljs-punctuation">&#125;</span><br><br></code></pre></td></tr></table></figure>
+
+<h2 id="实战"><a href="#实战" class="headerlink" title="实战"></a>实战</h2><h3 id="爬虫"><a href="#爬虫" class="headerlink" title="爬虫"></a>爬虫</h3><blockquote>
+<p>数据问题？数据库获取，消息队列获取，都可以成为数据源</p>
+</blockquote>
+<p>爬取数据：获取请求返回的页面信息，筛选出我们想要的数据</p>
+<p><strong>jsoup包</strong></p>
+<ol>
+<li><p>导入依赖</p>
+</li>
+<li><p>写一个爬取网页的工具类</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">package</span> com.dean.deanjd.utils;<br><br><span class="hljs-keyword">import</span> com.dean.deanjd.pojo.Content;<br><span class="hljs-keyword">import</span> org.jsoup.Jsoup;<br><span class="hljs-keyword">import</span> org.jsoup.nodes.Document;<br><span class="hljs-keyword">import</span> org.jsoup.nodes.Element;<br><span class="hljs-keyword">import</span> org.jsoup.select.Elements;<br><span class="hljs-keyword">import</span> org.springframework.stereotype.Component;<br><br><span class="hljs-keyword">import</span> java.io.IOException;<br><span class="hljs-keyword">import</span> java.util.ArrayList;<br><span class="hljs-keyword">import</span> java.util.HashMap;<br><span class="hljs-keyword">import</span> java.util.List;<br><br><span class="hljs-meta">@Component</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">HtmlPraseUtils</span> &#123;<br><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">main</span><span class="hljs-params">(String[] args)</span> <span class="hljs-keyword">throws</span> IOException &#123;<br>        <span class="hljs-keyword">new</span> <span class="hljs-title class_">HtmlPraseUtils</span>().PraseJD(<span class="hljs-string">&quot;java&quot;</span>).forEach(System.out::println);<br>    &#125;<br><br>    <span class="hljs-keyword">public</span> List&lt;Content&gt;  <span class="hljs-title function_">PraseJD</span><span class="hljs-params">(String keywords)</span> <span class="hljs-keyword">throws</span> IOException &#123;<br>        HashMap&lt;String, String&gt; header = <span class="hljs-keyword">new</span> <span class="hljs-title class_">HashMap</span>&lt;&gt;();<br>        header.put(<span class="hljs-string">&quot;Accept&quot;</span>, <span class="hljs-string">&quot;text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9&quot;</span>);<br>        header.put(<span class="hljs-string">&quot;Accept-Language&quot;</span>, <span class="hljs-string">&quot;zh-cn,zh;q=0.5&quot;</span>);<br>        header.put(<span class="hljs-string">&quot;Accept-Charset&quot;</span>, <span class="hljs-string">&quot;GB2312,utf-8;q=0.7,*;q=0.7&quot;</span>);<br>        header.put(<span class="hljs-string">&quot;Connection&quot;</span>, <span class="hljs-string">&quot;keep-alive&quot;</span>);<br>        header.put(<span class="hljs-string">&quot;cookie&quot;</span>,<span class="hljs-string">&quot;qrsc=3&quot;</span>);<br>        header.put(<span class="hljs-string">&quot;user-agent&quot;</span>, <span class="hljs-string">&quot;Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.88 Safari/537.36&quot;</span>);<br>        <span class="hljs-comment">// 构建url</span><br>        <span class="hljs-type">String</span> <span class="hljs-variable">url</span> <span class="hljs-operator">=</span> <span class="hljs-string">&quot;https://search.jd.com/Search?keyword=&quot;</span> + keywords;<br><br>        <span class="hljs-comment">// 解析网页 （jsoup返回的Document就是浏览器的document对象）</span><br>        <span class="hljs-comment">// 直接请求会跳转至登录界面因为请求头里没有cookie或者token请求会被拦截</span><br>        <span class="hljs-type">Document</span> <span class="hljs-variable">document</span> <span class="hljs-operator">=</span> Jsoup.connect(url).headers(header).get();<br>        <span class="hljs-type">Element</span> <span class="hljs-variable">jGoodsList</span> <span class="hljs-operator">=</span> document.getElementById(<span class="hljs-string">&quot;J_goodsList&quot;</span>);<br>        <span class="hljs-comment">// 获取所有的li标元素</span><br>        <span class="hljs-type">Elements</span> <span class="hljs-variable">elements</span> <span class="hljs-operator">=</span> jGoodsList.getElementsByTag(<span class="hljs-string">&quot;li&quot;</span>);<br>        <span class="hljs-comment">// 获取元素中的内容，这里的el就是每一个li标签了</span><br>        ArrayList&lt;Content&gt; goodList = <span class="hljs-keyword">new</span> <span class="hljs-title class_">ArrayList</span>&lt;&gt;();<br>        <span class="hljs-keyword">for</span> (Element el : elements) &#123;<br>            <span class="hljs-comment">// 关于这种图片特别多的网站，所有的图片都是延迟加载的</span><br>            <span class="hljs-type">String</span> <span class="hljs-variable">img</span> <span class="hljs-operator">=</span> el.getElementsByTag(<span class="hljs-string">&quot;img&quot;</span>).eq(<span class="hljs-number">0</span>).attr(<span class="hljs-string">&quot;data-lazy-img&quot;</span>);<br>            <span class="hljs-type">String</span> <span class="hljs-variable">price</span> <span class="hljs-operator">=</span> el.getElementsByClass(<span class="hljs-string">&quot;p-price&quot;</span>).eq(<span class="hljs-number">0</span>).text();<br>            <span class="hljs-type">String</span> <span class="hljs-variable">title</span> <span class="hljs-operator">=</span> el.getElementsByClass(<span class="hljs-string">&quot;p-name&quot;</span>).eq(<span class="hljs-number">0</span>).text();<br><br>            <span class="hljs-type">Content</span> <span class="hljs-variable">content</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Content</span>();<br>            content.setImg(img);<br>            content.setPrice(price);<br>            content.setTitle(title);<br>            goodList.add(content);<br>        &#125;<br>        <span class="hljs-keyword">return</span> goodList;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>说一下这里需要注意的问题</p>
+<ol>
+<li>现在的网页想要请求服务器，后端服务器会对请求先进行拦截，看你有没有携带cookie或者token，如果没有cookie或者token直接拒绝访问请求，要求重新登录。所以这里有的时候是不能直接进行connect的有的时候要设置头部信息</li>
+<li>一般有大量图片的网站，他们的图片都不是直接加载的，都是懒加载，所以想要获取图片的时候要注意它对应的属性</li>
+<li>通过connect获得页面后我们就可以像js一样操作页面了<ul>
+<li>getElementsByTag获取指定的标签</li>
+<li>getElementById获取指定id的元素</li>
+<li>el.getElementsByTag(“img”).eq(0).attr(“data-lazy-img”)，意思是获取img标签里的data-lazy-img的属性值</li>
+<li>el.getElementsByClass(“p-price”).eq(0).text();获取类p-price的文字，eq(0）代表第一个</li>
+</ul>
+</li>
+</ol>
+</li>
+<li><p>编写服务层将爬取到的数据插入到es</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">// 把解析的数据放到es中，并返回是否插入成功</span><br>    <span class="hljs-keyword">public</span> Boolean <span class="hljs-title function_">praseContent</span><span class="hljs-params">(String keywords)</span> <span class="hljs-keyword">throws</span> IOException &#123;<br>        <span class="hljs-comment">// 解析数据</span><br>        List&lt;Content&gt; contentList = htmlPraseUtils.PraseJD(<span class="hljs-string">&quot;java&quot;</span>);<br>        <span class="hljs-type">BulkRequest</span> <span class="hljs-variable">bulkRequest</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">BulkRequest</span>();<br>        bulkRequest.timeout(<span class="hljs-string">&quot;2m&quot;</span>);<br>        <span class="hljs-keyword">for</span> (Content content : contentList) &#123;<br>            bulkRequest.add(<br>                <span class="hljs-comment">// 需要操作的数据库</span><br>                    <span class="hljs-keyword">new</span> <span class="hljs-title class_">IndexRequest</span>(<span class="hljs-string">&quot;good_list&quot;</span>)<br>                <span class="hljs-comment">// 往数据库插入的内容</span><br>                            .source(JSON.toJSONString(content), XContentType.JSON)<br>            );<br>        &#125;<br>        <span class="hljs-comment">// 执行请求</span><br>        <span class="hljs-type">BulkResponse</span> <span class="hljs-variable">responses</span> <span class="hljs-operator">=</span> restHighLevelClient.bulk(bulkRequest, RequestOptions.DEFAULT);<br>        <span class="hljs-keyword">return</span> !responses.hasFailures();<br>    &#125;<br></code></pre></td></tr></table></figure></li>
+<li><p>查找数据</p>
+<p>前面我们已经爬取到了数据，并 把数据存到了es里面，现在我们要从es里面是把数据读出来</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><code class="hljs java">指定搜索哪个索引<br>        <span class="hljs-type">SearchRequest</span> <span class="hljs-variable">searchRequest</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">SearchRequest</span>(<span class="hljs-string">&quot;good_list&quot;</span>);<br><br>        <span class="hljs-comment">// 新建一个搜索</span><br>        <span class="hljs-type">SearchSourceBuilder</span> <span class="hljs-variable">searchSourceBuilder</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">SearchSourceBuilder</span>();<br><br>        <span class="hljs-comment">// 构造搜索条件</span><br>        <span class="hljs-type">TermQueryBuilder</span> <span class="hljs-variable">termQueryBuilder</span> <span class="hljs-operator">=</span> QueryBuilders.termQuery(<span class="hljs-string">&quot;title&quot;</span>, keywords);<br><br>        <span class="hljs-comment">// 指定搜索的分页</span><br>        searchSourceBuilder.from(pageNum);<br>        searchSourceBuilder.size(pageSize);<br><br>        <span class="hljs-comment">// 根据查询条件构造出一个完整的查询</span><br>        searchSourceBuilder.query(termQueryBuilder);<br>        searchSourceBuilder.timeout(<span class="hljs-keyword">new</span> <span class="hljs-title class_">TimeValue</span>(<span class="hljs-number">60</span>, TimeUnit.SECONDS));<br><br>        <span class="hljs-comment">//  把这个完整的搜索和索引结合起来</span><br>        searchRequest.source(searchSourceBuilder);<br>        <span class="hljs-comment">// 客户端执行搜索</span><br>        <span class="hljs-type">SearchResponse</span> <span class="hljs-variable">searchResponse</span> <span class="hljs-operator">=</span> restHighLevelClient.search(searchRequest,RequestOptions.DEFAULT);<br><br>        ArrayList&lt;Map&lt;String, Object&gt;&gt; list = <span class="hljs-keyword">new</span> <span class="hljs-title class_">ArrayList</span>&lt;&gt;();<br>        <span class="hljs-comment">// 获取返回的结果</span><br>        <span class="hljs-keyword">for</span> (SearchHit hit : searchResponse.getHits().getHits()) &#123;<br>            list.add(hit.getSourceAsMap());<br>        &#125;<br>        <span class="hljs-keyword">return</span> list;<br>    &#125;<br></code></pre></td></tr></table></figure></li>
+<li><p>前端调用后端es查询的接口，前端拿到数据后直接把数据渲染到模板上去。</p>
+</li>
+</ol>
+
+            </div>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                  <div class="post-meta mr-3">
+                    <i class="iconfont icon-category"></i>
+                    
+                      <a class="hover-with-bg" href="/categories/%E5%90%8E%E7%AB%AF/">后端</a>
+                    
+                  </div>
+                
+                
+                  <div class="post-meta">
+                    <i class="iconfont icon-tags"></i>
+                    
+                      <a class="hover-with-bg" href="/tags/%E6%90%9C%E7%B4%A2%E5%BC%95%E6%93%8E/">搜索引擎</a>
+                    
+                  </div>
+                
+              </div>
+              
+                <p class="note note-warning">
+                  
+                    本博客所有文章除特别声明外，均采用 <a target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！
+                  
+                </p>
+              
+              
+                <div class="post-prevnext">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2022/03/12/Go/">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Go</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2022/03/12/jetlinks/">
+                        <span class="hidden-mobile">jetlinks</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+              <!-- Comments -->
+              <article class="comments" id="comments" lazyload>
+                
+                  
+                
+                
+  <div id="valine"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#valine', function() {
+      Fluid.utils.createScript('https://cdn.jsdelivr.net/npm/valine@1/dist/Valine.min.js', function() {
+        var options = Object.assign(
+          {"appId":"nGD612Gu0HScFjNTtkQ975DQ-gzGzoHsz","appKey":"uQWFCWpfdpmUcF3iVKDcak3s","path":"window.location.pathname","placeholder":"说点什么","avatar":"retro","meta":["nick","mail","link"],"requiredFields":[],"pageSize":10,"lang":"zh-CN","highlight":false,"recordIP":false,"serverURLs":"","emojiCDN":null,"emojiMaps":null,"enableQQ":false},
+          {
+            el: "#valine",
+            path: window.location.pathname
+          }
+        )
+        new Valine(options);
+        Fluid.utils.waitElementVisible('#valine .vcontent', () => {
+          Fluid.plugins.initFancyBox('#valine .vcontent img:not(.vemoji)');
+        })
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+              </article>
+            
+          </article>
+        </div>
+      </div>
+    </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+      </div>
+    
+  </div>
+</div>
+
+<!-- Custom -->
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+
+    
+  </main>
+
+  <footer class="text-center mt-5 py-3">
+  <div class="footer-content">
+     <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+  </div>
+  
+  <div class="statistics">
+    
+    
+
+    
+      
+        <!-- LeanCloud 统计PV -->
+        <span id="leancloud-site-pv-container" style="display: none">
+            总访问量 
+            <span id="leancloud-site-pv"></span>
+             次
+          </span>
+      
+      
+        <!-- LeanCloud 统计UV -->
+        <span id="leancloud-site-uv-container" style="display: none">
+            总访客数 
+            <span id="leancloud-site-uv"></span>
+             人
+          </span>
+      
+
+    
+  </div>
+
+
+  
+
+  
+</footer>
+
+
+  <!-- SCRIPTS -->
+  
+  <script  src="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js" ></script>
+<script  src="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+<!-- Plugins -->
+
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+  
+
+
+
+  
+    <script  src="https://cdn.jsdelivr.net/npm/tocbot@4/dist/tocbot.min.js" ></script>
+  
+  
+    <script  src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.js" ></script>
+  
+  
+    <script  src="https://cdn.jsdelivr.net/npm/anchor-js@4/anchor.min.js" ></script>
+  
+  
+    <script defer src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js" ></script>
+  
+
+
+
+
+  <script defer src="/js/leancloud.js" ></script>
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/typed.js@2/lib/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var title = document.getElementById('subtitle').title;
+      
+        typing(title);
+      
+    })(window, document);
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+
+
+<!-- 主题的启动项 保持在最底部 -->
+<script  src="/js/boot.js" ></script>
+
+
+</body>
+</html>

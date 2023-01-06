@@ -1,0 +1,656 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/siteicon.jpg">
+  <link rel="icon" href="/img/siteicon.jpg">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="John Doe">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="Reactorreactive 是一种观察者模式的扩展     观察者模式指多个对象间存在一对多的依赖关系，当一个对象的状态发生改变时，所有依赖他的对象都得到通知并被自动更新。这种模式有时又称作为发布-订阅者模式 四种角色 Publisher: 发布者 Subscriber： 订阅者 Subscription：订阅的控制器 Processor：处理器  信号 onSubscribe(): 订阅事件">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Reactor">
+<meta property="og:url" content="http://example.com/2022/03/13/Reactor/index.html">
+<meta property="og:site_name" content="野草技术社区">
+<meta property="og:description" content="Reactorreactive 是一种观察者模式的扩展     观察者模式指多个对象间存在一对多的依赖关系，当一个对象的状态发生改变时，所有依赖他的对象都得到通知并被自动更新。这种模式有时又称作为发布-订阅者模式 四种角色 Publisher: 发布者 Subscriber： 订阅者 Subscription：订阅的控制器 Processor：处理器  信号 onSubscribe(): 订阅事件">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/2022/03/13/Reactor/1.png">
+<meta property="og:image" content="http://example.com/2022/03/13/Reactor/2.png">
+<meta property="og:image" content="http://example.com/2022/03/13/Reactor/3.png">
+<meta property="og:image" content="http://example.com/2022/03/13/Reactor/4.png">
+<meta property="og:image" content="http://example.com/2022/03/13/Reactor/5.png">
+<meta property="article:published_time" content="2022-03-13T08:17:34.000Z">
+<meta property="article:modified_time" content="2022-03-13T08:22:39.602Z">
+<meta property="article:author" content="John Doe">
+<meta property="article:tag" content="java高阶">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="http://example.com/2022/03/13/Reactor/1.png">
+  
+  
+  <title>Reactor - 野草技术社区</title>
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/css/bootstrap.min.css" />
+
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@4/github-markdown.min.css" />
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hint.css@2/hint.min.css" />
+
+  
+    
+    
+      
+      <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@10/styles/github-gist.min.css" />
+    
+  
+
+  
+    <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.css" />
+  
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_ba1fz6golrf.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.8.14","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"copy_btn":true,"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":"nGD612Gu0HScFjNTtkQ975DQ-gzGzoHsz","app_key":"uQWFCWpfdpmUcF3iVKDcak3s","server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+<meta name="generator" content="Hexo 5.4.1"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>野草技术社区</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="banner" id="banner" parallax=true
+         style="background: url('/img/bg01.jpg') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="page-header text-center fade-in-up">
+            <span class="h2" id="subtitle" title="Reactor">
+              
+            </span>
+
+            
+              <div class="mt-3">
+  
+  
+    <span class="post-meta">
+      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+      <time datetime="2022-03-13 16:17" pubdate>
+        2022年3月13日 下午
+      </time>
+    </span>
+  
+</div>
+
+<div class="mt-1">
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      3.3k 字
+    </span>
+  
+
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      28 分钟
+    </span>
+  
+
+  
+  
+    
+      <!-- LeanCloud 统计文章PV -->
+      <span id="leancloud-page-views-container" class="post-meta" style="display: none">
+        <i class="iconfont icon-eye" aria-hidden="true"></i>
+        <span id="leancloud-page-views"></span> 次
+      </span>
+    
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">Reactor</h1>
+            
+            <div class="markdown-body">
+              <h1 id="Reactor"><a href="#Reactor" class="headerlink" title="Reactor"></a>Reactor</h1><p>reactive 是一种观察者模式的扩展    </p>
+<h2 id="观察者模式"><a href="#观察者模式" class="headerlink" title="观察者模式"></a>观察者模式</h2><p>指多个对象间存在<strong>一对多的依赖关系</strong>，<strong>当一个对象的状态发生改变时，所有依赖他的对象都得到通知并被自动更新</strong>。这种模式有时又称作为发布-订阅者模式</p>
+<h2 id="四种角色"><a href="#四种角色" class="headerlink" title="四种角色"></a>四种角色</h2><ol>
+<li>Publisher: 发布者</li>
+<li>Subscriber： 订阅者</li>
+<li>Subscription：订阅的控制器</li>
+<li>Processor：处理器</li>
+</ol>
+<h2 id="信号"><a href="#信号" class="headerlink" title="信号"></a>信号</h2><ol>
+<li>onSubscribe(): 订阅事件</li>
+<li>onNext(): 数据达到事件</li>
+<li>onComplete(): 订阅完成事件</li>
+<li>onError(): 订阅异常</li>
+<li>request(): 请求</li>
+<li>cancel（）：取消</li>
+</ol>
+<blockquote>
+<p>Supplier Consumer Function</p>
+</blockquote>
+<ul>
+<li>Supplier 只出不进</li>
+<li>Consumer 只进不出</li>
+<li>Function 又进又出</li>
+</ul>
+<h2 id="常用方法"><a href="#常用方法" class="headerlink" title="常用方法"></a>常用方法</h2><blockquote>
+<p>map</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><div class="code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></div></td><td class="code"><pre><code class="hljs java"><span class="hljs-meta">@Test</span><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">reactorMapTest</span><span class="hljs-params">()</span>&#123;<br>        StepVerifier.create(Flux.just(<span class="hljs-number">1</span>,<span class="hljs-number">2</span>)<br>                .map(v-&gt;v+<span class="hljs-number">1</span>))<br>                .expectNext(<span class="hljs-number">2</span>,<span class="hljs-number">3</span>)<br>                .expectComplete()<br>                .verify();<br>    &#125;<br></code></pre></td></tr></table></figure>
+
+<p>这里的map就是对每一个元素进行加一操作，用于元素的转换</p>
+<blockquote>
+<p>flatmap</p>
+</blockquote>
+<p>flatmap也是对元素的转换但是不同的是，flatmap是将元素转换为流，再将流合并为一个大的流</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-meta">@Test</span><br>   <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">reactorFlatMapTest</span><span class="hljs-params">()</span>&#123;<br>       StepVerifier.create(Flux.just(<span class="hljs-string">&quot;crabman&quot;</span>,<span class="hljs-string">&quot;is&quot;</span>,<span class="hljs-string">&quot;hero&quot;</span>)<br>               .flatMap(v-&gt;Flux.fromArray(v.split(<span class="hljs-string">&quot;&quot;</span>)))<br>               .doOnNext(System.out::println))<br>               .expectNextCount(<span class="hljs-number">13</span>)<br>               .verifyComplete();<br>   &#125;<br></code></pre></td></tr></table></figure>
+
+<blockquote>
+<p>tips: flatmap和map 的区别</p>
+</blockquote>
+<p>map就是一个function函数，输入一个输出一个，对于flatmap来说他接受的是一个输出为Publisher的function，也就是说他输入一个值，输出的是一个Publisher的function，所以map是一对一的关系，而flatmap是一对多或者多对多的关系，并且两者输出的也不一样。flatmap的应用场景，例如一个接口，入参是List<id> 用户id合集，需求是返回每个id对应的具体的信息，所以代码就是这样的 a.flatmap( id -&gt; id.getUserInfo(id))</p>
+<ul>
+<li>map 接受Function &lt;T，U&gt;并返回Flux</li>
+<li>flatMap 接受Function &lt;T，Publisher &gt;并返回Flux</li>
+</ul>
+<p>flatmap期望每个传来的T都有一个publisher。flatMap知道如何处理它：订阅他并在输出序列中传播其元素，所以，flatmap左后总会返回Flux<V>类型，flatmap将把每个内部publisher<strong>展平</strong>为所有V的输出序列</p>
+<blockquote>
+<p>concat </p>
+</blockquote>
+<p>public static <T> Flux<T> concat(Publisher&lt;? extends T&gt;… sources)</p>
+<p>用于连接一个流。与combineLatest不同的是，concat都是在<strong>前一个流完成后再连接新的流</strong>。而combineLatest则是<strong>哪一个最先到哪个先处理。</strong></p>
+<p><strong>参数</strong>：</p>
+<ul>
+<li>T 事件的类型</li>
+<li>source：一系列的发布者</li>
+<li>returns：一个新的Flux连接了所有得发布者，并传递给下游</li>
+</ul>
+<blockquote>
+<p>concatDelayError</p>
+</blockquote>
+<p>拥有与concat类似得方法，不同得是，遇到问题不提前拦截，而是等到最后发布得事件处理完成后</p>
+<blockquote>
+<p>create,push</p>
+</blockquote>
+<p>public static <T> Flux<T> create(Consumer&lt;? super FluxSink<T>&gt; emitter)</p>
+<p>通过FluxSink API，以同步或者异步的方式创建flux</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs java">Flux.&lt;String&gt; create (emitter -&gt;&#123;<br>    <span class="hljs-type">ActionListener</span> <span class="hljs-variable">al</span> <span class="hljs-operator">=</span> e -&gt;&#123;<br>        emitter.next(textField.getText());<br>    &#125;<br>    <span class="hljs-comment">// without cleanup support</span><br>    <br>    button.addActionListener(al);<br>    <br>    <span class="hljs-comment">// add with cleanup support</span><br>    button.addActionListener(al);<br>    emiter.onDispose( () -&gt; &#123;<br>        buton.removeListener(al);<br>    &#125; )<br>&#125;)<br></code></pre></td></tr></table></figure>
+
+<p><em>create(Consumer&lt;? super FluxSink<T>&gt; emitter, FluxSink.OverflowStrategy backpressure) 设置背压方式</em></p>
+<p>push方法用处与使用方法与create几乎一致，他们唯一的区别就是CreateMode类型create为PUSH_PULL而push为PUSH_ONLY文档中也可以一个为多线程一个为单线程</p>
+<blockquote>
+<h5 id="backpressure-背压-概念的理解"><a href="#backpressure-背压-概念的理解" class="headerlink" title="backpressure(背压)概念的理解"></a>backpressure(背压)概念的理解</h5></blockquote>
+<p>这里，我摘自一位大神的话，背压是指在异步场景中，被观察者发送事件速度远快于观察者的处理速度的情况下，<strong>一种告诉上游的被观察者降低发送速度的策略</strong>。简而言之，背压是<strong>流速控制的一种策略</strong>。</p>
+<p>为什么会有背压策略，如果没有背压策略，当被观察者发送的事件速度远快于观察者处理速度的时候，会造成观察者这边事件堆积，造成内存占用过高。</p>
+<p><strong>需要强调两点：</strong></p>
+<ul>
+<li>背压策略的前提是<strong>异步环境</strong>，也就是说，被观察者和观察者处于不同的线程环境中</li>
+<li>背压并不是一个像flatmap一样可以在程序中直接使用的操作符，他只是一种控制事件流速的策略</li>
+<li>interval操作符本身不支持背压策略，他发送事件的速度是不受控制的，而range这类操作符是支持背压的，它发送事件的速度是可以控制的</li>
+</ul>
+<blockquote>
+<p>defer</p>
+</blockquote>
+<p>public static <T> Flux<T> defer(Supplier&lt;? extends Publisher<T>&gt; supplier)</p>
+<p>这个方法提供了一种惰性策略，发布者不会一开始发布消息，知道订阅者创建实例</p>
+<p><img src="1.png" srcset="/img/loading.gif" lazyload alt="1"></p>
+<p><strong>参数</strong>：</p>
+<ul>
+<li>T 发布者或者订阅者接收的类型</li>
+<li>supplier 一个发布者的供应者，当订阅的时候回调</li>
+<li>return: 一个惰性的Flux</li>
+</ul>
+<blockquote>
+<h4 id="empty"><a href="#empty" class="headerlink" title="empty"></a>empty</h4></blockquote>
+<p>public static <T> Flux<T> empty()<br>创建一个不含任何事件的流.</p>
+<blockquote>
+<p>error</p>
+</blockquote>
+<p>public static <T> Flux<T> error(Throwable error)<br>返回一个带着立即终止标识和错误信息的流</p>
+<blockquote>
+<p>first</p>
+</blockquote>
+<p>挑选出第一个发布者，由其提供事件。能有效的避免多个源的冲突。</p>
+<p><img src="2.png" srcset="/img/loading.gif" lazyload alt="2"></p>
+<blockquote>
+<p>from </p>
+</blockquote>
+<p>从一个发布者创建一个flux流</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> &lt;T&gt; Flux&lt;T&gt; <span class="hljs-title function_">from</span><span class="hljs-params">(Publisher&lt;? extends T&gt; source)</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> &lt;T&gt; Flux&lt;T&gt; <span class="hljs-title function_">fromIterable</span><span class="hljs-params">(Iterable&lt;? extends T&gt; it)</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> &lt;T&gt; Flux&lt;T&gt; <span class="hljs-title function_">fromStream</span><span class="hljs-params">(Stream&lt;? extends T&gt; s)</span><br></code></pre></td></tr></table></figure>
+
+<blockquote>
+<h4 id="fromArray，fromIterable，fromStream"><a href="#fromArray，fromIterable，fromStream" class="headerlink" title="fromArray，fromIterable，fromStream"></a>fromArray，fromIterable，fromStream</h4></blockquote>
+<p>public static <T> Flux<T> fromArray(T[] array)<br>通过一个数组，或者一个可迭代的元素，或者一个流，创建 flux 流.</p>
+<p><img src="3.png" srcset="/img/loading.gif" lazyload alt="3"></p>
+<blockquote>
+<h4 id="generate"><a href="#generate" class="headerlink" title="generate"></a>generate</h4></blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> &lt;T&gt; Flux&lt;T&gt; <span class="hljs-title function_">generate</span><span class="hljs-params">(Consumer&lt;SynchronousSink&lt;T&gt;&gt; generator)</span><br></code></pre></td></tr></table></figure>
+
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs">通过消费者回调逐一生成信号，以编程方式创建 Flux。<br></code></pre></td></tr></table></figure>
+
+<p><img src="4.png" srcset="/img/loading.gif" lazyload alt="4"></p>
+<blockquote>
+<p>interval</p>
+</blockquote>
+<p>public static Flux<Long> interval(Duration period)</p>
+<p>间隔一定的事件，发送事件</p>
+<p><img src="5.png" srcset="/img/loading.gif" lazyload alt="5"></p>
+
+            </div>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                  <div class="post-meta mr-3">
+                    <i class="iconfont icon-category"></i>
+                    
+                      <a class="hover-with-bg" href="/categories/%E5%90%8E%E7%AB%AF/">后端</a>
+                    
+                  </div>
+                
+                
+                  <div class="post-meta">
+                    <i class="iconfont icon-tags"></i>
+                    
+                      <a class="hover-with-bg" href="/tags/java%E9%AB%98%E9%98%B6/">java高阶</a>
+                    
+                  </div>
+                
+              </div>
+              
+                <p class="note note-warning">
+                  
+                    本博客所有文章除特别声明外，均采用 <a target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！
+                  
+                </p>
+              
+              
+                <div class="post-prevnext">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2022/03/13/Linux/">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Linux</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2022/03/13/Docker/">
+                        <span class="hidden-mobile">Docker</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+              <!-- Comments -->
+              <article class="comments" id="comments" lazyload>
+                
+                  
+                
+                
+  <div id="valine"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#valine', function() {
+      Fluid.utils.createScript('https://cdn.jsdelivr.net/npm/valine@1/dist/Valine.min.js', function() {
+        var options = Object.assign(
+          {"appId":"nGD612Gu0HScFjNTtkQ975DQ-gzGzoHsz","appKey":"uQWFCWpfdpmUcF3iVKDcak3s","path":"window.location.pathname","placeholder":"说点什么","avatar":"retro","meta":["nick","mail","link"],"requiredFields":[],"pageSize":10,"lang":"zh-CN","highlight":false,"recordIP":false,"serverURLs":"","emojiCDN":null,"emojiMaps":null,"enableQQ":false},
+          {
+            el: "#valine",
+            path: window.location.pathname
+          }
+        )
+        new Valine(options);
+        Fluid.utils.waitElementVisible('#valine .vcontent', () => {
+          Fluid.plugins.initFancyBox('#valine .vcontent img:not(.vemoji)');
+        })
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+              </article>
+            
+          </article>
+        </div>
+      </div>
+    </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+      </div>
+    
+  </div>
+</div>
+
+<!-- Custom -->
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+
+    
+  </main>
+
+  <footer class="text-center mt-5 py-3">
+  <div class="footer-content">
+     <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+  </div>
+  
+  <div class="statistics">
+    
+    
+
+    
+      
+        <!-- LeanCloud 统计PV -->
+        <span id="leancloud-site-pv-container" style="display: none">
+            总访问量 
+            <span id="leancloud-site-pv"></span>
+             次
+          </span>
+      
+      
+        <!-- LeanCloud 统计UV -->
+        <span id="leancloud-site-uv-container" style="display: none">
+            总访客数 
+            <span id="leancloud-site-uv"></span>
+             人
+          </span>
+      
+
+    
+  </div>
+
+
+  
+
+  
+</footer>
+
+
+  <!-- SCRIPTS -->
+  
+  <script  src="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js" ></script>
+<script  src="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+<!-- Plugins -->
+
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+  
+
+
+
+  
+    <script  src="https://cdn.jsdelivr.net/npm/tocbot@4/dist/tocbot.min.js" ></script>
+  
+  
+    <script  src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.js" ></script>
+  
+  
+    <script  src="https://cdn.jsdelivr.net/npm/anchor-js@4/anchor.min.js" ></script>
+  
+  
+    <script defer src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js" ></script>
+  
+
+
+
+
+  <script defer src="/js/leancloud.js" ></script>
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/typed.js@2/lib/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var title = document.getElementById('subtitle').title;
+      
+        typing(title);
+      
+    })(window, document);
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+
+
+<!-- 主题的启动项 保持在最底部 -->
+<script  src="/js/boot.js" ></script>
+
+
+</body>
+</html>
