@@ -1,0 +1,565 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/siteicon.jpg">
+  <link rel="icon" href="/img/siteicon.jpg">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="John Doe">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="Filter和Interceptor的使用Filter和Interceptor的不同点 Filter是Servlet的，它主要用于对用户的请求进行预处理，也可以对ServletResponse进行后置处理. Interceptor拦截器，在AOP中用于某个方法或字段被访问前，进行拦截，然后在之前或者之后做一些拦截操作，比如日志。 从前两点就可以看出来，Filter和Interceptor的作用时机">
+<meta property="og:type" content="article">
+<meta property="og:title" content="filter和interceptor">
+<meta property="og:url" content="http://example.com/2022/12/28/filter%E5%92%8Cinterceptor/index.html">
+<meta property="og:site_name" content="野草技术社区">
+<meta property="og:description" content="Filter和Interceptor的使用Filter和Interceptor的不同点 Filter是Servlet的，它主要用于对用户的请求进行预处理，也可以对ServletResponse进行后置处理. Interceptor拦截器，在AOP中用于某个方法或字段被访问前，进行拦截，然后在之前或者之后做一些拦截操作，比如日志。 从前两点就可以看出来，Filter和Interceptor的作用时机">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-12-28T13:47:38.000Z">
+<meta property="article:modified_time" content="2023-01-06T07:49:56.559Z">
+<meta property="article:author" content="John Doe">
+<meta property="article:tag" content="java高阶">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  <title>filter和interceptor - 野草技术社区</title>
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/css/bootstrap.min.css" />
+
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@4/github-markdown.min.css" />
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hint.css@2/hint.min.css" />
+
+  
+    
+    
+      
+      <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@10/styles/github-gist.min.css" />
+    
+  
+
+  
+    <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.css" />
+  
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_ba1fz6golrf.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.8.14","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"copy_btn":true,"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":"nGD612Gu0HScFjNTtkQ975DQ-gzGzoHsz","app_key":"uQWFCWpfdpmUcF3iVKDcak3s","server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+<meta name="generator" content="Hexo 5.4.1"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>野草技术社区</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="banner" id="banner" parallax=true
+         style="background: url('/img/bg01.jpg') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="page-header text-center fade-in-up">
+            <span class="h2" id="subtitle" title="filter和interceptor">
+              
+            </span>
+
+            
+              <div class="mt-3">
+  
+  
+    <span class="post-meta">
+      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+      <time datetime="2022-12-28 21:47" pubdate>
+        2022年12月28日 晚上
+      </time>
+    </span>
+  
+</div>
+
+<div class="mt-1">
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      9.8k 字
+    </span>
+  
+
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      82 分钟
+    </span>
+  
+
+  
+  
+    
+      <!-- LeanCloud 统计文章PV -->
+      <span id="leancloud-page-views-container" class="post-meta" style="display: none">
+        <i class="iconfont icon-eye" aria-hidden="true"></i>
+        <span id="leancloud-page-views"></span> 次
+      </span>
+    
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">filter和interceptor</h1>
+            
+            <div class="markdown-body">
+              <h1 id="Filter和Interceptor的使用"><a href="#Filter和Interceptor的使用" class="headerlink" title="Filter和Interceptor的使用"></a>Filter和Interceptor的使用</h1><h2 id="Filter和Interceptor的不同点"><a href="#Filter和Interceptor的不同点" class="headerlink" title="Filter和Interceptor的不同点"></a>Filter和Interceptor的不同点</h2><ol>
+<li>Filter是Servlet的，它主要用于对用户的请求进行预处理，也可以对ServletResponse进行后置处理.</li>
+<li>Interceptor拦截器，在AOP中用于某个方法或字段被访问前，进行拦截，然后在之前或者之后做一些拦截操作，比如日志。</li>
+<li>从前两点就可以看出来，Filter和Interceptor的作用时机是不同的，Filter都没有机会进到方法那里，所以如果我们想做一些权限的校验我们可以采用过滤器，如果我们想对方法做一些加强，比如方法前后做一些日志，那我们就可以使用Interceptor拦截器了</li>
+</ol>
+<h2 id="Filter实践"><a href="#Filter实践" class="headerlink" title="Filter实践"></a>Filter实践</h2><figure class="highlight java"><table><tr><td class="gutter"><div class="code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></div></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">import</span> com.ruoyi.common.core.redis.RedisCache;<br><span class="hljs-keyword">import</span> com.ruoyi.common.utils.StringUtils;<br><span class="hljs-keyword">import</span> lombok.extern.slf4j.Slf4j;<br><span class="hljs-keyword">import</span> org.springframework.beans.factory.annotation.Autowired;<br><br><span class="hljs-keyword">import</span> javax.servlet.*;<br><span class="hljs-keyword">import</span> javax.servlet.http.HttpServletRequest;<br><span class="hljs-keyword">import</span> java.io.IOException;<br><span class="hljs-keyword">import</span> java.util.Arrays;<br><span class="hljs-keyword">import</span> java.util.List;<br><span class="hljs-keyword">import</span> java.util.Optional;<br><span class="hljs-keyword">import</span> java.util.stream.Collectors;<br><br><span class="hljs-meta">@Slf4j</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">OpenApiFilter</span> <span class="hljs-keyword">implements</span> <span class="hljs-title class_">Filter</span> &#123;<br><br>    <span class="hljs-meta">@Autowired</span><br>    <span class="hljs-keyword">private</span> RedisCache redisCache;<br><br>    <span class="hljs-meta">@Override</span><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">doFilter</span><span class="hljs-params">(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain)</span> <span class="hljs-keyword">throws</span> IOException, ServletException &#123;<br>        log.warn(<span class="hljs-string">&quot;开始 进行 open api filter&quot;</span>);<br>        <span class="hljs-type">HttpServletRequest</span> <span class="hljs-variable">request</span> <span class="hljs-operator">=</span> (HttpServletRequest) servletRequest;<br>        <span class="hljs-type">String</span> <span class="hljs-variable">requestURI</span> <span class="hljs-operator">=</span> request.getRequestURI();<br>        <span class="hljs-type">String</span> <span class="hljs-variable">xClientId</span> <span class="hljs-operator">=</span> request.getHeader(<span class="hljs-string">&quot;x-Client-id&quot;</span>);<br><br>        <span class="hljs-comment">// 判断是否存在xClientId, 不存在说明不是请求open api 继续下个节点过滤，存在继续校验</span><br>        <span class="hljs-keyword">if</span> (StringUtils.isNotEmpty(xClientId)) &#123;<br>            <span class="hljs-comment">// 从redis中获取xClientId对应的open api 接口</span><br>            <span class="hljs-type">String</span> <span class="hljs-variable">openApiStr</span> <span class="hljs-operator">=</span> Optional.ofNullable(redisCache.getCacheObject(xClientId))<br>                    .map(item -&gt; &#123;<br>                        <span class="hljs-keyword">return</span> item.toString();<br>                    &#125;)<br>                    .orElse(<span class="hljs-literal">null</span>);<br>            <span class="hljs-keyword">if</span> (StringUtils.isNotNull(openApiStr)) &#123;<br>                String[] split = openApiStr.split(<span class="hljs-string">&quot;;&quot;</span>);<br>                List&lt;String&gt; openApiList = Arrays.stream(split).collect(Collectors.toList());<br>                <span class="hljs-comment">// 判断当前uri是否包含在资源里面 包含通过 不包含不通过</span><br>                <span class="hljs-keyword">if</span> (openApiList.contains(requestURI)) &#123;<br>                    filterChain.doFilter(servletRequest, servletResponse);<br>                &#125;<span class="hljs-keyword">else</span> &#123;<br>                    log.warn(<span class="hljs-string">&quot;IP：&#123;&#125;不存在该open api &#123;&#125;的访问权限&quot;</span>, request.getRemoteAddr(), requestURI);<br>                &#125;<br>            &#125;<span class="hljs-keyword">else</span> &#123;<br>                log.warn(<span class="hljs-string">&quot;IP：&#123;&#125;不存在该open api &#123;&#125;的访问权限, 请检查x-Client-id的正确性&quot;</span>, request.getRemoteAddr(), requestURI);<br>            &#125;<br>        &#125;<span class="hljs-keyword">else</span> &#123;<br>            log.warn(<span class="hljs-string">&quot;IP：&#123;&#125;不存在该open api &#123;&#125;的访问权限&quot;</span>, request.getRemoteAddr(), requestURI);<br>        &#125;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">import</span> com.ruoyi.openapi.core.filter.OpenApiFilter;<br><span class="hljs-keyword">import</span> org.springframework.boot.web.servlet.FilterRegistrationBean;<br><span class="hljs-keyword">import</span> org.springframework.context.annotation.Bean;<br><span class="hljs-keyword">import</span> org.springframework.context.annotation.Configuration;<br><span class="hljs-keyword">import</span> org.springframework.web.filter.DelegatingFilterProxy;<br><br><span class="hljs-keyword">import</span> java.util.Arrays;<br><br><span class="hljs-meta">@Configuration</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">OpenApiFilterConfig</span> &#123;<br><br>    <span class="hljs-meta">@Bean(name = &quot;openApiFilter&quot;)</span><br>    <span class="hljs-keyword">public</span> OpenApiFilter <span class="hljs-title function_">getOpenApiFilter</span><span class="hljs-params">()</span> &#123;<br>        <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">OpenApiFilter</span>();<br>    &#125;<br><br>    <span class="hljs-meta">@Bean</span><br>    <span class="hljs-keyword">public</span> FilterRegistrationBean <span class="hljs-title function_">registerMyFilter</span><span class="hljs-params">()</span> &#123;<br>        <span class="hljs-type">FilterRegistrationBean</span> <span class="hljs-variable">registrationBean</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">FilterRegistrationBean</span>&lt;&gt;();<br>        registrationBean.setOrder(<span class="hljs-number">1</span>);<br>        <span class="hljs-comment">// 正常Filter里面是注入不了Bean的，前面也说过Filter更靠前，Filter比Bean先加载</span><br>        <span class="hljs-comment">// 是属于Servlet的，他还没有进入spring所以无法使用spring的注入</span><br>        <span class="hljs-comment">// 我们可以采用filter配置文件&lt;filter&gt;和Bean的配置文件来解决</span><br>        <span class="hljs-comment">// 这里我们使用DelegatingFilterProxy来解决</span><br>        registrationBean.setFilter(<span class="hljs-keyword">new</span> <span class="hljs-title class_">DelegatingFilterProxy</span>(<span class="hljs-string">&quot;openApiFilter&quot;</span>));<br>        registrationBean.setUrlPatterns(Arrays.asList(<span class="hljs-string">&quot;/aiot/openapi/*&quot;</span>));<br>        <span class="hljs-comment">// 因为我们已经通过DelegatingFilterProxy来实现了所以我们可以把这个filter设置为false，</span><br>        <span class="hljs-comment">// 默认为true，如果为true会导致一个请求filter两次</span><br>        registrationBean.setEnabled(<span class="hljs-literal">false</span>);<br>        <span class="hljs-keyword">return</span> registrationBean;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<blockquote>
+<p>通过测试发现，正常的接口也被过滤了，，，这是为什么？我也不知道，心想着我在setFilter的时候既然用的是DelegatingFilterProxy那我为什么不直接使用<code>DelegatingFilterProxyRegistrationBean</code>呢, 于是改为下面的</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">import</span> com.ruoyi.openapi.core.filter.OpenApiFilter;<br><span class="hljs-keyword">import</span> org.springframework.boot.web.servlet.DelegatingFilterProxyRegistrationBean;<br><span class="hljs-keyword">import</span> org.springframework.context.annotation.Bean;<br><span class="hljs-keyword">import</span> org.springframework.context.annotation.Configuration;<br><br><span class="hljs-keyword">import</span> javax.servlet.DispatcherType;<br><br><span class="hljs-meta">@Configuration</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">OpenApiFilterConfig</span> &#123;<br><br>    <span class="hljs-meta">@Bean(name = &quot;openApiFilter&quot;)</span><br>    <span class="hljs-keyword">public</span> OpenApiFilter <span class="hljs-title function_">getOpenApiFilter</span><span class="hljs-params">()</span> &#123;<br>        <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">OpenApiFilter</span>();<br>    &#125;<br><br>    <span class="hljs-meta">@Bean</span><br>    <span class="hljs-keyword">public</span> DelegatingFilterProxyRegistrationBean <span class="hljs-title function_">delegatingFilterProxyRegistrationBean</span><span class="hljs-params">()</span>&#123;<br>        <span class="hljs-type">DelegatingFilterProxyRegistrationBean</span> <span class="hljs-variable">filterProxy</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">DelegatingFilterProxyRegistrationBean</span>(<span class="hljs-string">&quot;openApiFilter&quot;</span>);<br>        filterProxy.addUrlPatterns(<span class="hljs-string">&quot;/aiot/openapi/*&quot;</span>);<br>        filterProxy.addInitParameter(<span class="hljs-string">&quot;targetFilterLifecycle&quot;</span>,<span class="hljs-string">&quot;true&quot;</span>);<br>        filterProxy.addInitParameter(<span class="hljs-string">&quot;exclusions&quot;</span>, <span class="hljs-string">&quot;*.js,*.gif,*.jpg,*.png,*.css,*.ico&quot;</span>);<br>        filterProxy.setDispatcherTypes(DispatcherType.REQUEST);<br>        <span class="hljs-keyword">return</span> filterProxy;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>这次测试通过，只过滤了我们想要过滤的接口。至于上面那种方式不行还有待探索。参考连接<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/102273651">参考</a></p>
+<blockquote>
+<p>FilterRegistrationBean和DelegatingFilterProxyRegistrationBean区别：</p>
+</blockquote>
+<ul>
+<li>FilterRegistrationBean通过onStartup方法直接注册filter。</li>
+<li>DelegatingFilterProxyRegistrationBean是将DelegatingFilterProxy注册到Servlet3.0+的容器中，同时实现了ApplicationContextAware接口，实例ApplicationContext通过通过传入自定义filter的名称查找对应的bean，并生成相应bean的代理对象。</li>
+</ul>
+<h3 id="DelegatingFilterProxy"><a href="#DelegatingFilterProxy" class="headerlink" title="DelegatingFilterProxy"></a>DelegatingFilterProxy</h3><p>DelegatingFilterProxy就是一个对于servlet filter的代理，用这个类的好处就是<code>可以通过spring容器来管理servlet filter的生命周期。</code></p>
+<p>还有就是如果filter中需要一些spring容器的实例，可以通过spring直接注入，另外读取一些配置文件这些便利的操作也可以通过spring来配置实现</p>
+<p>Spring web在设计的时候考虑到某些功能的实现是通过Filter来拦截进行实现的，如果直接的简单的实现几个Filter好像也不是不可以（平时我们就是这么用的），但是Spring框架最核心的是IOC容器，和Spring框架最好的实现就是将要实现的Filter功能注册到IOC容器的一个Bean，这样就可以和Spring IOC容器进行完美的融合，所以Spring Web设计了DelegatingFilterProxy。</p>
+<blockquote>
+<p>本质上来说DelegatingFilterProxy就是一个Filter，其间接实现了Filter接口，但是<strong>在doFilter中其实调用的从Spring 容器中获取到的代理Filter的实现类delegate。</strong></p>
+</blockquote>
+<h3 id="DelegatingFilterProxy原理"><a href="#DelegatingFilterProxy原理" class="headerlink" title="DelegatingFilterProxy原理"></a>DelegatingFilterProxy原理</h3><ol>
+<li><p>DelegatingFilterProxy根据targetBeanName从Spring 容器中获取被注入到Spring 容器的Filter实现类，<strong>在DelegatingFilterProxy配置时一般需要配置属性targetBeanName</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-meta">@Override</span><br><span class="hljs-keyword">protected</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">initFilterBean</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> ServletException &#123;<br>	<span class="hljs-keyword">synchronized</span> (<span class="hljs-built_in">this</span>.delegateMonitor) &#123;<br>		<span class="hljs-keyword">if</span> (<span class="hljs-built_in">this</span>.delegate == <span class="hljs-literal">null</span>) &#123;<br>			<span class="hljs-comment">// If no target bean name specified, use filter name.</span><br>            <span class="hljs-comment">// 当Filter配置时如果没有设置targentBeanName属性，则直接根据Filter名称来查找</span><br>			<span class="hljs-keyword">if</span> (<span class="hljs-built_in">this</span>.targetBeanName == <span class="hljs-literal">null</span>) &#123;<br>				<span class="hljs-built_in">this</span>.targetBeanName = getFilterName();<br>			&#125;<br>			<span class="hljs-comment">// Fetch Spring root application context and initialize the delegate early,</span><br>			<span class="hljs-comment">// if possible. If the root application context will be started after this</span><br>			<span class="hljs-comment">// filter proxy, we&#x27;ll have to resort to lazy initialization.</span><br>			<span class="hljs-type">WebApplicationContext</span> <span class="hljs-variable">wac</span> <span class="hljs-operator">=</span> findWebApplicationContext();<br>			<span class="hljs-keyword">if</span> (wac != <span class="hljs-literal">null</span>) &#123;<br>                <span class="hljs-comment">// 从Spring容器中获取注入的Filter的实现类</span><br>				<span class="hljs-built_in">this</span>.delegate = initDelegate(wac);<br>			&#125;<br>		&#125;<br>	&#125;<br>&#125;<br> <br><span class="hljs-keyword">protected</span> Filter <span class="hljs-title function_">initDelegate</span><span class="hljs-params">(WebApplicationContext wac)</span> <span class="hljs-keyword">throws</span> ServletException &#123;<br>		<span class="hljs-comment">//从Spring 容器中获取注入的Filter的实现类</span><br>		<span class="hljs-type">Filter</span> <span class="hljs-variable">delegate</span> <span class="hljs-operator">=</span> wac.getBean(getTargetBeanName(), Filter.class);<br>		<span class="hljs-keyword">if</span> (isTargetFilterLifecycle()) &#123;<br>			delegate.init(getFilterConfig());<br>		&#125;<br>		<span class="hljs-keyword">return</span> delegate;<br>	&#125;<br></code></pre></td></tr></table></figure></li>
+<li><p>在DelegatingFilterProxy的实现方法doFilter中，其实最终调用的是委派的类delegate</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-meta">@Override</span><br><span class="hljs-keyword">protected</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">initFilterBean</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> ServletException &#123;<br>	<span class="hljs-keyword">synchronized</span> (<span class="hljs-built_in">this</span>.delegateMonitor) &#123;<br>		<span class="hljs-keyword">if</span> (<span class="hljs-built_in">this</span>.delegate == <span class="hljs-literal">null</span>) &#123;<br>			<span class="hljs-comment">// If no target bean name specified, use filter name.</span><br>            <span class="hljs-comment">// 当Filter配置时如果没有设置targentBeanName属性，则直接根据Filter名称来查找</span><br>			<span class="hljs-keyword">if</span> (<span class="hljs-built_in">this</span>.targetBeanName == <span class="hljs-literal">null</span>) &#123;<br>				<span class="hljs-built_in">this</span>.targetBeanName = getFilterName();<br>			&#125;<br>			<span class="hljs-comment">// Fetch Spring root application context and initialize the delegate early,</span><br>			<span class="hljs-comment">// if possible. If the root application context will be started after this</span><br>			<span class="hljs-comment">// filter proxy, we&#x27;ll have to resort to lazy initialization.</span><br>			<span class="hljs-type">WebApplicationContext</span> <span class="hljs-variable">wac</span> <span class="hljs-operator">=</span> findWebApplicationContext();<br>			<span class="hljs-keyword">if</span> (wac != <span class="hljs-literal">null</span>) &#123;<br>                <span class="hljs-comment">// 从Spring容器中获取注入的Filter的实现类</span><br>				<span class="hljs-built_in">this</span>.delegate = initDelegate(wac);<br>			&#125;<br>		&#125;<br>	&#125;<br>&#125;<br> <br><span class="hljs-keyword">protected</span> Filter <span class="hljs-title function_">initDelegate</span><span class="hljs-params">(WebApplicationContext wac)</span> <span class="hljs-keyword">throws</span> ServletException &#123;<br>		<span class="hljs-comment">// 从Spring 容器中获取注入的Filter的实现类</span><br>		<span class="hljs-type">Filter</span> <span class="hljs-variable">delegate</span> <span class="hljs-operator">=</span> wac.getBean(getTargetBeanName(), Filter.class);<br>		<span class="hljs-keyword">if</span> (isTargetFilterLifecycle()) &#123;<br>			delegate.init(getFilterConfig());<br>		&#125;<br>		<span class="hljs-keyword">return</span> delegate;<br>	&#125;<br></code></pre></td></tr></table></figure></li>
+</ol>
+<h2 id="Interceptor的使用"><a href="#Interceptor的使用" class="headerlink" title="Interceptor的使用"></a>Interceptor的使用</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">import</span> com.ruoyi.aiot.webconfig.annotation.DeviceAuth;<br><span class="hljs-keyword">import</span> com.ruoyi.common.utils.StringUtils;<br><span class="hljs-keyword">import</span> org.springframework.beans.factory.annotation.Value;<br><span class="hljs-keyword">import</span> org.springframework.web.method.HandlerMethod;<br><span class="hljs-keyword">import</span> org.springframework.web.servlet.HandlerInterceptor;<br><br><span class="hljs-keyword">import</span> javax.servlet.http.HttpServletRequest;<br><span class="hljs-keyword">import</span> javax.servlet.http.HttpServletResponse;<br><span class="hljs-keyword">import</span> java.lang.reflect.Method;<br><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">DeviceAuthTokenInterceptor</span> <span class="hljs-keyword">implements</span> <span class="hljs-title class_">HandlerInterceptor</span> &#123;<br><br><span class="hljs-comment">//    public static final String NY_AIOT_TOKEN_KEY = &quot;NY_DEVICE_TOKEN&quot;;</span><br><br>    <span class="hljs-meta">@Value(&quot;$&#123;emq.value&#125;&quot;)</span><br>    <span class="hljs-keyword">private</span> String emqToken;<br><br>    <span class="hljs-meta">@Value(&quot;$&#123;emq.header&#125;&quot;)</span><br>    <span class="hljs-keyword">private</span> String header;<br><br>    <span class="hljs-meta">@Override</span><br>    <span class="hljs-keyword">public</span> <span class="hljs-type">boolean</span> <span class="hljs-title function_">preHandle</span><span class="hljs-params">(HttpServletRequest request, HttpServletResponse response, Object handler)</span> <span class="hljs-keyword">throws</span> Exception &#123;<br>        <span class="hljs-comment">// 如果不是映射到方法直接通过</span><br>        <span class="hljs-keyword">if</span> (!(handler <span class="hljs-keyword">instanceof</span> HandlerMethod)) &#123;<br>            <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;<br>        &#125;<br><br>        <span class="hljs-type">HandlerMethod</span> <span class="hljs-variable">handlerMethod</span> <span class="hljs-operator">=</span> (HandlerMethod) handler;<br>        <span class="hljs-type">Method</span> <span class="hljs-variable">method</span> <span class="hljs-operator">=</span> handlerMethod.getMethod();<br>        <span class="hljs-type">DeviceAuth</span> <span class="hljs-variable">annotation</span> <span class="hljs-operator">=</span> method.getAnnotation(DeviceAuth.class);<br>        <span class="hljs-keyword">if</span> (StringUtils.isNull(annotation))&#123;<br>            <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;<br>        &#125;<br><br>        <span class="hljs-comment">// 判断token的合法性</span><br>        <span class="hljs-type">String</span> <span class="hljs-variable">token</span> <span class="hljs-operator">=</span> request.getHeader(header);<br>        <span class="hljs-keyword">return</span> emqToken.equals(token);<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>注册</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">import</span> com.ruoyi.aiot.webconfig.Interceptor.DeviceAuthTokenInterceptor;<br><span class="hljs-keyword">import</span> org.springframework.context.annotation.Bean;<br><span class="hljs-keyword">import</span> org.springframework.context.annotation.Configuration;<br><span class="hljs-keyword">import</span> org.springframework.web.servlet.config.annotation.InterceptorRegistry;<br><span class="hljs-keyword">import</span> org.springframework.web.servlet.config.annotation.WebMvcConfigurer;<br><br><span class="hljs-comment">/**</span><br><span class="hljs-comment"> * 设备token认证</span><br><span class="hljs-comment"> * <span class="hljs-doctag">@author</span> DEAN</span><br><span class="hljs-comment"> */</span><br><span class="hljs-meta">@Configuration</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">WebDeviceAuthConfigurer</span> <span class="hljs-keyword">implements</span> <span class="hljs-title class_">WebMvcConfigurer</span> &#123;<br><br>    <span class="hljs-meta">@Bean</span><br>    <span class="hljs-keyword">public</span> DeviceAuthTokenInterceptor <span class="hljs-title function_">getDeviceAuthTokenInterceptor</span><span class="hljs-params">()</span>&#123;<br>        <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">DeviceAuthTokenInterceptor</span>();<br>    &#125;<br><br>    <span class="hljs-meta">@Override</span><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">addInterceptors</span><span class="hljs-params">(InterceptorRegistry registry)</span> &#123;<br>        <span class="hljs-comment">// addInterceptor这里如果是通过new DeviceAuthTokenInterceptor()的话</span><br>        <span class="hljs-comment">// 我们在DeviceAuthTokenInterceptor 里面注入的Bean都会为null, </span><br>        <span class="hljs-comment">// 因为new出来的是不归spring容器管理的</span><br>        <span class="hljs-comment">// 所以我们好像DeviceAuthTokenInterceptor里面注入的Bean不为null，这里就要是一个Bean</span><br>        <span class="hljs-comment">// 我们就通过@Bean注解的方式获得一个Bean然后add进去就好了 [参考这篇博客](https://cloud.tencent.com/developer/article/1640210)</span><br>        <span class="hljs-comment">// 通过new的方式创建的拦截器是没有交给spring进行管理的，没有被spring管理的实例，是无法注入的，所以为null</span><br>       registry.addInterceptor(getDeviceAuthTokenInterceptor()).addPathPatterns(<span class="hljs-string">&quot;/aiot/device/state&quot;</span>);<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+
+
+
+            </div>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                  <div class="post-meta mr-3">
+                    <i class="iconfont icon-category"></i>
+                    
+                      <a class="hover-with-bg" href="/categories/%E5%90%8E%E7%AB%AF/">后端</a>
+                    
+                  </div>
+                
+                
+                  <div class="post-meta">
+                    <i class="iconfont icon-tags"></i>
+                    
+                      <a class="hover-with-bg" href="/tags/java%E9%AB%98%E9%98%B6/">java高阶</a>
+                    
+                  </div>
+                
+              </div>
+              
+                <p class="note note-warning">
+                  
+                    本博客所有文章除特别声明外，均采用 <a target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！
+                  
+                </p>
+              
+              
+                <div class="post-prevnext">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2023/01/06/Enum%E4%BD%BF%E7%94%A8/">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Enum使用</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2022/12/07/RestTemplate/">
+                        <span class="hidden-mobile">RestTemplate</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+              <!-- Comments -->
+              <article class="comments" id="comments" lazyload>
+                
+                  
+                
+                
+  <div id="valine"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#valine', function() {
+      Fluid.utils.createScript('https://cdn.jsdelivr.net/npm/valine@1/dist/Valine.min.js', function() {
+        var options = Object.assign(
+          {"appId":"nGD612Gu0HScFjNTtkQ975DQ-gzGzoHsz","appKey":"uQWFCWpfdpmUcF3iVKDcak3s","path":"window.location.pathname","placeholder":"说点什么","avatar":"retro","meta":["nick","mail","link"],"requiredFields":[],"pageSize":10,"lang":"zh-CN","highlight":false,"recordIP":false,"serverURLs":"","emojiCDN":null,"emojiMaps":null,"enableQQ":false},
+          {
+            el: "#valine",
+            path: window.location.pathname
+          }
+        )
+        new Valine(options);
+        Fluid.utils.waitElementVisible('#valine .vcontent', () => {
+          Fluid.plugins.initFancyBox('#valine .vcontent img:not(.vemoji)');
+        })
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+              </article>
+            
+          </article>
+        </div>
+      </div>
+    </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+      </div>
+    
+  </div>
+</div>
+
+<!-- Custom -->
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+
+    
+  </main>
+
+  <footer class="text-center mt-5 py-3">
+  <div class="footer-content">
+     <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+  </div>
+  
+  <div class="statistics">
+    
+    
+
+    
+      
+        <!-- LeanCloud 统计PV -->
+        <span id="leancloud-site-pv-container" style="display: none">
+            总访问量 
+            <span id="leancloud-site-pv"></span>
+             次
+          </span>
+      
+      
+        <!-- LeanCloud 统计UV -->
+        <span id="leancloud-site-uv-container" style="display: none">
+            总访客数 
+            <span id="leancloud-site-uv"></span>
+             人
+          </span>
+      
+
+    
+  </div>
+
+
+  
+
+  
+</footer>
+
+
+  <!-- SCRIPTS -->
+  
+  <script  src="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js" ></script>
+<script  src="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+<!-- Plugins -->
+
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+  
+
+
+
+  
+    <script  src="https://cdn.jsdelivr.net/npm/tocbot@4/dist/tocbot.min.js" ></script>
+  
+  
+    <script  src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.js" ></script>
+  
+  
+    <script  src="https://cdn.jsdelivr.net/npm/anchor-js@4/anchor.min.js" ></script>
+  
+  
+    <script defer src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js" ></script>
+  
+
+
+
+
+  <script defer src="/js/leancloud.js" ></script>
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/typed.js@2/lib/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var title = document.getElementById('subtitle').title;
+      
+        typing(title);
+      
+    })(window, document);
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+
+
+<!-- 主题的启动项 保持在最底部 -->
+<script  src="/js/boot.js" ></script>
+
+
+</body>
+</html>

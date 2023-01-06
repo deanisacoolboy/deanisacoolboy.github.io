@@ -16,21 +16,21 @@
   <meta name="author" content="John Doe">
   <meta name="keywords" content="">
   
-    <meta name="description" content="RestTemplate的使用配置1234567891011121314151617181920212223242526272829303132@Configurationpublic class RestTemplateConfig &amp;#123;&#x2F;&#x2F;    @Value(&quot;$&amp;#123;emq.username&amp;#125;&quot;)&#x2F;&#x2F;    private String user">
+    <meta name="description" content="Enum使用统一枚举的操作，枚举类实现该接口 1234567891011121314151617181920212223242526import java.util.Arrays;import java.util.Optional;public interface EnumOperate &amp;#123;    public Integer getCode();    public String ge">
 <meta property="og:type" content="article">
-<meta property="og:title" content="RestTemplate">
-<meta property="og:url" content="http://example.com/2022/12/07/RestTemplate/index.html">
+<meta property="og:title" content="Enum使用">
+<meta property="og:url" content="http://example.com/2023/01/06/Enum%E4%BD%BF%E7%94%A8/index.html">
 <meta property="og:site_name" content="野草技术社区">
-<meta property="og:description" content="RestTemplate的使用配置1234567891011121314151617181920212223242526272829303132@Configurationpublic class RestTemplateConfig &amp;#123;&#x2F;&#x2F;    @Value(&quot;$&amp;#123;emq.username&amp;#125;&quot;)&#x2F;&#x2F;    private String user">
+<meta property="og:description" content="Enum使用统一枚举的操作，枚举类实现该接口 1234567891011121314151617181920212223242526import java.util.Arrays;import java.util.Optional;public interface EnumOperate &amp;#123;    public Integer getCode();    public String ge">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2022-12-07T06:36:20.000Z">
-<meta property="article:modified_time" content="2022-12-07T06:37:21.929Z">
+<meta property="article:published_time" content="2023-01-06T07:35:56.000Z">
+<meta property="article:modified_time" content="2023-01-06T07:45:58.707Z">
 <meta property="article:author" content="John Doe">
 <meta property="article:tag" content="java高阶">
 <meta name="twitter:card" content="summary_large_image">
   
   
-  <title>RestTemplate - 野草技术社区</title>
+  <title>Enum使用 - 野草技术社区</title>
 
   <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/css/bootstrap.min.css" />
 
@@ -176,7 +176,7 @@
       <div class="full-bg-img">
         <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
           <div class="page-header text-center fade-in-up">
-            <span class="h2" id="subtitle" title="RestTemplate">
+            <span class="h2" id="subtitle" title="Enum使用">
               
             </span>
 
@@ -186,8 +186,8 @@
   
     <span class="post-meta">
       <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-      <time datetime="2022-12-07 14:36" pubdate>
-        2022年12月7日 下午
+      <time datetime="2023-01-06 15:35" pubdate>
+        2023年1月6日 下午
       </time>
     </span>
   
@@ -206,7 +206,7 @@
       <i class="iconfont icon-clock-fill"></i>
       
       
-      10 分钟
+      11 分钟
     </span>
   
 
@@ -243,15 +243,13 @@
         <div class="py-5" id="board">
           <article class="post-content mx-auto">
             <!-- SEO header -->
-            <h1 style="display: none">RestTemplate</h1>
+            <h1 style="display: none">Enum使用</h1>
             
             <div class="markdown-body">
-              <h1 id="RestTemplate的使用"><a href="#RestTemplate的使用" class="headerlink" title="RestTemplate的使用"></a>RestTemplate的使用</h1><h2 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h2><figure class="highlight java"><table><tr><td class="gutter"><div class="code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></div></td><td class="code"><pre><code class="hljs java"><span class="hljs-meta">@Configuration</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">RestTemplateConfig</span> &#123;<br><span class="hljs-comment">//    @Value(&quot;$&#123;emq.username&#125;&quot;)</span><br><span class="hljs-comment">//    private String username;</span><br><span class="hljs-comment">//    @Value(&quot;$&#123;emq.password&#125;&quot;)</span><br><span class="hljs-comment">//    private String password;</span><br><span class="hljs-comment">//    @Bean</span><br><span class="hljs-comment">//    public RestTemplate restTemplate(RestTemplateBuilder builder)&#123;</span><br><span class="hljs-comment">//        return builder.basicAuthentication(username,password).build();</span><br><span class="hljs-comment">//    &#125;</span><br><br>    <span class="hljs-meta">@Bean</span><br>    <span class="hljs-keyword">public</span> ClientHttpRequestFactory <span class="hljs-title function_">simpleClientHttpRequestFactory</span><span class="hljs-params">()</span> &#123;<br><br>        <span class="hljs-type">SimpleClientHttpRequestFactory</span> <span class="hljs-variable">factory</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">SimpleClientHttpRequestFactory</span>();<br>        factory.setReadTimeout(<span class="hljs-number">5000</span>);<br>        factory.setConnectTimeout(<span class="hljs-number">15000</span>);<br>        <span class="hljs-comment">// 设置代理</span><br>        <span class="hljs-comment">//factory.setProxy(null);</span><br><br>        <span class="hljs-keyword">return</span> factory;<br>    &#125;<br><br>    <span class="hljs-meta">@Bean</span><br>    <span class="hljs-keyword">public</span> RestTemplate <span class="hljs-title function_">restTemplate</span><span class="hljs-params">(ClientHttpRequestFactory factory)</span> &#123;<br><br>        <span class="hljs-type">RestTemplate</span> <span class="hljs-variable">restTemplate</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">RestTemplate</span>(factory);<br><br>        <span class="hljs-keyword">return</span> restTemplate;<br>    &#125;<br><br>&#125;<br></code></pre></td></tr></table></figure>
+              <h1 id="Enum使用"><a href="#Enum使用" class="headerlink" title="Enum使用"></a>Enum使用</h1><p>统一枚举的操作，枚举类实现该接口</p>
+<figure class="highlight java"><table><tr><td class="gutter"><div class="code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></div></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">import</span> java.util.Arrays;<br><span class="hljs-keyword">import</span> java.util.Optional;<br><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">interface</span> <span class="hljs-title class_">EnumOperate</span> &#123;<br><br>    <span class="hljs-keyword">public</span> Integer <span class="hljs-title function_">getCode</span><span class="hljs-params">()</span>;<br><br>    <span class="hljs-keyword">public</span> String <span class="hljs-title function_">getDescription</span><span class="hljs-params">()</span>;<br><br>    <span class="hljs-comment">/**</span><br><span class="hljs-comment">     * 根据枚举类型和code获取对应的枚举</span><br><span class="hljs-comment">     * <span class="hljs-doctag">@param</span> c 枚举类型</span><br><span class="hljs-comment">     * <span class="hljs-doctag">@param</span> code 枚举code</span><br><span class="hljs-comment">     * <span class="hljs-doctag">@param</span> &lt;T&gt;</span><br><span class="hljs-comment">     * <span class="hljs-doctag">@return</span> 枚举值</span><br><span class="hljs-comment">     */</span><br>    <span class="hljs-keyword">static</span> &lt;T <span class="hljs-keyword">extends</span> <span class="hljs-title class_">EnumOperate</span>&gt; T <span class="hljs-title function_">valueOfEnum</span><span class="hljs-params">(Class&lt;T&gt; c, <span class="hljs-type">int</span> code)</span> &#123;<br>        EnumOperate[] enums = c.getEnumConstants();<br>        Optional&lt;EnumOperate&gt; optional = Arrays.stream(enums)<br>                .filter(baseCode -&gt; baseCode.getCode().equals(code)).findAny();<br>        <span class="hljs-keyword">if</span> (optional.isPresent()) &#123;<br>            <span class="hljs-keyword">return</span> (T) optional.get();<br>        &#125;<br>        <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">IllegalArgumentException</span>(String.format(<span class="hljs-string">&quot;[%s]没有对应枚举值: [%s]&quot;</span>, c.getName(), code));<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
 
-<p>也可以通过RestTemplateBuilder来设置一些参数，比如验证、超时时间等。</p>
-<h2 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-type">HttpHeaders</span> <span class="hljs-variable">requestHeaders</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">HttpHeaders</span>();<br>        requestHeaders.setContentType(MediaType.APPLICATION_JSON);<br>        HttpEntity&lt;String&gt; requestEntity = <span class="hljs-keyword">new</span> <span class="hljs-title class_">HttpEntity</span>&lt;String&gt;(jsonString, requestHeaders);<br>        ResponseEntity&lt;String&gt; res = restTemplate.postForEntity(url, requestEntity, String.class);<br></code></pre></td></tr></table></figure>
-
-
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">enum</span> <span class="hljs-title class_">OpenApiStatueCode</span> <span class="hljs-keyword">implements</span> <span class="hljs-title class_">EnumOperate</span> &#123;<br><br>    FORBIDDEN(<span class="hljs-number">403</span>, <span class="hljs-string">&quot;没有该open api 接口的请求权限&quot;</span>),<br><br>    COUNTRY_EXPIRED(<span class="hljs-number">401</span>, <span class="hljs-string">&quot;对该open api接口请求的权限已到期&quot;</span>),<br><br>    REQUEST_TIMEOUT(<span class="hljs-number">408</span>, <span class="hljs-string">&quot;X-Timestamp超时&quot;</span>);<br><br>    <span class="hljs-keyword">private</span> Integer code;<br><br>    <span class="hljs-keyword">private</span> String description;<br><br>    OpenApiStatueCode(Integer code, String description) &#123;<br>        <span class="hljs-built_in">this</span>.code = code;<br>        <span class="hljs-built_in">this</span>.description = description;<br>    &#125;<br><br>    <span class="hljs-meta">@Override</span><br>    <span class="hljs-keyword">public</span> Integer <span class="hljs-title function_">getCode</span><span class="hljs-params">()</span> &#123;<br>        <span class="hljs-keyword">return</span> <span class="hljs-built_in">this</span>.code;<br>    &#125;<br><br>    <span class="hljs-meta">@Override</span><br>    <span class="hljs-keyword">public</span> String <span class="hljs-title function_">getDescription</span><span class="hljs-params">()</span> &#123;<br>        <span class="hljs-keyword">return</span> <span class="hljs-built_in">this</span>.description;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
 
 
             </div>
@@ -287,18 +285,12 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2022/12/28/filter%E5%92%8Cinterceptor/">
-                        <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">filter和interceptor</span>
-                        <span class="visible-mobile">上一篇</span>
-                      </a>
-                    
                   </article>
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2022/11/09/wait%E5%92%8Cnotify/">
-                        <span class="hidden-mobile">wait和notify</span>
+                      <a href="/2022/12/28/filter%E5%92%8Cinterceptor/">
+                        <span class="hidden-mobile">filter和interceptor</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
